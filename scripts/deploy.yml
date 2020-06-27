@@ -1,0 +1,27 @@
+---
+- name: Deploy to droplet
+  host: me.pecu.cc
+  collections: 
+    - containers.podman
+  task:
+    - name: Create install directory
+      file:
+        state: directory
+        path: /usr/share/testpage/
+    - name: Copy files to remote host
+      copy:
+        src: client/public/
+        dest: /opt/client
+    - name: Build dockerfile to image
+      command: cd /app && podman build . mem
+    - name: Run redis container
+      containers.podman.podman_container:
+        name: myredis
+        image: redis
+        command: redis-server --appendonly yes
+        state: present
+        recreate: yes
+        expose:
+          - 6379
+        volumes_from:
+          - mydata
