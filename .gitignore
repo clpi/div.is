@@ -3,3 +3,5 @@
 mem.db
 .gitlab-ci.yml
 /wiki
+/front/node_modules
+/front/app/node_modules
