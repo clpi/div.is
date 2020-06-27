@@ -1,0 +1,13 @@
+/home/chrisp/scr/rust/mem/target/rls/debug/deps/heck-960dec0bb97e07a5.rmeta: /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/lib.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/camel.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/kebab.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/mixed.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/shouty_snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/title.rs
+
+/home/chrisp/scr/rust/mem/target/rls/debug/deps/libheck-960dec0bb97e07a5.rlib: /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/lib.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/camel.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/kebab.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/mixed.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/shouty_snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/title.rs
+
+/home/chrisp/scr/rust/mem/target/rls/debug/deps/heck-960dec0bb97e07a5.d: /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/lib.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/camel.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/kebab.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/mixed.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/shouty_snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/snake.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/title.rs
+
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/lib.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/camel.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/kebab.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/mixed.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/shouty_snake.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/snake.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/heck-0.3.1/src/title.rs:

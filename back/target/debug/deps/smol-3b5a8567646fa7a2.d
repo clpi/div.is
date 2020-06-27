@@ -1,0 +1,16 @@
+/home/chrisp/scr/rust/mem/target/debug/deps/smol-3b5a8567646fa7a2.rmeta: /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/lib.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/async_io.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/block_on.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/blocking.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/context.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/multitask.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/parking.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/reactor.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/run.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/sys.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/task.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/timer.rs
+
+/home/chrisp/scr/rust/mem/target/debug/deps/smol-3b5a8567646fa7a2.d: /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/lib.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/async_io.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/block_on.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/blocking.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/context.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/multitask.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/parking.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/reactor.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/run.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/sys.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/task.rs /home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/timer.rs
+
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/lib.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/async_io.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/block_on.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/blocking.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/context.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/multitask.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/parking.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/reactor.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/run.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/sys.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/task.rs:
+/home/chrisp/.cargo/registry/src/github.com-1ecc6299db9ec823/smol-0.1.18/src/timer.rs:
