@@ -14,8 +14,7 @@ async fn main() -> sqlx::Result<()> {
 
     let (host, port) = get_host();
 
-
-    //usr.insert(db).await?; -> IT WORKS!
+    ex_user().insert(db).await?; // -> IT WORKS!
 
     let index = warp::path!("index")
         .map(|| StatusCode::OK);
@@ -38,11 +37,10 @@ pub fn get_host() -> (String, String) {
 }
 
 pub fn ex_user() -> User {
-    let usr = db::models::User {
+    db::models::User {
         id: None, email: String::from("chris@pecu.cc"),
         username: String::from("chrisp"),
         password: String::from("hashword"),
         created_at: sqlx::types::chrono::Utc::now().timestamp() as i32,
-    };
-    usr
+    }
 }

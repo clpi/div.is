@@ -11,14 +11,16 @@ pub struct Db {
 impl Db {
 
     pub async fn new(url: &str) -> sqlx::Result<Self> {
-        Ok( Self { 
-            pool: sqlx::SqlitePool::new(&url).await?,
-        } )
+        let pool = sqlx::SqlitePool::new(&url).await?;
+        sqlx::query_file!("./schema/schema.sql")
+            .execute(&self.pool).await?;
+        println!("Successfully created DB pool.");
+        Ok( Self { pool } )
     }
 
     pub async fn init(self) -> sqlx::Result<Self> {
         sqlx::query_file!("schema/schema.sql")
             .execute(&self.pool).await?;
         Ok( self )
-    }
+   }
 }
