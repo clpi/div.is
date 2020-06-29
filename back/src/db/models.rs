@@ -157,17 +157,12 @@ pub struct Condition {
 
 
 pub trait Model: Sized {
-
-    fn to_string(&self);
-    fn from_id(&self);
-    fn from_db(&self);
-    fn to_dB(&self);
 }
 
 
 impl User {
 
-    pub async fn new(email: &str, uname: &str, pwd: &str) -> Self { 
+    pub async fn new(email: String, uname: String, pwd: String) -> Self { 
         User {
             id: None,
             email: String::from(email),
@@ -176,6 +171,8 @@ impl User {
             created_at: Utc::now().timestamp() as i32,
         } 
     }
+
+    //pub async fn from_db(db: Db) -> DbQuery { User::default(), DbQuery::from(db) }
 
     pub async fn build() -> Self {
         User {
@@ -208,7 +205,6 @@ impl User {
         Ok(())
     }
 
-    // pub async fn with_db(pool: &MemDb) -> {    }
     pub async fn from_id(db: Db, id: i32 )
         -> sqlx::Result<Self> 
     {
@@ -223,24 +219,22 @@ impl User {
         Self { id: None, ..user }
     }
 
-    pub async fn from_username(db: Db, username: &str) 
-        -> sqlx::Result<Self> 
+    pub async fn from_username(db: Db, username: String) 
+        -> sqlx::Result<Self>
     {
-        let res: Self = sqlx::query_as::<Sqlite, Self>(
-            "SELECT * FROM Users WHERE username=?;")
+        Ok(sqlx::query_as::<Sqlite, Self>
+            ("SELECT * FROM Users WHERE username=?;")
             .bind(String::from(username))
-            .fetch_one(&db.pool).await?;
-        Ok(res)
+            .fetch_one(&db.pool).await?)
     }
 
     pub async fn from_email(db: Db, username: &str) 
         -> sqlx::Result<Self> 
     {
-        let res: Self = sqlx::query_as::<Sqlite, Self>(
-            "SELECT * FROM Users WHERE email=?;")
+        Ok(sqlx::query_as::<Sqlite, Self>
+            ("SELECT * FROM Users WHERE email=?;")
             .bind(String::from(username))
-            .fetch_one(&db.pool).await?;
-        Ok(res)
+            .fetch_one(&db.pool).await?)
     }
 
     pub async fn from_db<T: Into<String>>(db: Db, param: &str, value: T)
@@ -336,6 +330,34 @@ impl Item {
 impl Field {
     pub async fn new() {}
 }
+
+impl Model for User {}
+
+impl Into<String> for User {
+    fn into(self) -> String { String::from("User") }
+}
+//pub struct DbQuery<T: Model> {
+    //pub db: Db,
+    //pub model: T,
+//}
+
+//impl DbQuery<T: Model> {
+
+    //pub async fn new<T: Model>(db: Db, model: T) -> DbQuery { 
+        //DbQuery { db, model } 
+    //}
+
+    //pub async fn with_id<T: Model>(&self, id: i32) -> sqlx::Result<T> {
+        //let res: Self = sqlx::query_as::<Sqlite, T>(
+            //"SELECT * FROM ? WHERE id=?;")
+            //.bind(self.model.to_string())
+            //.bind(id)
+            //.fetch_one(&self.db.pool).await?;
+        //Ok(res)
+
+    //}
+    
+//}
 
 pub enum Conditions {}
 /*

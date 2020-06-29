@@ -1,1 +1,0 @@
-{"rustc":5807094999684781751,"features":"","target":0,"profile":0,"path":0,"deps":[[11938653119179573612,"build_script_build",false,5178073422754316888]],"local":[{"RerunIfEnvChanged":{"var":"SQLITE_MAX_VARIABLE_NUMBER","val":null}},{"RerunIfEnvChanged":{"var":"SQLITE_MAX_EXPR_DEPTH","val":null}}],"rustflags":[],"metadata":0}

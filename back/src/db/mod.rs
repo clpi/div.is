@@ -12,8 +12,8 @@ impl Db {
 
     pub async fn new(url: &str) -> sqlx::Result<Self> {
         let pool = sqlx::SqlitePool::new(&url).await?;
-        sqlx::query_file!("./schema/schema.sql")
-            .execute(&self.pool).await?;
+        sqlx::query_file!("schema/schema.sql")
+            .execute(&pool).await?;
         println!("Successfully created DB pool.");
         Ok( Self { pool } )
     }
