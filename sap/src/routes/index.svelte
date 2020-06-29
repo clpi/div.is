@@ -1,3 +1,14 @@
+<script>
+    import { onMount } from 'svelte';
+    let exp;
+    onMount(async () => {
+        await fetch('http://localhost:3000/sum/10/20')
+            .then(res => res.text())
+            .then(body => exp = body);
+    })
+    
+
+</script>
 <style>
 	h1, figure, p {
 		text-align: center;
@@ -26,6 +37,7 @@
 </svelte:head>
 
 <h2>memuri</h2>
+<h3>{exp} sdfds</h3>
 
 <figure>
 	<figcaption>Have fun with Sapper!</figcaption>

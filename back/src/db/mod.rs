@@ -1,6 +1,12 @@
 pub mod models;
+pub mod users;
+pub mod records;
+
 
 pub use models::*;
+pub use users::*;
+
+
 use sqlx::SqlitePool;
 use sqlx::*;
 

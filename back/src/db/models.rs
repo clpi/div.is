@@ -1,9 +1,8 @@
 use serde_derive::*;
-use sqlx::*;
-use sqlx::sqlite::*;
 use sqlx::FromRow;
-use sqlx::types::chrono::{DateTime, Utc};
-use crate::db::Db;
+use super::Db;
+use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
+
 
 //TODO Consider adding custom types for forieng key references, using
 //sqlx::Type and transparent
@@ -159,7 +158,6 @@ pub struct Condition {
 pub trait Model: Sized {
 }
 
-
 impl User {
 
     pub async fn new(email: String, uname: String, pwd: String) -> Self { 
@@ -189,7 +187,7 @@ impl User {
             .bind(&self.username)
             .bind(&self.password)
             .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await;
+            .execute(&db.pool).await?;
         Ok(self)
     }
 
@@ -201,7 +199,7 @@ impl User {
             .bind(&self.username)
             .bind(&self.password)
             .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await;
+            .execute(&db.pool).await?;
         Ok(())
     }
 

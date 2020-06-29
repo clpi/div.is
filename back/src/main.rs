@@ -1,7 +1,8 @@
 mod db;
-mod routes;
+mod api;
 
 use std::net::SocketAddr;
+use std::sync::{Arc, Mutex};
 use warp::http::StatusCode;
 use warp::{Filter, self};
 use db::models::*; //TODO: Merge models and schema files
@@ -11,6 +12,7 @@ use db::Db;
 async fn main() -> sqlx::Result<()> {
     
     let db = setup_db().await?;
+    let memdb = Arc::new(Mutex::new(0));
     let cors = warp::cors().allow_any_origin();
 
     let (host, port) = get_host();
