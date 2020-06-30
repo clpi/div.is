@@ -21,6 +21,10 @@ pub struct UserLogin {
     pub password: String,
 }
 
+pub fn hash_pass() {}
+
+pub fn verify_pass() {}
+
 //impl Into<User> for UserLogin {
     //fn into(self) -> User {
         //User {

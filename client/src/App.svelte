@@ -1,42 +1,24 @@
 <script>
-    import { onMount } from 'svelte';
-	export let name;
-    let expression = "";
-
-    onMount(async () => {
-        await fetch('http://localhost:3001/api/sum/23/69')
-            .then(res => res.text())
-            .then(body => expression = body)
-            .catch(err=>{
-                console.log(err);
-            });
-    });
-</script>
-
-<main>
-	<h1>Hello {name}!</h1>
-    <h3>{expression}</h3>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+  import { Router } from "@sveltech/routify";
+  import { routes } from "@sveltech/routify/tmp/routes";
+  import 'bulma/css/bulma.css'
+  </script>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+    body {
+        min-width: 70vw;
+        max-height: 100vh;
+        padding-left:14em;
+    }
+    .contain {
+        min-width: max-content;
+        max-width: 90rem;
+        margin: auto;
+        background-color: #faf9f8;
+        min-height:100vh;
+    }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
 </style>
+<div class="contain">
+<Router {routes} />
+</div>
