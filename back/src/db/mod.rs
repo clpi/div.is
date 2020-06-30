@@ -18,6 +18,9 @@ pub struct Db {
 impl Db {
 
     pub async fn new(url: &str) -> sqlx::Result<Self> {
+        if !std::path::Path::new(&url.to_string()).exists() {
+            // run sqlite3 mem.db "" to create
+        }
         let pool = sqlx::SqlitePool::new(&url).await?;
         sqlx::query_file!("schema/schema.sql")
             .execute(&pool).await?;

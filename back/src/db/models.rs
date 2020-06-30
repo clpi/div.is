@@ -10,10 +10,12 @@ use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct User {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub email: String,
     pub username: String,
     pub password: String,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
@@ -23,23 +25,27 @@ pub struct User {
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Record {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32, //user id
     pub name: String,
     pub status: i32,
     pub private: bool,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Item {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32,
     pub pid: Option<i32>, // parent item id
     pub name: String,
     pub status: i32,
     pub private: bool,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
@@ -47,68 +53,81 @@ pub struct Item {
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Field {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub name: String,
     pub typ: String,
     pub value: String,
     pub private: bool, 
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct RecordItemLink {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub rid: i32,
     pub iid: i32,
     pub status: i32,
     pub priority: i32,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct ItemFieldLink {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub iid: i32,
     pub fid: i32,
     pub status: i32,
     pub priority: i32,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct FieldEntryLink {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub fid: i32,
     pub etid: i32,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct EntryType {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32,
     pub name: String,
     pub status: i32,
     pub private: bool,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct EntryEntry {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32,
     pub etid: i32,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct FieldEntry {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub eeid: i32,
     pub fid: i32, 
@@ -120,21 +139,25 @@ pub struct FieldEntry {
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Rule {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub rid: Option<i32>, // record ID
     pub aid: Option<i32>, //action id
     pub name: String,
     pub priority: Option<i32>,
     pub status: i32,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Action {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub target: String,
     pub action: String,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
@@ -143,6 +166,7 @@ pub struct Action {
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Condition {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub pos: i32, //position in rule
     pub and_or: bool, //whether this is preceded by "and". 0 if preceded by "or"
@@ -153,6 +177,7 @@ pub struct Condition {
     pub fid2: i32,
     pub cond: i32, // < <= = >= > etc
     pub status: bool,
+    #[serde(default = "now_timestamp")]
     pub created_at: i32,
 }
 
@@ -203,14 +228,16 @@ impl User {
             .execute(&db.pool).await
     }
 
-    pub async fn delete_from(self, db: Db) -> sqlx::Result<u64> {
-        sqlx::query("DELETE FROM Users 
-        (email, username, password, created_at) 
-        VALUES ($1, $2, $3, $4);")  
-            .bind(&self.email)
-            .bind(&self.username)
-            .bind(&self.password)
-            .bind(Utc::now().timestamp() as i32)
+    pub async fn delete_by_id(db: Db, id:i32) -> sqlx::Result<u64> {
+        sqlx::query("DELETE FROM Users where id=?")
+            .bind(id)
+            .execute(&db.pool).await
+    }
+
+    pub async fn delete_by_username(db: Db, username: String) 
+    -> sqlx::Result<u64> {
+        sqlx::query("DELETE FROM Users where username=?")
+            .bind(username)
             .execute(&db.pool).await
     }
 
@@ -382,6 +409,9 @@ impl Model for Condition {}
 impl Model for Rule {}
 */
 
+pub fn now_timestamp() -> i32 {
+    Utc::now().timestamp() as i32
+}
 /*
  *
  * Vague ideas:

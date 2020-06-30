@@ -14,5 +14,6 @@ serde={version="*", features=["derive"]}
 serde_derive="*"
 serde_json="*"
 dotenv="*"
+blake2="*"
 #actix_web="*"
 #actix_rt="*"

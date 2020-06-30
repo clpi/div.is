@@ -1,0 +1,37 @@
+{
+  "cookies" : [
+  ],
+  "headers" : [
+  ],
+  "body" : {
+    "form" : [
+      {
+        "enabled" : true,
+        "key" : "username",
+        "value" : "chrisp",
+        "file" : null,
+        "type" : 0
+      },
+      {
+        "enabled" : true,
+        "key" : "email",
+        "value" : "chrisp1877@gmail.com",
+        "file" : null,
+        "type" : 0
+      },
+      {
+        "enabled" : true,
+        "key" : "password",
+        "value" : "hashword",
+        "file" : null,
+        "type" : 0
+      }
+    ],
+    "uri" : "http://localhost:3001/api/register",
+    "method" : 1,
+    "validate_x509" : false,
+    "data_type" : "BODY_TYPE_RAW",
+    "raw_language" : 1,
+    "raw" : "{\n    \"email\": \"chris@pecu.cc\",\n    \"username\": \"chrisp\",\n    \"password\": \"hashword\"\n    }"
+  }
+}
