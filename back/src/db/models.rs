@@ -8,6 +8,7 @@ use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
 //sqlx::Type and transparent
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct User {
     pub id: Option<i32>,
     pub email: String,
@@ -20,6 +21,7 @@ pub struct User {
 // TODO: make collaborative records have anonymous option
 //#[derive(Serialize, Deserialize)]
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Record {
     pub id: Option<i32>,
     pub uid: i32, //user id
@@ -30,6 +32,7 @@ pub struct Record {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Item {
     pub id: Option<i32>,
     pub uid: i32,
@@ -42,6 +45,7 @@ pub struct Item {
 
 // NOTE: typ can mean cardinally valued (ie checkboxes), stateful, textbox, etc.
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Field {
     pub id: Option<i32>,
     pub name: String,
@@ -52,6 +56,7 @@ pub struct Field {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct RecordItemLink {
     pub id: Option<i32>,
     pub rid: i32,
@@ -62,6 +67,7 @@ pub struct RecordItemLink {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct ItemFieldLink {
     pub id: Option<i32>,
     pub iid: i32,
@@ -72,6 +78,7 @@ pub struct ItemFieldLink {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct FieldEntryLink {
     pub id: Option<i32>,
     pub fid: i32,
@@ -80,6 +87,7 @@ pub struct FieldEntryLink {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct EntryType {
     pub id: Option<i32>,
     pub uid: i32,
@@ -90,6 +98,7 @@ pub struct EntryType {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct EntryEntry {
     pub id: Option<i32>,
     pub uid: i32,
@@ -98,6 +107,7 @@ pub struct EntryEntry {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct FieldEntry {
     pub id: Option<i32>,
     pub eeid: i32,
@@ -108,6 +118,7 @@ pub struct FieldEntry {
 // a logic implementation to connect actions in web app
 // to entries, rules, fields, etc.
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Rule {
     pub id: Option<i32>,
     pub rid: Option<i32>, // record ID
@@ -119,6 +130,7 @@ pub struct Rule {
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Action {
     pub id: Option<i32>,
     pub target: String,
@@ -129,6 +141,7 @@ pub struct Action {
 // NOTE: Define as enum for in-code options TODO allow for tiered conditions
 // TODO Create table for actions performed on the basis of conditions
 #[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Condition {
     pub id: Option<i32>,
     pub pos: i32, //position in rule
@@ -179,7 +192,7 @@ impl User {
         }
     }
 
-    pub async fn insert(self, db: Db) -> sqlx::Result<Self> {
+    pub async fn insert_into(self, db: Db) -> sqlx::Result<u64> {
         sqlx::query("INSERT INTO Users 
         (email, username, password, created_at) 
         VALUES ($1, $2, $3, $4);")  
@@ -187,11 +200,10 @@ impl User {
             .bind(&self.username)
             .bind(&self.password)
             .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await?;
-        Ok(self)
+            .execute(&db.pool).await
     }
 
-    pub async fn delete_from(self, db: Db) -> sqlx::Result<()> {
+    pub async fn delete_from(self, db: Db) -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users 
         (email, username, password, created_at) 
         VALUES ($1, $2, $3, $4);")  
@@ -199,8 +211,7 @@ impl User {
             .bind(&self.username)
             .bind(&self.password)
             .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await?;
-        Ok(())
+            .execute(&db.pool).await
     }
 
     pub async fn from_id(db: Db, id: i32 )
@@ -220,19 +231,19 @@ impl User {
     pub async fn from_username(db: Db, username: String) 
         -> sqlx::Result<Self>
     {
-        Ok(sqlx::query_as::<Sqlite, Self>
+        sqlx::query_as::<Sqlite, Self>
             ("SELECT * FROM Users WHERE username=?;")
             .bind(String::from(username))
-            .fetch_one(&db.pool).await?)
+            .fetch_one(&db.pool).await
     }
 
     pub async fn from_email(db: Db, username: &str) 
         -> sqlx::Result<Self> 
     {
-        Ok(sqlx::query_as::<Sqlite, Self>
+        sqlx::query_as::<Sqlite, Self>
             ("SELECT * FROM Users WHERE email=?;")
             .bind(String::from(username))
-            .fetch_one(&db.pool).await?)
+            .fetch_one(&db.pool).await
     }
 
     pub async fn from_db<T: Into<String>>(db: Db, param: &str, value: T)
@@ -258,7 +269,10 @@ impl User {
 
     pub async fn table() -> String { String::from("Users") }
 
-    pub fn to_string(&self) -> String { String::new() }
+    pub fn to_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+        
+    }
 
     pub fn create_record(&self, name: &str) -> Record {
         Record {

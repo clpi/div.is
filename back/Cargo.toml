@@ -10,7 +10,7 @@ edition = "2018"
 sqlx={version="*", features=["sqlite", "postgres", "chrono", "uuid"]}
 warp="*"
 tokio={version="*", features=["macros"]}
-serde="*"
+serde={version="*", features=["derive"]}
 serde_derive="*"
 serde_json="*"
 dotenv="*"

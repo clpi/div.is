@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
-    username TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     created_at INTEGER NOT NULL
 );

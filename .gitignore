@@ -8,7 +8,3 @@ mem.db
 back/.env
 back/.mem.db
 back/target
-/re
-/pr
-/sap
-/vu

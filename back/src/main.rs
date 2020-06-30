@@ -12,31 +12,82 @@ use db::Db;
 async fn main() -> sqlx::Result<()> {
     
     let db = setup_db().await?;
-    let memdb = Arc::new(Mutex::new(0));
+    
+    let wdb = warp::any().map(move || db.clone());
     let cors = warp::cors().allow_any_origin();
 
     let (host, port) = get_host();
-
-    ex_user().insert(db).await?; // -> IT WORKS!
+    //ex_user().insert(wdb).await?; // -> IT WORKS!
 
     let index = warp::path!("index")
         .map(|| "Hello");
     let sum = warp::path!("sum" / u32 / u32)
         .map(|a, b| format!("{} + {} = {}", a, b, a+b));
-    let get_user_by_username = warp::get()
+    let get_user = warp::get()
+        .and(wdb.clone())
+        .and(warp::path("user"))
         .and(warp::path::param())
-        .map(move |u: String| format!("hey {}", u));
+        .and_then(get_user_by_username);
 
-    let api = index.or(sum)
-        .with(warp::log("routes"))
+    let routes = index.or(sum).or(get_user);
+
+    let api = warp::path("api")
+        .and(routes)
         .with(cors);
 
-    warp::serve(api).run(([127, 0, 0, 1], 3000)).await;
+    warp::serve(api).run(([127, 0, 0, 1], 3001)).await;
     Ok(())
 }
 
-pub async fn get_username(db: Db, username: String) -> String {
-    User::from_username(db, username).await.unwrap().to_string()
+pub async fn get_user_by_username(
+    db: Db, username: String
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::from_username(db, username).await {
+        Ok(user) => Ok(user.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn get_user_by_id(
+    db: Db, id: i32,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::from_id(db, id).await {
+        Ok(user) => Ok(user.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn login (
+    db: Db, req_user: User,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::from_username(db, req_user.username).await {
+        Ok(db_user) => {
+            if db_user.password == req_user.password {
+                Ok(StatusCode::OK.to_string())
+            } else {
+                Ok(StatusCode::UNAUTHORIZED.to_string())
+            }
+        },
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn register (
+    db: Db, user: User,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match user.insert_into(db).await {
+        Ok(_o) => Ok(StatusCode::OK.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn delete_user_by_username(
+    db: Db, user: User,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match user.delete_from(db).await {
+        Ok(_o) => Ok(StatusCode::OK.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
 }
 
 pub async fn setup_db() -> sqlx::Result<db::Db> {
@@ -58,3 +109,5 @@ pub fn ex_user() -> User {
         created_at: sqlx::types::chrono::Utc::now().timestamp() as i32,
     }
 }
+
+// NOTE: Remember, now is not the time to overengineer things

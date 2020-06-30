@@ -10,6 +10,7 @@ pub use users::*;
 use sqlx::SqlitePool;
 use sqlx::*;
 
+#[derive(Clone)]
 pub struct Db {
     pool: SqlitePool,
 }
