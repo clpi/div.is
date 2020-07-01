@@ -1,29 +1,12 @@
 <script>
   import {Collapse, Field, Button, Input, Icon, Tabs, Tab } from 'svelma'
+  import Hero from '../../comp/hero.svelte'
 </script>
 
 <style>
     .dbcontainer{
         margin: auto;
-        margin-top: 2rem;
         display: inline;
-    }
-    .title {
-        font-size: 2em;
-        text-shadow: 0px 2px 2px #555;
-        font-weight:400;
-        
-    }
-    .subtitle {
-        font-size:1.2em;
-        text-shadow: 0px 1.5px 1.5px #555;
-        font-weight: 500;
-    }
-    .hero{
-        background-image: linear-gradient(170deg, #ef8958, #ffdeaa);
-        height: 10rem;
-        color: #221;
-        border-bottom: 4px solid rgba(255, 140, 100, 40)
     }
     .buttons{
         padding: 20px 10px 20px 10px;
@@ -32,18 +15,6 @@
         width:max-content;
     }
 </style>
-<section class="hero is-success">
-    <div class="hero-body">
-      <div class="container">
-        <h1 class="title">
-          about
-        </h1>
-        <h2 class="subtitle">
-          Logging website
-        </h2>
-      </div>
-    </div>
-  </section>
   <div class="buttons">
   <Button type="is-success" iconPack="fa" iconLeft="plus">Save</Button>
   <Button iconPack="fa" iconLeft="edit">Save</Button>

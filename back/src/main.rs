@@ -8,6 +8,7 @@ use warp::{Filter, self};
 use db::models::*; //TODO: Merge models and schema files
 use db::Db;
 use self::api::handlers;
+use warp::http::Method;
 
 #[tokio::main]
 async fn main() -> sqlx::Result<()> {
@@ -15,7 +16,18 @@ async fn main() -> sqlx::Result<()> {
     let db = setup_db().await?;
     
     let wdb = warp::any().map(move || db.clone());
-    let cors = warp::cors().allow_any_origin();
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", 
+            "Referer", "Origin", "Access-Control-Request-Method", 
+            "Access-Control-Request-Headers", "content-type"
+        ])
+        .allow_methods(&[
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+        ]);
 
     let (host, port) = get_host();
     //ex_user().insert(wdb).await?; // -> IT WORKS!

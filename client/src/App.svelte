@@ -12,9 +12,8 @@
     }
     .contain {
         min-width: max-content;
-        max-width: 90rem;
         margin: auto;
-        background-color: #faf9f8;
+        background-color: #f9f7f5;
         min-height:100vh;
     }
 

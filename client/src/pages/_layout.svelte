@@ -7,33 +7,33 @@
 
 <style>
     .Navbar {
-        border-top-color: #111111;
-        border-bottom-color: #452392;
+        border-top: 4px solid #feba80;
+        background-image: linear-gradient(#fffffe, #f9f7f5);
     }
     .NavLinks {
-        border-bottom: 1px solid #bbbbbb;
     }
     #navHome {
-        color: #ff7eaa;
         margin-left: 5vw;
         margin-right: 5vw;
-        border-bottom: 4px solid #feca91;
+        border: 4px solid #fedaa1;
+        padding: 0px 4px 0px 4px;
 
     }
     #navHome:hover {
         color: #fe8a00;
-        background-color: #ddd;
+        background-color: #feeada;
     }
     .Nav {
-        border-top: 4px solid #feba80;
-        background-color: #fffefb;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 1200px;
         display: block;
-        background-image: linear-gradient(#fffffe, #fcfcf9)
     } 
     ul {
         list-style-type: none;
         justify-items: auto;
-        margin: 0;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
         padding: 0;
         overflow: hidden;
     }
@@ -58,17 +58,20 @@
         text-align: center;
         padding: 1.8vh 1.5vw 1.8vh 1.5vw;
         text-decoration: none;
-        font-stretch: semi-expanded;
+        font-stretch: expanded;
         font-weight:400;
+        outline:0;
     }
     li:hover {
-        background-color: #feeaea;
-        border-bottom: 4px solid #fc9;
+        border-bottom: 4px solid #ffdca9;
+        transition: border-bottom-width 0.2s;
     }
     .active {
-        background-color: #feddcc;
         border-bottom: 4px solid #fa4;
         align-items: center;
+    }
+    .active:hover {
+        border-bottom: 4px solid #fa4;
     }
     #navIcon{
         float: right;
@@ -87,8 +90,8 @@
             <li class:active={$isActive("/about")}>
                 <a href={$url("/about")}>about</a>
             </li>
-            <li class:active={$isActive("/FAQ")}>
-                <a href={$url("/about")}>FAQ</a>
+            <li class:active={$isActive("/contact")}>
+                <a href={$url("/contact")}>contact</a>
             </li>
             <li id="signupNav" class:active={$isActive("/signup")} >
                 <a href={$url("/signup")}>signup</a>
