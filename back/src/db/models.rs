@@ -333,10 +333,25 @@ impl User {
 
 impl Record {
 
-    pub async fn from_user(user: &User) -> Record {
-        let ts = Utc::now().timestamp() as i32;
-        let uid = user.id.unwrap();
-        Self { id: None, uid, name: String::new(), created_at: ts, private: true, status: 1 }
+    pub fn new(uid: i32, name: String) -> Record {
+        Self { 
+            id: None, uid, name, 
+            status: 1,
+            private: true,
+            created_at: Utc::now().timestamp() as i32,
+        }
+    }
+
+    pub async fn insert_db(self, db: Db) -> sqlx::Result<u64> {
+        sqlx::query("INSERT INTO Records 
+        (uid, name, status, private, created_at) 
+        VALUES ($1, $2, $3, $4, $5);")  
+            .bind(&self.uid)
+            .bind(&self.name)
+            .bind(&self.status)
+            .bind(&self.private)
+            .bind(&self.created_at)
+            .execute(&db.pool).await
     }
 
     pub async fn with_name(mut self, name: String) -> Record {

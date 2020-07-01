@@ -10,11 +10,20 @@ pub async fn test(name: String) -> Result<impl warp::Reply, warp::Rejection> {
     Ok(warp::reply::html(reply))
 }
 
-pub async fn get_user_by_username(
+pub async fn get_user_by_username (
     db: Db, username: String
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::from_username(db, username).await {
         Ok(user) => Ok(user.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn create_user_record (
+    db: Db, uid: i32, name: String,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match Record::new(uid, name).insert_db(db).await {
+        Ok(ok) => Ok(StatusCode::OK.to_string()),
         Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
     }
 }
@@ -36,7 +45,7 @@ pub async fn login (
             if db_user.password == req_user.password {
                 Ok(StatusCode::OK.to_string())
             } else {
-                Ok(StatusCode::UNAUTHORIZED.to_string())
+                Err(warp::reject::reject())
             }
         },
         Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
@@ -48,7 +57,7 @@ pub async fn register (
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match req_user.insert_into(db).await {
         Ok(_o) => Ok(StatusCode::OK.to_string()),
-        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+        Err(_e) => Err(warp::reject()),
     }
 }
 
