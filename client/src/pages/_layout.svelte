@@ -2,15 +2,17 @@
 <script>
   import { isActive, url, layout } from "@sveltech/routify";
   import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
+  import { slide } from 'svelte/transition';
   let login=false;
 </script>
 
 <style>
     .Navbar {
         border-top: 4px solid #feba80;
-        background-image: linear-gradient(#fffffe, #f9f7f5);
+        background-image: linear-gradient(#fffffd, #fffdfe);
     }
     .NavLinks {
+        margin-bottom: 1rem;
     }
     #navHome {
         margin-left: 5vw;
@@ -81,25 +83,28 @@
 <div class="Navbar">
     <div class="NavLinks">
         <ul class="Nav">
-            <li id="navHome"class:active={$isActive("/")}>
+            <li in:slide={{delay:100}} id="navHome"class:active={$isActive("/")}>
                 <a href={$url("/")}>memri</a>
             </li>
-            <li class:active={$isActive("/dashboard")}>
+            <li in:slide={{delay:150}} class:active={$isActive("/")}>
+                <a href={$url("/")}>home</a>
+            </li>
+            <li in:slide={{delay:200}} class:active={$isActive("/dashboard")}>
                 <a href={$url("/dashboard")}>dashboard</a>
             </li>
-            <li class:active={$isActive("/about")}>
+            <li in:slide={{delay:250}} class:active={$isActive("/about")}>
                 <a href={$url("/about")}>about</a>
             </li>
-            <li class:active={$isActive("/contact")}>
+            <li in:slide={{delay:300}} class:active={$isActive("/contact")}>
                 <a href={$url("/contact")}>contact</a>
             </li>
-            <li id="signupNav" class:active={$isActive("/signup")} >
+            <li in:slide={{delay:200}} id="signupNav" class:active={$isActive("/signup")} >
                 <a href={$url("/signup")}>signup</a>
             </li>
-            <li id="loginNav" class:active={$isActive("/login")}>
+            <li in:slide={{delay:250}} id="loginNav" class:active={$isActive("/login")}>
                 <a href={$url("/login")}>login</a>
             </li>
-            <li id="navIcon">
+            <li in:slide={{delay:300}} id="navIcon">
                 <a href="http://github.com/pecusys">
                     <Icon pack="fab" size="is-small" icon="github"/>
                 </a>

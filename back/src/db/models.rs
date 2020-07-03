@@ -322,9 +322,8 @@ impl User {
 
     pub async fn query<T: Model>(&self) -> &Self { self }
 
-    pub async fn create_entry(&self, record_name: &str, entry_name: &str) -> EntryType {
-        Record::from_user(self).await
-            .with_name(String::from(record_name)).await
+    pub async fn create_entry(&self, record_name: String, entry_name: &str) -> EntryType {
+        Record::new(self.id.unwrap(), record_name)
             .create_entry_type(self.id.unwrap(), entry_name.to_string()).await
     }
 

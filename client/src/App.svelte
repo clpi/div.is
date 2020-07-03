@@ -1,6 +1,7 @@
 <script>
   import { Router } from "@sveltech/routify";
   import { routes } from "@sveltech/routify/tmp/routes";
+  import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
   </script>
 
@@ -13,11 +14,12 @@
     .contain {
         min-width: max-content;
         margin: auto;
-        background-color: #f9f7f5;
+        background-color: #fffefd;
         min-height:100vh;
     }
 
 </style>
 <div class="contain">
+    <slot/>
 <Router {routes} />
 </div>

@@ -1,5 +1,6 @@
 <script>
   import { Button, Field, Input } from 'svelma'
+  import { slide, fade } from 'svelte/transition'
   let loginInfo = {
     username: '',
     password: '',
@@ -17,7 +18,7 @@
           body: JSON.stringify(userInfo)
       });
       if (signupPost.ok) {
-        return "OK";
+        return signupPost;
       } else {
         throw new Error(users);
       }
@@ -36,35 +37,37 @@
     }
 </style>
 
-<div class="loginForm">
+<div>
+    <div in:fade class="loginForm">
 
-    <Field label="Username"> 
-        <Input type="email" bind:value={loginInfo.username} />
-    </Field>
+        <Field label="Username"> 
+            <Input type="email" bind:value={loginInfo.username} />
+        </Field>
 
-    <Field label="Password"> 
-        <Input type="password" bind:value={loginInfo.pasword} passwordReveal={true} />
-    </Field>
-  <div class="buttons, submitAuth">
-    <Button 
-      type="is-primary" 
-      nativeType="submit" 
-      on:click={ handleLogin } { disabled }
-    >
-      Login
-    </Button>
-  </div>
-  <div class=loginRes>
-    {#await promise}
-      <p>waiting...</p>
-    {:then res}
-      {#if submitted}
-          <p>{res}</p>
-          <p>Welcome {loginInfo.username}!</p>
-      {/if}
-    {:catch error}
-      <p style="color: red">{error.message}</p>
-  {/await}
-  </div>
+        <Field label="Password"> 
+            <Input type="password" bind:value={loginInfo.pasword} passwordReveal={true} />
+        </Field>
+        <div class="buttons, submitAuth">
+            <Button 
+                type="is-primary" 
+                nativeType="submit" 
+                on:click={ handleLogin } { disabled }
+                >
+                Login
+            </Button>
+        </div>
+        <div class=loginRes>
+            {#await promise}
+                <p>waiting...</p>
+            {:then res}
+                {#if submitted}
+                    <p>{res}</p>
+                    <p>Welcome {loginInfo.username}!</p>
+                {/if}
+            {:catch error}
+                <p style="color: red">{error.message}</p>
+            {/await}
+        </div>
 
+    </div>
 </div>

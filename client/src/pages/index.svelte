@@ -1,25 +1,41 @@
 <script>
-  import { onMount } from 'svelte';	
-  let x = 1;
-  let y = 2;
-  let expression = "";
-  let userInfo = "";
-  onMount(async () => {
-    await fetch('http://localhost:3001/api/sum/29/69')
-      .then(res => res.text())
-      .then(body => expression = body)
-      .catch(err=>{
-        console.log(err);
-    });
-    await fetch('http://localhost:3001/api/user/chrisp')
-      .then(res=> res.json())
-      .then(body => userInfo = body)
-      .catch(err=>{
-        console.log(err);
-      });
-  });
+    import { slide, fade } from 'svelte/transition'
 </script>
 
+<style>
+    .indH1 {
+        font-size: 6rem;
+    }
+    h2 {
+        font-size: 2rem;
+    }
+    .bod {
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
+        margin: auto;
+        align-content: center;
+    }
+    .box {
+		width: 300px;
+		border: 1px solid #fa4;
+		border-radius: 2px;
+		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+		padding: 1em;
+		margin: 0 0 1em 0;
+	}
+</style>
 
-<p>Logged in as: <code>{userInfo.username}</code> ({userInfo.email})</p>
-<p>{x} + {y} gives: {expression}</p>
+<div class="bod" in:fade>
+    <div class="box">
+        <h2>Hello</h2>
+        <p>world</p>
+    </div>
+    <div class="box">
+        <h2>How are you</h2>
+        <p>my friend</p>
+    </div>
+    <div class="box">
+        <h2>try loggin</h2>
+        <p>in <a href="/login">here</a>.</p>
+    </div>    
+</div>

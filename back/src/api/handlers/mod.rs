@@ -1,8 +1,10 @@
 use warp::Filter;
+use warp::http::Response;
 use warp::http::StatusCode;
 use crate::db::models::*;
 use crate::db::Db;
 use crate::api::UserLogin;
+use warp::http::header::{HeaderMap, HeaderValue};
 
 
 pub async fn test(name: String) -> Result<impl warp::Reply, warp::Rejection> {
@@ -43,12 +45,18 @@ pub async fn login (
     match User::from_username(db, req_user.username).await {
         Ok(db_user) => {
             if db_user.password == req_user.password {
+                let mut headers = HeaderMap::new();
+                headers.insert("loginCookie", HeaderValue::from_static("coooookie"));
                 Ok(StatusCode::OK.to_string())
             } else {
-                Err(warp::reject::reject())
+                println!("LOGIN: Incorrect password for {}", db_user.username);
+                Err(warp::reject())
             }
         },
-        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+        Err(_e) => {
+            println!("LOGIN: No user with username found");
+            Err(warp::reject::not_found())
+        },
     }
 }
 

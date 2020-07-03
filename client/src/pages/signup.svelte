@@ -1,6 +1,7 @@
 
 <script>
   import { Button, Field, Input } from 'svelma'
+  import { slide, fade } from 'svelte/transition'
   let disabled = false;
   let promise = Promise.resolve([]);
   let submitted = false;
@@ -54,40 +55,42 @@
     }
 </style>
 
-<div class="signupForm">
-    <!-- Maybe do this with traditional form input instead of binding -->
-    <!-- Get a form validator library -->
-  <Field label="Email" type="text">
-    <Input type="email" bind:value={signupInfo.email} maxlength="30" />
-  </Field>
-  <Field label="Username" type="text">
-    <Input type="username" bind:value={signupInfo.username} />
-  </Field>
-  <Field label="Password"> 
-    <Input type="password" bind:value={signupInfo.password} passwordReveal={true} />
-  </Field>
-  <Field label="Verify Password"> 
-      <Input type="password" bind:value={verifyPwd} passwordReveal={true} />
-  </Field>
-  <div class="buttons, submitAuth">
-    <Button type="is-light" nativeType="reset" on:click={handleReset}>Reset</Button>
-    <Button 
-      type="is-primary" 
-      nativeType="submit" 
-      on:click={ handleSubmit } { disabled }
-    >
-      Submit
-    </Button>
-  </div>
-  <div class=loginRes>
-    {#await promise}
-      <p>waiting...</p>
-    {:then}
-      {#if submitted}
-        <p>Created {signupInfo.username}! Now <a href="/login">login</a>.</p>
-      {/if}
-    {:catch error}
-      <p style="color: red">{error.message}</p>
-  {/await}
-  </div>
+<div>
+    <div in:fade class="signupForm">
+        <!-- Maybe do this with traditional form input instead of binding -->
+        <!-- Get a form validator library -->
+        <Field label="Email" type="text">
+            <Input type="email" bind:value={signupInfo.email} maxlength="30" />
+        </Field>
+        <Field label="Username" type="text">
+            <Input type="username" bind:value={signupInfo.username} />
+        </Field>
+        <Field label="Password"> 
+            <Input type="password" bind:value={signupInfo.password} passwordReveal={true} />
+        </Field>
+        <Field label="Verify Password"> 
+            <Input type="password" bind:value={verifyPwd} passwordReveal={true} />
+        </Field>
+        <div class="buttons, submitAuth">
+            <Button type="is-light" nativeType="reset" on:click={handleReset}>Reset</Button>
+            <Button 
+                type="is-primary" 
+                nativeType="submit" 
+                on:click={ handleSubmit } { disabled }
+                >
+                Submit
+            </Button>
+        </div>
+        <div class=loginRes>
+            {#await promise}
+                <p>waiting...</p>
+            {:then}
+                {#if submitted}
+                    <p>Created {signupInfo.username}! Now <a href="/login">login</a>.</p>
+                {/if}
+            {:catch error}
+                <p style="color: red">{error.message}</p>
+            {/await}
+        </div>
+    </div>
 </div>

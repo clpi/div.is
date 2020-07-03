@@ -46,13 +46,15 @@ async fn main() -> sqlx::Result<()> {
         .and(wdb.clone())
         .and(warp::path("login"))
         .and(warp::body::json())
-        .and_then(handlers::login);
+        .and_then(handlers::login)
+        .with(warp::reply::with::header("cook", "ie"));
 
     let register = warp::post()
         .and(wdb.clone())
         .and(warp::path("register"))
         .and(warp::body::json())
-        .and_then(handlers::register);
+        .and_then(handlers::register)
+        .with(warp::reply::with::header("cook", "ie"));
     
     let delete_user = warp::post()
         .and(wdb.clone())

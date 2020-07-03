@@ -1,5 +1,8 @@
 <script>
-    import Hero from '../comp/hero.svelte'
+  import Hero from '../comp/hero.svelte'
+  import { slide, fade } from 'svelte/transition'
 </script>
 
-<h1>About</h1>
+<div class="contact" in:fade>
+    <h1>About</h1>
+</div>
