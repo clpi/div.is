@@ -46,7 +46,8 @@
 
 <style>
     .signupForm{
-        margin: 10vmin;
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
     }
     .submitAuth {
         margin-top: 3vmin;
@@ -56,7 +57,7 @@
 </style>
 
 <div>
-    <div in:fade class="signupForm">
+    <div in:fade={{duration:100}} class="signupForm">
         <!-- Maybe do this with traditional form input instead of binding -->
         <!-- Get a form validator library -->
         <Field label="Email" type="text">

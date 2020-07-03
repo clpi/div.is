@@ -10,6 +10,9 @@ use db::Db;
 use self::api::handlers;
 use warp::http::Method;
 
+// TODO: Created BoxedFilter routes in api/routes/*.rs modules
+// TODO: Implement CRUD for basic records
+
 #[tokio::main]
 async fn main() -> sqlx::Result<()> {
     
@@ -37,11 +40,13 @@ async fn main() -> sqlx::Result<()> {
     let sum = warp::path!("sum" / u32 / u32)
         .map(|a, b| format!("{} + {} = {}", a, b, a+b));
 
+    // NOTE GET /api/user/<username>
     let get_user = warp::get()
         .and(wdb.clone())
         .and(warp::path!("user" / String))
         .and_then(handlers::get_user_by_username);
 
+    // NOTE POST /api/login
     let login = warp::post()
         .and(wdb.clone())
         .and(warp::path("login"))
@@ -49,6 +54,7 @@ async fn main() -> sqlx::Result<()> {
         .and_then(handlers::login)
         .with(warp::reply::with::header("cook", "ie"));
 
+    // NOTE POST /api/register
     let register = warp::post()
         .and(wdb.clone())
         .and(warp::path("register"))
@@ -56,6 +62,7 @@ async fn main() -> sqlx::Result<()> {
         .and_then(handlers::register)
         .with(warp::reply::with::header("cook", "ie"));
     
+    // NOTE DELETE /user/<username>
     let delete_user = warp::post()
         .and(wdb.clone())
         .and(warp::path!("user" / String))

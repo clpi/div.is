@@ -3,23 +3,25 @@
   import { routes } from "@sveltech/routify/tmp/routes";
   import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
+  // TODO: Modularize reusable components (cards, ui elements, etc.)
+  // TODO: Design your own buttons, etc. instead of bulma stuff
+  // TODO: Make properties shared among comps inherited (ie fade in)
   </script>
 
 <style>
-    body {
-        min-width: 70vw;
-        max-height: 100vh;
-        padding-left:14em;
+    .body {
+        height: 100%;
     }
     .contain {
         min-width: max-content;
         margin: auto;
         background-color: #fffefd;
-        min-height:100vh;
     }
 
 </style>
-<div class="contain">
-    <slot/>
-<Router {routes} />
+<div class="body">
+    <Router {routes} />
+    <div class="contain">
+        <slot/>
+    </div>
 </div>

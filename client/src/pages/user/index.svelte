@@ -26,16 +26,9 @@
 </style>
 
 <div class="bod" in:fade={{duration:100}}>
+    <h2>Find user...</h2>
     <div class="box">
         <h2>Hello</h2>
         <p>world</p>
     </div>
-    <div class="box">
-        <h2>How are you</h2>
-        <p>Look for <a href="/user">users</a></p>
-    </div>
-    <div class="box">
-        <h2>try loggin</h2>
-        <p>in <a href="/login">here</a>.</p>
-    </div>    
 </div>

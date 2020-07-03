@@ -1,13 +1,18 @@
+
+<!-- /user/:userId/posts/:postId -->
 <script>
-    import { slide, fade } from 'svelte/transition'
+  import { params } from '@sveltech/routify'
+  import { fade } from 'svelte/transition';
+  console.log($params) /** {userId: 123, postId: 456} **/
 </script>
 
 <style>
-    .indH1 {
-        font-size: 6rem;
-    }
     h2 {
         font-size: 2rem;
+    }
+    .userPage {
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
     }
     .bod {
         padding-left: 15.5vw;
@@ -25,17 +30,13 @@
 	}
 </style>
 
-<div class="bod" in:fade={{duration:100}}>
+<div class="userPage">
     <div class="box">
         <h2>Hello</h2>
-        <p>world</p>
+        <p>{$params}</p>
     </div>
-    <div class="box">
-        <h2>How are you</h2>
-        <p>Look for <a href="/user">users</a></p>
-    </div>
-    <div class="box">
-        <h2>try loggin</h2>
-        <p>in <a href="/login">here</a>.</p>
-    </div>    
+</div>
+
+<div class="bod" in:fade>
+    <h2>Find user...</h2>
 </div>

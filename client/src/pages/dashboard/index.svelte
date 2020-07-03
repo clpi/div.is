@@ -15,8 +15,12 @@
     .searchbar {
         width:max-content;
     }
+    .dbindex {
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
+    }
 </style>
-<div class="dbindex" in:fade>
+<div class="dbindex" in:fade={{duration:100}}>
     <div class="buttons">
         <Button type="is-success" iconPack="fa" iconLeft="plus">Save</Button>
         <Button iconPack="fa" iconLeft="edit">Save</Button>

@@ -20,7 +20,13 @@
   let userInfo = "";
 </script>
 
-<div class="about" in:fade>
+<style>
+    .about {
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
+    }
+</style>
+<div class="about" in:fade={{duration:100}}>
     <h1>About</h1>
     <p>Logged in as: <code>{userInfo.username}</code> ({userInfo.email})</p>
     <p>{expression}</p>

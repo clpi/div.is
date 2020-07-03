@@ -33,12 +33,13 @@
 
 <style>
     .loginForm {
-        margin: 1rem;
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
     }
 </style>
 
 <div>
-    <div in:fade class="loginForm">
+    <div in:fade={{duration:100}} class="loginForm">
 
         <Field label="Username"> 
             <Input type="email" bind:value={loginInfo.username} />
