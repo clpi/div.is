@@ -17,12 +17,17 @@ impl Routes {
             .boxed()
     }
 
-    pub async fn user() -> BoxedFilter<(String,)> {
-        warp::get()
-            .and(warp::path("hello"))
-            .and(warp::path::param::<String>())
+    // NOTE: Access to users records if user has cookie / etc.
+    pub async fn record_by_id() -> BoxedFilter<(String,)> {
+        warp::path!("record" / i32)
+            .map(|uid: i32| "hw".to_string())
             .boxed()
+    }
 
+    pub async fn user_record() -> BoxedFilter<(String,)> {
+        warp::path!("user" / "rec" / String)
+            .map(|rec_name: String| rec_name)
+            .boxed()
     }
 
     pub async fn index() -> BoxedFilter<(String,)> {

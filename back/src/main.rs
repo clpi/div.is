@@ -1,12 +1,8 @@
 mod db;
 mod api;
 
-use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
-use warp::http::StatusCode;
 use warp::{Filter, self};
 use db::models::*; //TODO: Merge models and schema files
-use db::Db;
 use self::api::handlers;
 use warp::http::Method;
 
@@ -38,7 +34,7 @@ async fn main() -> sqlx::Result<()> {
     let index = warp::path!("index")
         .map(|| "Hello");
     let sum = warp::path!("sum" / u32 / u32)
-        .map(|a, b| format!("{} + {} = {}", a, b, a+b));
+        .map(|a, b| format!("{} + {} = {}", a, b, a + b));
 
     // NOTE GET /api/user/<username>
     let get_user = warp::get()
@@ -47,6 +43,7 @@ async fn main() -> sqlx::Result<()> {
         .and_then(handlers::get_user_by_username);
 
     // NOTE POST /api/login
+    // TODO Fix login handler
     let login = warp::post()
         .and(wdb.clone())
         .and(warp::path("login"))
@@ -68,8 +65,20 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::path!("user" / String))
         .and_then(handlers::delete_user_by_username);
 
-    let auth = register.or(login);
-    let user_actions = auth.or(get_user).or(delete_user);
+    // NOTE UPDATE /user/<username>
+    let update_user = warp::put()
+        .and(wdb.clone())
+        .and(warp::path!("user" / String))
+        .and_then(handlers::update_user_by_username)
+        .with(warp::reply::with::header("cook", "ie"));
+
+    // NOTE: /api/user/
+    let user_actions = get_user
+        .or(delete_user)
+        .or(update_user)
+        .or(register)
+        .or(login);
+
     let routes = index.or(sum).or(user_actions);
 
     let api = warp::path("api")

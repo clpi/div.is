@@ -39,6 +39,15 @@ pub async fn get_user_by_id(
     }
 }
 
+pub async fn get_all_users(
+    db: Db
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::fetch_all(db).await {
+        Ok(users) => Ok(users.get(0).unwrap().to_string()), //TODO return all in json string
+        Err(_e) => Err(warp::reject()),
+    }
+}
+
 pub async fn login (
     db: Db, req_user: UserLogin,
 ) -> Result<impl warp::Reply, warp::Rejection> {
@@ -70,6 +79,16 @@ pub async fn register (
 }
 
 pub async fn delete_user_by_username(
+    db: Db, username: String,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::delete_by_username(db, username).await {
+        Ok(_o) => Ok(StatusCode::OK.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+// TODO: Implement
+pub async fn update_user_by_username(
     db: Db, username: String,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::delete_by_username(db, username).await {
