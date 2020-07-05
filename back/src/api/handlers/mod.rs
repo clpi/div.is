@@ -56,6 +56,7 @@ pub async fn login (
             if db_user.password == req_user.password {
                 let mut headers = HeaderMap::new();
                 headers.insert("loginCookie", HeaderValue::from_static("coooookie"));
+                println!("LOGIN: Logged in {}", db_user.username);
                 Ok(StatusCode::OK.to_string())
             } else {
                 println!("LOGIN: Incorrect password for {}", db_user.username);

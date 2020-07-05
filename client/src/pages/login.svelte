@@ -46,7 +46,7 @@
         </Field>
 
         <Field label="Password"> 
-            <Input type="password" bind:value={loginInfo.pasword} passwordReveal={true} />
+            <Input type="password" bind:value={loginInfo.password} passwordReveal={true} />
         </Field>
         <div class="buttons, submitAuth">
             <Button 
@@ -60,9 +60,8 @@
         <div class=loginRes>
             {#await promise}
                 <p>waiting...</p>
-            {:then res}
+            {:then}
                 {#if submitted}
-                    <p>{res}</p>
                     <p>Welcome {loginInfo.username}!</p>
                 {/if}
             {:catch error}
