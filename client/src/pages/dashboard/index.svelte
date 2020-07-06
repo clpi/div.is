@@ -6,8 +6,6 @@
 
 <style>
     .dbcontainer{
-        margin: auto;
-        display: inline;
     }
     .buttons{
         padding: 20px 10px 20px 10px;
@@ -16,11 +14,14 @@
         width:max-content;
     }
     .dbindex {
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 300;
     }
 </style>
 <div class="dbindex" in:fade={{duration:100}}>
+    <h1>dashboard</h1>
     <div class="buttons">
         <Button type="is-success" iconPack="fa" iconLeft="plus">Save</Button>
         <Button iconPack="fa" iconLeft="edit">Save</Button>
