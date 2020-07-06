@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS Groups (
     name TEXT NOT NULL,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     status INTEGER NOT NULL DEFAULT 1,
-    created_at INTEGER NOT NULL,
+    created_at INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS UserGroupLinks (
@@ -165,4 +165,6 @@ CREATE TABLE IF NOT EXISTS UserGroupLinks (
     role TEXT NOT NULL,
     status INTEGER NOT NULL DEFAULT 1,
     created_at INTEGER NOT NULL,
+    FOREIGN KEY (uid) REFERENCES Users(id),
+    FOREIGN KEY (gid) REFERENCES Groups(id)
 );
