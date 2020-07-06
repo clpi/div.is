@@ -1,7 +1,7 @@
 <script>
   import { isActive, url, layout } from "@sveltech/routify";
   import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
-  import { slide } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
 </script>
 <style>
     .db {
@@ -66,19 +66,19 @@
     <div class="Navbar">
         <div class="NavLinks">
             <ul class="Nav">
-                <li in:slide={{delay:0}} class:active={$isActive("/dashboard/index")}>
+                <li in:fade class:active={$isActive("/dashboard/index")}>
                     <a href={$url("/dashboard/index")}>home</a>
                 </li>
-                <li in:slide={{delay:50}} class:active={$isActive("/dashboard/records")}>
+                <li in:fade class:active={$isActive("/dashboard/records")}>
                     <a href={$url("/dashboard/records")}>records</a>
                 </li>
-                <li in:slide={{delay:100}} class:active={$isActive("/dashboard/items")}>
+                <li in:fade class:active={$isActive("/dashboard/items")}>
                     <a href={$url("/dashboard/items")}>items</a>
                 </li>
-                <li in:slide={{delay:150}} class:active={$isActive("/dashboard/entries")}>
+                <li in:fade class:active={$isActive("/dashboard/entries")}>
                     <a href={$url("/dashboard/entries")}>entries</a>
                 </li>
-                <li in:slide={{delay:200}} class:active={$isActive("/dashboard/stats")}>
+                <li in:fade class:active={$isActive("/dashboard/stats")}>
                     <a href={$url("/dashboard/stats")}>stats</a>
                 </li>
             </ul>

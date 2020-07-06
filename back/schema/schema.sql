@@ -6,6 +6,22 @@ CREATE TABLE IF NOT EXISTS Users (
     created_at INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS UserInfo (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uid INTEGER NOT NULL,
+    first_name TEXT,
+    last_name TEXT,
+    website TEXT,
+    bio TEXT,
+    img_path TEXT,
+    gender TEXT,
+    birth_date INTEGER,
+    experience INTEGER NOT NULL,
+    privelege_level INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (uid) REFERENCES Users(id)
+);
+
 CREATE TABLE IF NOT EXISTS Records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
@@ -134,4 +150,19 @@ CREATE TABLE IF NOT EXISTS Actions (
     FOREIGN KEY (ruleid) REFERENCES Rules(id)
 );
 
-    
+CREATE TABLE IF NOT EXISTS Groups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    private BOOLEAN NOT NULL DEFAULT TRUE,
+    status INTEGER NOT NULL DEFAULT 1,
+    created_at INTEGER NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS UserGroupLinks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uid INTEGER NOT NULL,
+    gid INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    status INTEGER NOT NULL DEFAULT 1,
+    created_at INTEGER NOT NULL,
+);
