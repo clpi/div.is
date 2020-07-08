@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS UserInfo (
     uid INTEGER NOT NULL,
     first_name TEXT,
     last_name TEXT,
-    website TEXT,
     bio TEXT,
     img_path TEXT,
     gender TEXT,
@@ -59,7 +58,6 @@ CREATE TABLE IF NOT EXISTS ItemFieldLinks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     iid INTEGER NOT NULL,
     fid INTEGER NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
     priority INTEGER DEFAULT 0,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (iid) REFERENCES Items(id),
@@ -88,7 +86,6 @@ CREATE TABLE IF NOT EXISTS EntryTypes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
     name TEXT NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id)
@@ -97,9 +94,11 @@ CREATE TABLE IF NOT EXISTS EntryTypes (
 CREATE TABLE IF NOT EXISTS EntryEntries ( 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
+    rid INTEGER NOT NULL,
     etid INTEGER,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id),
+    FOREIGN KEY (rid) REFERENCES Records(id),
     FOREIGN KEY (etid) REFERENCES EntryTypes(id)
 );
 

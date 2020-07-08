@@ -3,10 +3,9 @@ use sqlx::FromRow;
 use super::Db;
 use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
 
-
 //TODO Consider adding custom types for forieng key references, using
 //sqlx::Type and transparent
-
+//NOTE: Add (?) last login, pwd hash
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct User {
@@ -19,6 +18,25 @@ pub struct User {
     pub created_at: i32,
 }
 
+// NOTE: Add (?) preferences
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct UserInfo {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub uid: i32,
+    pub first_name: String,
+    pub last_name: String,
+    pub bio: String,
+    pub img_path: String,
+    pub gender: String,
+    pub birth_date: i32,
+    pub experience: i32,
+    pub privelge_level: i32,
+    pub created_at: i32,
+    #[serde(default = "now_timestamp")]
+    pub updated_at: i32,
+}
 // TODO: Eventually make records collaborable, not associated with single user
 // TODO: make collaborative records have anonymous option
 //#[derive(Serialize, Deserialize)]
@@ -119,6 +137,7 @@ pub struct EntryEntry {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32,
+    pub rid: i32,
     pub etid: i32,
     #[serde(default = "now_timestamp")]
     pub created_at: i32,
@@ -181,6 +200,7 @@ pub struct Condition {
     pub created_at: i32,
 }
 
+// Add groups, usergrouplinks
 
 // a label is a Field
 // a task is an item
@@ -217,7 +237,7 @@ impl User {
         }
     }
 
-    pub async fn insert_into(self, db: Db) -> sqlx::Result<u64> {
+    pub async fn insert_into(self, db: Db) -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Users 
         (email, username, password, created_at) 
         VALUES ($1, $2, $3, $4);")  
@@ -225,7 +245,8 @@ impl User {
             .bind(&self.username)
             .bind(&self.password)
             .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await
+            .execute(&db.pool).await?;
+        Ok(self)
     }
 
     pub async fn delete_by_id(db: Db, id:i32) -> sqlx::Result<u64> {

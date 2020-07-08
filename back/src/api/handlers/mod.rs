@@ -6,8 +6,9 @@ use crate::db::Db;
 use crate::api::UserLogin;
 use warp::http::header::{HeaderMap, HeaderValue};
 
-
-pub async fn test(name: String) -> Result<impl warp::Reply, warp::Rejection> {
+pub async fn test(
+    name: String
+) -> Result<impl warp::Reply, warp::Rejection> {
     let reply = format!("hi {}", name);
     Ok(warp::reply::html(reply))
 }
@@ -48,16 +49,20 @@ pub async fn get_all_users(
     }
 }
 
+// TODO implement hashing verification
+// NOTE check header is set: $curl -x POST -c header.txt localhost:3001/api/login && cat header.txt
 pub async fn login (
     db: Db, req_user: UserLogin,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::from_username(db, req_user.username).await {
         Ok(db_user) => {
             if db_user.password == req_user.password {
-                let mut headers = HeaderMap::new();
-                headers.insert("loginCookie", HeaderValue::from_static("coooookie"));
                 println!("LOGIN: Logged in {}", db_user.username);
-                Ok(StatusCode::OK.to_string())
+                Ok(warp::reply::with_header(
+                    StatusCode::OK.to_string(),
+                    warp::http::header::SET_COOKIE,
+                    format!("SESS={}", db_user.username)
+                ))
             } else {
                 println!("LOGIN: Incorrect password for {}", db_user.username);
                 Err(warp::reject())
@@ -70,11 +75,18 @@ pub async fn login (
     }
 }
 
+// TODO implement hashing creation
 pub async fn register (
     db: Db, req_user: User,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    match req_user.insert_into(db).await {
-        Ok(_o) => Ok(StatusCode::OK.to_string()),
+    match &req_user.insert_into(db).await {
+        Ok(user) => {
+            Ok(warp::reply::with_header(
+                StatusCode::OK.to_string(),
+                warp::http::header::SET_COOKIE,
+                format!("SESS={}", user.username)
+            ))
+        },
         Err(_e) => Err(warp::reject()),
     }
 }

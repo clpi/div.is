@@ -57,7 +57,7 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::path("register"))
         .and(warp::body::json())
         .and_then(handlers::register)
-        .with(warp::reply::with::header("cook", "ie"));
+        .with(warp::reply::with::header("set-cookie", "ie"));
     
     // NOTE DELETE /user/<username>
     let delete_user = warp::post()
