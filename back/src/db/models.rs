@@ -31,6 +31,8 @@ pub struct UserInfo {
     pub img_path: String,
     pub gender: String,
     pub birth_date: i32,
+    pub city: String,
+    pub country: String,
     pub experience: i32,
     pub privelge_level: i32,
     pub created_at: i32,
@@ -351,6 +353,7 @@ impl User {
     pub async fn get_all_data(&self) {  }
 }
 
+// NOTE: pass user ID into all user header requests, so it can be passed ot Record::new()
 impl Record {
 
     pub fn new(uid: i32, name: String) -> Record {
@@ -387,9 +390,40 @@ impl Record {
             status: 1,
             created_at: Utc::now().timestamp() as i32,
         }
-    }
+   }
 
-    pub async fn add_item(self, item: Item) -> Self { self }
+    pub async fn with_item(self, 
+        db: Db, 
+        item: Item, 
+        priority: Option<i32>
+    ) -> sqlx::Result<Self> {
+        RecordItemLink::insert_db(db, &self, &item, priority).await?;
+        Ok(self)
+    }
+}
+
+impl Item {
+    pub async fn new() {}
+}
+
+impl RecordItemLink {
+    pub async fn insert_db(
+        db: Db,
+        record: &Record,
+        item: &Item,
+        priority: Option<i32>
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO RecordItemLinks
+        (rid, iid, priority, created_at) 
+        VALUES ($1, $2, $3, $4);")
+            .bind(record.id)
+            .bind(item.id)
+            .bind(priority)
+            .bind(Utc::now().timestamp() as i32)
+            .execute(&db.pool).await?;
+        Ok(())
+    
+    }
 }
 
 impl EntryType {
@@ -397,9 +431,6 @@ impl EntryType {
     
 }
 
-impl Item {
-    pub async fn new() {}
-}
 
 impl Field {
     pub async fn new() {}

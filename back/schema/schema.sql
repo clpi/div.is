@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS UserInfo (
     img_path TEXT,
     gender TEXT,
     birth_date INTEGER,
+    city VARCHAR(255),
+    country VARCHAR(255),
     experience INTEGER NOT NULL,
     privelege_level INTEGER NOT NULL,
     created_at INTEGER NOT NULL,

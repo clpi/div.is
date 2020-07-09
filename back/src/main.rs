@@ -5,6 +5,7 @@ use warp::{Filter, self};
 use db::models::*; //TODO: Merge models and schema files
 use self::api::handlers;
 use warp::http::Method;
+use db::Db;
 
 // TODO: Created BoxedFilter routes in api/routes/*.rs modules
 // TODO: Implement CRUD for basic records
@@ -41,6 +42,14 @@ async fn main() -> sqlx::Result<()> {
         .and(wdb.clone())
         .and(warp::path!("user" / String))
         .and_then(handlers::get_user_by_username);
+
+    let get_record = warp::get()
+        .and(wdb.clone())
+        .and(warp::path!("user" / String / "record" / String))
+        .map(|db: Db, u: String, r: String| {
+            format!("{}, {}", u, r)
+        });
+
 
     // NOTE POST /api/login
     // TODO Fix login handler
