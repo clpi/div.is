@@ -4,6 +4,9 @@ use super::Db;
 use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
 
 //TODO Consider adding custom types for forieng key references, using
+//TODO Severely refactor code to reduce redundancy (query builder?)
+//TODO Consider removing redundancy between EntryType/Item
+//TODO Separate implementations into own files
 //sqlx::Type and transparent
 //NOTE: Add (?) last login, pwd hash
 #[derive(Default, FromRow, Serialize, Deserialize)]
@@ -202,6 +205,30 @@ pub struct Condition {
     pub created_at: i32,
 }
 
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct Group {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub name: String,
+    pub private: bool, 
+    pub status: i32,
+    #[serde(default = "now_timestamp")]
+    pub created_at: i32,
+}
+
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct UserGroupLink {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub uid: i32,
+    pub gid: i32,
+    pub role: String,
+    pub status: i32,
+    #[serde(default = "now_timestamp")]
+    pub created_at: i32,
+}
 // Add groups, usergrouplinks
 
 // a label is a Field
@@ -215,8 +242,9 @@ pub struct Condition {
 //
 
 
-pub trait Model: Sized {
-}
+pub trait Model: Sized {  }
+
+pub trait ModelLink { } 
 
 impl User {
 
@@ -397,17 +425,27 @@ impl Record {
         item: Item, 
         priority: Option<i32>
     ) -> sqlx::Result<Self> {
-        RecordItemLink::insert_db(db, &self, &item, priority).await?;
+        RecordItemLink::create(db, &self, &item, priority).await?;
         Ok(self)
     }
 }
 
 impl Item {
     pub async fn new() {}
+
+    pub async fn with_field(self, 
+        db: Db, 
+        field: Field, 
+        priority: Option<i32>
+    ) -> sqlx::Result<Self> {
+        ItemFieldLink::create(db, &self, &field, priority).await?;
+        Ok(self)
+    }
+
 }
 
 impl RecordItemLink {
-    pub async fn insert_db(
+    pub async fn create(
         db: Db,
         record: &Record,
         item: &Item,
@@ -422,13 +460,54 @@ impl RecordItemLink {
             .bind(Utc::now().timestamp() as i32)
             .execute(&db.pool).await?;
         Ok(())
-    
+    }
+}
+
+impl ItemFieldLink {
+    pub async fn create(
+        db: Db,
+        item: &Item,
+        field: &Field,
+        priority: Option<i32>
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO ItemFieldLinks
+        (iid, fid, priority, created_at) 
+        VALUES ($1, $2, $3, $4);")
+            .bind(item.id)
+            .bind(field.id)
+            .bind(priority)
+            .bind(Utc::now().timestamp() as i32)
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+}
+
+impl FieldEntryLink {
+    pub async fn create(
+        db: Db,
+        field: &Field,
+        entry_type: &EntryType,
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO FieldEntryLinks
+        (fid, etid, created_at) VALUES ($1, $2, $4);")
+            .bind(field.id)
+            .bind(entry_type.id)
+            .bind(Utc::now().timestamp() as i32)
+            .execute(&db.pool).await?;
+        Ok(())
     }
 }
 
 impl EntryType {
     pub async fn new() {}
     
+    pub async fn with_field(self, 
+        db: Db, 
+        field: Field, 
+    ) -> sqlx::Result<Self> {
+        FieldEntryLink::create(db, &field, &self).await?;
+        Ok(self)
+    }
 }
 
 
@@ -436,7 +515,35 @@ impl Field {
     pub async fn new() {}
 }
 
-impl Model for User {}
+impl Group {
+    pub async fn new() {}
+
+    pub async fn with_user(self, db: Db, user: User, role: String) 
+        -> sqlx::Result<Self> {
+        UserGroupLink::create(db, &user, &self, role).await?;
+        Ok(self)
+    }
+}
+
+impl UserGroupLink {
+    pub async fn create(
+        db: Db,
+        user: &User,
+        group: &Group,
+        role: String,
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO UserGroupLinks
+        (uid, gid, role, created_at) VALUES ($1, $2, $4);")
+            .bind(user.id)
+            .bind(group.id)
+            .bind(role)
+            .bind(Utc::now().timestamp() as i32)
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+}
+
+
 
 impl Into<String> for User {
     fn into(self) -> String { String::from("User") }
@@ -465,15 +572,26 @@ impl Into<String> for User {
 //}
 
 pub enum Conditions {}
-/*
 impl Model for User {}
 impl Model for Record {}
-impl Model for Entry {}
+impl Model for EntryType {}
 impl Model for Item {}
 impl Model for Field {}
 impl Model for Condition {}
 impl Model for Rule {}
-*/
+
+impl ModelLink for RecordItemLink { }
+impl ModelLink for ItemFieldLink { }
+impl ModelLink for FieldEntryLink { }
+
+pub enum FieldTypes {
+    Text,
+    TextBox,
+    EnumSingle,
+    EnumMultiple,
+    Boolean,
+    Range,
+}
 
 pub fn now_timestamp() -> i32 {
     Utc::now().timestamp() as i32

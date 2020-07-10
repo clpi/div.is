@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL UNIQUE,
-    username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(64) NOT NULL UNIQUE,
+    password VARCHAR(64) NOT NULL,
     created_at INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS UserInfo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
-    first_name TEXT,
-    last_name TEXT,
-    bio TEXT,
-    img_path TEXT,
-    gender TEXT,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    bio VARCHAR(255),
+    img_path VARCHAR(255),
+    gender VARCHAR(255),
     birth_date INTEGER,
     city VARCHAR(255),
     country VARCHAR(255),
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS UserInfo (
 CREATE TABLE IF NOT EXISTS Records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
-    name TEXT NOT NULL,    
+    name VARCHAR(255) NOT NULL,    
     status INTEGER NOT NULL DEFAULT 1,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
     pid INTEGER,
-    name TEXT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     status INTEGER NOT NULL DEFAULT 1,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS FieldEntryLinks (
 
 CREATE TABLE IF NOT EXISTS Fields (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,    
-    typ TEXT NOT NULL,
-    value TEXT,
+    name VARCHAR(255) NOT NULL,    
+    typ VARCHAR(255) NOT NULL,
+    value VARCHAR(255),
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL
 );
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS Fields (
 CREATE TABLE IF NOT EXISTS EntryTypes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
-    name TEXT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id)
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS FieldEntries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     eeid INTEGER NOT NULL,
     fid INTEGER NOT NULL,
-    content TEXT,
+    content VARCHAR(255),
     FOREIGN KEY (eeid) REFERENCES EntryEntries(id),
     FOREIGN KEY (fid) REFERENCES Fields(id)
 );
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS FieldEntries (
 CREATE TABLE IF NOT EXISTS Rules ( 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
-    name TEXT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     priority INTEGER DEFAULT 0,
     status INTEGER NOT NULL DEFAULT 1,
     created_at INTEGER NOT NULL,
