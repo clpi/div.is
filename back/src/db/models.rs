@@ -7,6 +7,7 @@ use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
 //TODO Severely refactor code to reduce redundancy (query builder?)
 //TODO Consider removing redundancy between EntryType/Item
 //TODO Separate implementations into own files
+//TODO error handling for with_x functions for models w/o ids -- remove unwrap()
 //sqlx::Type and transparent
 //NOTE: Add (?) last login, pwd hash
 #[derive(Default, FromRow, Serialize, Deserialize)]
@@ -17,7 +18,7 @@ pub struct User {
     pub email: String,
     pub username: String,
     pub password: String,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -39,7 +40,7 @@ pub struct UserInfo {
     pub experience: i32,
     pub privelge_level: i32,
     pub created_at: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub updated_at: i32,
 }
 // TODO: Eventually make records collaborable, not associated with single user
@@ -54,7 +55,7 @@ pub struct Record {
     pub name: String,
     pub status: i32,
     pub private: bool,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -68,7 +69,7 @@ pub struct Item {
     pub name: String,
     pub status: i32,
     pub private: bool,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -82,7 +83,7 @@ pub struct Field {
     pub typ: String,
     pub value: String,
     pub private: bool, 
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -95,7 +96,7 @@ pub struct RecordItemLink {
     pub iid: i32,
     pub status: i32,
     pub priority: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -108,7 +109,7 @@ pub struct ItemFieldLink {
     pub fid: i32,
     pub status: i32,
     pub priority: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -119,7 +120,7 @@ pub struct FieldEntryLink {
     pub id: Option<i32>,
     pub fid: i32,
     pub etid: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -132,7 +133,7 @@ pub struct EntryType {
     pub name: String,
     pub status: i32,
     pub private: bool,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -144,7 +145,7 @@ pub struct EntryEntry {
     pub uid: i32,
     pub rid: i32,
     pub etid: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -170,7 +171,7 @@ pub struct Rule {
     pub name: String,
     pub priority: Option<i32>,
     pub status: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -181,7 +182,7 @@ pub struct Action {
     pub id: Option<i32>,
     pub target: String,
     pub action: String,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -194,14 +195,14 @@ pub struct Condition {
     pub id: Option<i32>,
     pub pos: i32, //position in rule
     pub and_or: bool, //whether this is preceded by "and". 0 if preceded by "or"
-    pub ruleid: Option<i32>, //can be associated only with a single record (or multiple, for future)
-    pub iid1: Option<i32>, //can be associated only with a single item if wished (or multiple, to impl)
+    pub ruleid: Option<i32>, //can be associated only with a single record
+    pub iid1: Option<i32>, //can be associated only with a single item if wished
     pub fid1: i32, //must be associated with a field, whether singular or global
     pub iid2: Option<i32>, 
     pub fid2: i32,
     pub cond: i32, // < <= = >= > etc
     pub status: bool,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -213,7 +214,7 @@ pub struct Group {
     pub name: String,
     pub private: bool, 
     pub status: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
 
@@ -226,24 +227,27 @@ pub struct UserGroupLink {
     pub gid: i32,
     pub role: String,
     pub status: i32,
-    #[serde(default = "now_timestamp")]
+    #[serde(default = "now_ts")]
     pub created_at: i32,
 }
-// Add groups, usergrouplinks
+
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct UserRecordLink {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub uid: i32,
+    pub rid: i32,
+    pub privelege: i32,
+    #[serde(default = "now_ts")]
+    pub created_at: i32,
+}
 
 // a label is a Field
 // a task is an item
 // a goal is an item
 
-// Use should be able to define their own loggable items
-// NOTE: Propose: Optionally define as loggable?
-// NOTE: Propose: Item is generic, different item types below
-// NOTE: Example: Fooditem, RuleItem, 
-//
-
-
 pub trait Model: Sized {  }
-
 pub trait ModelLink { } 
 
 impl User {
@@ -254,7 +258,7 @@ impl User {
             email: String::from(email),
             username: String::from(uname),
             password: String::from(pwd),
-            created_at: Utc::now().timestamp() as i32,
+            created_at: now_ts(),
         } 
     }
 
@@ -262,7 +266,7 @@ impl User {
 
     pub async fn build() -> Self {
         User {
-            id: None, created_at: Utc::now().timestamp() as i32,
+            id: None, created_at: now_ts(),
             ..User::default()
         }
     }
@@ -274,7 +278,7 @@ impl User {
             .bind(&self.email)
             .bind(&self.username)
             .bind(&self.password)
-            .bind(Utc::now().timestamp() as i32)
+            .bind(now_ts())
             .execute(&db.pool).await?;
         Ok(self)
     }
@@ -345,11 +349,8 @@ impl User {
         Ok(res)
     }
 
-    pub async fn table() -> String { String::from("Users") }
-
     pub fn to_string(&self) -> String {
         serde_json::to_string(self).unwrap()
-        
     }
 
     pub fn create_record(&self, name: &str) -> Record {
@@ -357,21 +358,27 @@ impl User {
             id: None,
             uid: self.id.unwrap(),
             name: name.to_string(),
-            created_at: Utc::now().timestamp() as i32,
+            created_at: now_ts(),
             status: 1, private: true
         }
     }
 
-    pub async fn get_record(&self, db: Db) -> sqlx::Result<Record> {
-        let res: Record = sqlx::query_as::<Sqlite, Record>(
+    pub async fn with_record(&self, db: Db, record_id: i32, privelege: i32) 
+        -> sqlx::Result<()> {
+        UserRecordLink::create(db, self.id.unwrap(), record_id, privelege).await?;
+        Ok(())
+    }
+
+    pub async fn get_records(&self, db: Db) -> sqlx::Result<Vec<Record>> {
+        let res: Vec<Record> = sqlx::query_as::<Sqlite, Record>(
             "SELECT * FROM Records WHERE uid=?;")
             .bind(self.id)
-            .fetch_one(&db.pool)
+            .fetch_all(&db.pool)
             .await?;
         Ok(res)
     }
 
-    pub async fn query<T: Model>(&self) -> &Self { self }
+    //pub async fn query<T: Model>(&self) -> &Self { self }
 
     pub async fn create_entry(&self, record_name: String, entry_name: &str) -> EntryType {
         Record::new(self.id.unwrap(), record_name)
@@ -389,11 +396,11 @@ impl Record {
             id: None, uid, name, 
             status: 1,
             private: true,
-            created_at: Utc::now().timestamp() as i32,
+            created_at: now_ts(),
         }
     }
 
-    pub async fn insert_db(self, db: Db) -> sqlx::Result<u64> {
+    pub async fn insert(self, db: Db) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO Records 
         (uid, name, status, private, created_at) 
         VALUES ($1, $2, $3, $4, $5);")  
@@ -402,7 +409,17 @@ impl Record {
             .bind(&self.status)
             .bind(&self.private)
             .bind(&self.created_at)
-            .execute(&db.pool).await
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+
+    pub async fn get_items(self, db: Db) -> sqlx::Result<Vec<Item>> {
+        let items: Vec<Item> = sqlx::query_as::<Sqlite, Item>("
+            SELECT * FROM Items INNER JOIN RecordItemLinks 
+            ON RecordItemLinks.rid=?;")
+            .bind(&self.id)
+            .fetch_all(&db.pool).await?;
+        Ok(items)
     }
 
     pub async fn with_name(mut self, name: String) -> Record {
@@ -411,53 +428,61 @@ impl Record {
 
     pub async fn create_entry_type(&self, uid: i32, name: String) -> EntryType {
         EntryType {
-            id: Some(0),
+            id: None,
             uid: uid,
             name: name,
             private: true,
             status: 1,
-            created_at: Utc::now().timestamp() as i32,
+            created_at: now_ts(),
         }
    }
 
-    pub async fn with_item(self, 
+    pub async fn with_item(&self, 
         db: Db, 
-        item: Item, 
+        item_id: i32, 
         priority: Option<i32>
-    ) -> sqlx::Result<Self> {
-        RecordItemLink::create(db, &self, &item, priority).await?;
-        Ok(self)
+    ) -> sqlx::Result<()> {
+        RecordItemLink::create(db, self.id.unwrap(), item_id, priority).await?;
+        Ok(())
     }
 }
 
 impl Item {
     pub async fn new() {}
 
-    pub async fn with_field(self, 
+    pub async fn with_field(&self, 
         db: Db, 
-        field: Field, 
+        field_id: i32, 
         priority: Option<i32>
-    ) -> sqlx::Result<Self> {
-        ItemFieldLink::create(db, &self, &field, priority).await?;
-        Ok(self)
+    ) -> sqlx::Result<()> {
+        ItemFieldLink::create(db, self.id.unwrap(), field_id, priority).await?;
+        Ok(())
     }
 
+    pub async fn get_fields(self, db: Db) -> sqlx::Result<Vec<Field>> {
+        let items: Vec<Field> = sqlx::query_as::<Sqlite, Field>("
+            SELECT * FROM Fields INNER JOIN ItemFieldLinks 
+            ON RecordItemLinks.iid=?")
+            .bind(&self.id)
+            .fetch_all(&db.pool).await?;
+        Ok(items)
+    }
 }
 
 impl RecordItemLink {
     pub async fn create(
         db: Db,
-        record: &Record,
-        item: &Item,
+        record_id: i32,
+        item_id: i32,
         priority: Option<i32>
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO RecordItemLinks
         (rid, iid, priority, created_at) 
         VALUES ($1, $2, $3, $4);")
-            .bind(record.id)
-            .bind(item.id)
+            .bind(record_id)
+            .bind(item_id)
             .bind(priority)
-            .bind(Utc::now().timestamp() as i32)
+            .bind(now_ts())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -466,17 +491,17 @@ impl RecordItemLink {
 impl ItemFieldLink {
     pub async fn create(
         db: Db,
-        item: &Item,
-        field: &Field,
+        item_id: i32,
+        field_id: i32,
         priority: Option<i32>
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO ItemFieldLinks
         (iid, fid, priority, created_at) 
         VALUES ($1, $2, $3, $4);")
-            .bind(item.id)
-            .bind(field.id)
+            .bind(item_id)
+            .bind(field_id)
             .bind(priority)
-            .bind(Utc::now().timestamp() as i32)
+            .bind(now_ts())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -485,14 +510,50 @@ impl ItemFieldLink {
 impl FieldEntryLink {
     pub async fn create(
         db: Db,
-        field: &Field,
-        entry_type: &EntryType,
+        field_id: i32,
+        entry_type_id: i32,
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO FieldEntryLinks
-        (fid, etid, created_at) VALUES ($1, $2, $4);")
-            .bind(field.id)
-            .bind(entry_type.id)
-            .bind(Utc::now().timestamp() as i32)
+        (fid, etid, created_at) VALUES ($1, $2, $3);")
+            .bind(field_id)
+            .bind(entry_type_id)
+            .bind(now_ts())
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+}
+
+impl UserGroupLink {
+    pub async fn create(
+        db: Db,
+        user_id: i32,
+        group_id: i32,
+        role: String,
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO UserGroupLinks
+        (uid, gid, role, created_at) VALUES ($1, $2, $3, $4);")
+            .bind(user_id)
+            .bind(group_id)
+            .bind(role)
+            .bind(now_ts())
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+}
+
+impl UserRecordLink {
+    pub async fn create(
+        db: Db,
+        user_id: i32,
+        record_id: i32,
+        privelege: i32,
+    ) -> sqlx::Result<()> {
+        sqlx::query("INSERT INTO UserRecordLinks
+            (uid, rid, privelege, created_at) VALUES ($1, $2, $3, $4);")
+            .bind(user_id)
+            .bind(record_id)
+            .bind(privelege)
+            .bind(now_ts())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -501,12 +562,9 @@ impl FieldEntryLink {
 impl EntryType {
     pub async fn new() {}
     
-    pub async fn with_field(self, 
-        db: Db, 
-        field: Field, 
-    ) -> sqlx::Result<Self> {
-        FieldEntryLink::create(db, &field, &self).await?;
-        Ok(self)
+    pub async fn with_field(&self, db: Db, field_id: i32) -> sqlx::Result<()> {
+        FieldEntryLink::create(db, field_id, self.id.unwrap()).await?;
+        Ok(())
     }
 }
 
@@ -518,30 +576,13 @@ impl Field {
 impl Group {
     pub async fn new() {}
 
-    pub async fn with_user(self, db: Db, user: User, role: String) 
-        -> sqlx::Result<Self> {
-        UserGroupLink::create(db, &user, &self, role).await?;
-        Ok(self)
-    }
-}
-
-impl UserGroupLink {
-    pub async fn create(
-        db: Db,
-        user: &User,
-        group: &Group,
-        role: String,
-    ) -> sqlx::Result<()> {
-        sqlx::query("INSERT INTO UserGroupLinks
-        (uid, gid, role, created_at) VALUES ($1, $2, $4);")
-            .bind(user.id)
-            .bind(group.id)
-            .bind(role)
-            .bind(Utc::now().timestamp() as i32)
-            .execute(&db.pool).await?;
+    pub async fn with_user(&self, db: Db, user_id: i32, role: String) 
+        -> sqlx::Result<()> {
+        UserGroupLink::create(db, user_id, self.id.unwrap(), role).await?;
         Ok(())
     }
 }
+
 
 
 
@@ -579,10 +620,12 @@ impl Model for Item {}
 impl Model for Field {}
 impl Model for Condition {}
 impl Model for Rule {}
+impl Model for Group {} 
 
 impl ModelLink for RecordItemLink { }
 impl ModelLink for ItemFieldLink { }
 impl ModelLink for FieldEntryLink { }
+impl ModelLink for UserGroupLink { }
 
 pub enum FieldTypes {
     Text,
@@ -593,7 +636,7 @@ pub enum FieldTypes {
     Range,
 }
 
-pub fn now_timestamp() -> i32 {
+pub fn now_ts() -> i32 {
     Utc::now().timestamp() as i32
 }
 /*

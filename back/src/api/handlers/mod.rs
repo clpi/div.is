@@ -25,7 +25,7 @@ pub async fn get_user_by_username (
 pub async fn create_user_record (
     db: Db, uid: i32, name: String,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    match Record::new(uid, name).insert_db(db).await {
+    match Record::new(uid, name).insert(db).await {
         Ok(ok) => Ok(StatusCode::OK.to_string()),
         Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
     }
@@ -107,5 +107,15 @@ pub async fn update_user_by_username(
     match User::delete_by_username(db, username).await {
         Ok(_o) => Ok(StatusCode::OK.to_string()),
         Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn add_record(
+    db: Db, user_id: i32, record_id: i32, privelege: i32,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    // first create record! TODO then insert in db! TODO
+    match UserRecordLink::create(db, user_id, record_id, privelege).await {
+        Ok(_) => Ok(String::from("Created record")),
+        Err(_) => Err(warp::reject()),
     }
 }
