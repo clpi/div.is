@@ -5,6 +5,8 @@ use crate::db::models::*;
 use crate::db::Db;
 use crate::api::UserLogin;
 use warp::http::header::{HeaderMap, HeaderValue};
+use bcrypt::{DEFAULT_COST, hash, verify};
+use jsonwebtoken::*;
 
 pub async fn test(
     name: String
@@ -50,6 +52,7 @@ pub async fn get_all_users(
 }
 
 // TODO implement hashing verification
+// TODO first match should be some vs none -> impl option for user::from_username
 // NOTE check header is set: $curl -x POST -c header.txt localhost:3001/api/login && cat header.txt
 pub async fn login (
     db: Db, req_user: UserLogin,

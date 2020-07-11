@@ -14,8 +14,9 @@ serde={version="*", features=["derive"]}
 serde_derive="*"
 serde_json="*"
 dotenv="*"
-argonautica="*"
 jsonwebtoken="*"
+bcrypt="*"
+oauth2 = { version = "3.0", features = ["futures-03"], default-features = false }
 #blake2="*"
 #actix_web="*"
 #actix_rt="*"

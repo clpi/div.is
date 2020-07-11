@@ -416,7 +416,7 @@ impl Record {
     pub async fn get_items(self, db: Db) -> sqlx::Result<Vec<Item>> {
         let items: Vec<Item> = sqlx::query_as::<Sqlite, Item>("
             SELECT * FROM Items INNER JOIN RecordItemLinks 
-            ON RecordItemLinks.rid=?;")
+            ON RecordItemLinks.iid=Items.id WHERE RecordItemLinks.iid=?;")
             .bind(&self.id)
             .fetch_all(&db.pool).await?;
         Ok(items)
@@ -462,7 +462,7 @@ impl Item {
     pub async fn get_fields(self, db: Db) -> sqlx::Result<Vec<Field>> {
         let items: Vec<Field> = sqlx::query_as::<Sqlite, Field>("
             SELECT * FROM Fields INNER JOIN ItemFieldLinks 
-            ON RecordItemLinks.iid=?")
+            ON ItemFieldLinks.fid=Fields.id WHERE ItemFieldLinks.fid=?")
             .bind(&self.id)
             .fetch_all(&db.pool).await?;
         Ok(items)

@@ -57,30 +57,26 @@ async fn main() -> sqlx::Result<()> {
         .and(wdb.clone())
         .and(warp::path("login"))
         .and(warp::body::json())
-        .and_then(handlers::login)
-        .with(warp::reply::with::header("cook", "ie"));
+        .and_then(handlers::login);
 
     // NOTE POST /api/register
     let register = warp::post()
         .and(wdb.clone())
         .and(warp::path("register"))
         .and(warp::body::json())
-        .and_then(handlers::register)
-        .with(warp::reply::with::header("set-cookie", "ie"));
+        .and_then(handlers::register);
     
     // NOTE DELETE /user/<username>
     let delete_user = warp::post()
         .and(wdb.clone())
         .and(warp::path!("user" / String))
-        .and_then(handlers::delete_user_by_username)
-        .with(warp::reply::with::header("deleted", "user")) //just testing right now
+        .and_then(handlers::delete_user_by_username);
 
     // NOTE UPDATE /user/<username>
     let update_user = warp::put()
         .and(wdb.clone())
         .and(warp::path!("user" / String))
-        .and_then(handlers::update_user_by_username)
-        .with(warp::reply::with::header("cook", "ie"));
+        .and_then(handlers::update_user_by_username);
 
     // NOTE: /api/user/
     let user_actions = get_user
