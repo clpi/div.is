@@ -72,7 +72,8 @@ async fn main() -> sqlx::Result<()> {
     let delete_user = warp::post()
         .and(wdb.clone())
         .and(warp::path!("user" / String))
-        .and_then(handlers::delete_user_by_username);
+        .and_then(handlers::delete_user_by_username)
+        .with(warp::reply::with::header("deleted", "user")) //just testing right now
 
     // NOTE UPDATE /user/<username>
     let update_user = warp::put()
