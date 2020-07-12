@@ -22,14 +22,14 @@ impl Db {
             // run sqlite3 mem.db "" to create
         }
         let pool = sqlx::SqlitePool::new(&url).await?;
-        sqlx::query_file!("schema/schema.sql")
+        sqlx::query_file!("sql/schema.sql")
             .execute(&pool).await?;
         println!("Successfully created DB pool.");
         Ok( Self { pool } )
     }
 
     pub async fn init(self) -> sqlx::Result<Self> {
-        sqlx::query_file!("schema/schema.sql")
+        sqlx::query_file!("sql/schema.sql")
             .execute(&self.pool).await?;
         Ok( self )
    }

@@ -5,8 +5,6 @@ use crate::db::models::*;
 use crate::db::Db;
 use crate::api::UserLogin;
 use warp::http::header::{HeaderMap, HeaderValue};
-use bcrypt::{DEFAULT_COST, hash, verify};
-use jsonwebtoken::*;
 
 pub async fn test(
     name: String

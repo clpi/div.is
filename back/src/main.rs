@@ -30,6 +30,10 @@ async fn main() -> sqlx::Result<()> {
         ]);
 
     let (host, port) = get_host();
+    //let app_data = api::AppData {
+        //jwt_secret: api::auth::get_jwt_secret().await?,
+        //secret_key: api::auth::get_secret_key().await?,
+    //};
     //ex_user().insert(wdb).await?; // -> IT WORKS!
 
     let index = warp::path!("index")
@@ -49,7 +53,6 @@ async fn main() -> sqlx::Result<()> {
         .map(|db: Db, u: String, r: String| {
             format!("{}, {}", u, r)
         });
-
 
     // NOTE POST /api/login
     // TODO Fix login handler
@@ -106,6 +109,7 @@ pub fn get_host() -> (String, String) {
     let port = dotenv::var("DEV_PORT").expect("DEV_PORT not set");
     (host, port) 
 }
+
 
 pub fn ex_user() -> User {
     db::models::User {

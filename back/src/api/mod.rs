@@ -4,16 +4,8 @@ pub mod users;
 pub mod auth;
 pub mod handlers;
 
-use super::db::models::*;
-use super::db::Db;
-use warp::filters::BoxedFilter;
-use sqlx::types::chrono::{DateTime, Utc};
 use serde_derive::*;
-
-pub enum UsersRes {
-    Login { username: String, password: String },
-    Register { email: String, username: String, password: String },
-}
+use crate::db::Db;
 
 #[derive(Serialize, Deserialize)]
 pub struct UserLogin {
@@ -21,9 +13,11 @@ pub struct UserLogin {
     pub password: String,
 }
 
-pub fn hash_pass() {}
-
-pub fn verify_pass() {}
+//#[derive(Serialize, Deserialize)]
+//pub struct AppData {
+    //pub jwt_secret: String,
+    //pub secret_key: argonautica::input::SecretKey,
+//}
 
 //impl Into<User> for UserLogin {
     //fn into(self) -> User {
