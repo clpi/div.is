@@ -2,6 +2,21 @@
   import {Collapse, Field, Button, Input, Icon, Tabs, Tab } from 'svelma'
   import Hero from '../../comp/hero.svelte'
   import { slide, fade } from 'svelte/transition'
+  import { setContext, getContext, onMount } from 'svelte'
+  onMount(async () => { 
+      await fetch('http://localhost:3001/api/userstatus')
+          .then(res => setContext("userData", res.json()))
+          .then(res => setContext("loggedIn", res.ok))
+          .catch(err => {
+            console.log(err);
+            setContext("userData", null);
+            setContext("loggedIn", false);
+          });
+  });
+  let userData = getContext("userData");
+  let loggedIn = getContext("loggedIn");
+  console.log(userData);
+  console.log(loggedIn);
 </script>
 
 <style>

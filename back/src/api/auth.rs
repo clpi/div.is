@@ -1,12 +1,19 @@
-use jsonwebtoken::{encode, decode};
+use jsonwebtoken::{
+    Header, EncodingKey, DecodingKey, 
+    Validation, encode, decode, errors::ErrorKind,
+};
+use chrono::{Utc, Duration};
 use argonautica::{Hasher, Verifier, config::Variant, input::{SecretKey, Salt}};
 use futures::Future;
+use serde::{Serialize, Deserialize};
+use jsonwebtoken::errors::Result as JWTResult;
 
 // TODO implement salt?
-//
 
-pub async fn hash_pwd(pwd: String) -> String {
-    let secret_key = get_secret_key().await.unwrap();
+
+pub async fn hash_pwd(key: &String, pwd: &String) -> String {
+    let secret_key: SecretKey<'static> = 
+        SecretKey::from_base64_encoded(key).unwrap();
     let mut hasher = Hasher::default();
     hasher.configure_secret_key_clearing(false)
         .configure_threads(2)
@@ -18,8 +25,12 @@ pub async fn hash_pwd(pwd: String) -> String {
         .wait().unwrap()
 }
 
-pub async fn verify_pwd(pwd: &String, db_pwd: &String) -> bool {
-    let secret_key = get_secret_key().await.unwrap();
+pub async fn verify_pwd(key: &String, pwd: &String, db_pwd: &String) -> bool {
+    println!("secretkey {}", &key);
+    println!("pwd {}", &pwd);
+    println!("db_pwd {}", &db_pwd);
+    let secret_key: SecretKey<'static> = 
+        SecretKey::from_base64_encoded(key).unwrap();
     let mut verifier = Verifier::default();
     verifier.with_secret_key(&secret_key)
         .with_hash(&db_pwd)
@@ -28,13 +39,54 @@ pub async fn verify_pwd(pwd: &String, db_pwd: &String) -> bool {
         .wait().unwrap()
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Claims {
+    sub: i32,
+    exp: i32, 
+}
+
+impl Claims {
+    fn new(uid: i32) -> Claims {
+        let exp = (Utc::now() + Duration::weeks(2)).timestamp() as i32;
+        Self { sub: uid, exp }
+    }
+}
+
+pub fn encode_jwt(secret: &String, uid: i32) -> Result<String, String> {
+    match encode(
+        &Header::default(),
+        &Claims::new(uid),
+        &EncodingKey::from_secret(secret.as_ref()),
+    ) {
+        Ok(jwt) => Ok(jwt),
+        Err(err) => Err(String::from("Couldn't encode")),
+    }
+}
+
+pub fn decode_jwt(secret: &String, token: &String) -> JWTResult<Claims> {
+    // implement match for different token starts? for priv?
+    match decode::<Claims>(
+        token.trim_start_matches("MEMT "),
+        &DecodingKey::from_secret(secret.as_ref()),
+        &Validation::default(),
+    ) {
+        Ok(jwt) => Ok(jwt.claims),
+        Err(err) => Err(err),
+    }
+}
+
 pub async fn get_jwt_secret() -> Result<String, std::io::Error> {
     Ok(dotenv::var("JWT_SECRET")
         .expect("JWT SECRET NOT SET"))
 }
 
-pub async fn get_secret_key() -> Result<SecretKey<'static>, std::io::Error>  {
+pub async fn get_secret_key() -> Result<String, std::io::Error>  {
     let key = dotenv::var("SECRET_KEY")
         .expect("SECRET_KEY NOT SET");
-    Ok(SecretKey::from_base64_encoded(key).unwrap())
+    Ok(key)
+}
+
+pub enum Privelege {
+    Admin,
+    User,
 }

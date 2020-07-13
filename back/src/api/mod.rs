@@ -1,6 +1,4 @@
-pub mod entries;
 pub mod routes;
-pub mod users;
 pub mod auth;
 pub mod handlers;
 
@@ -13,11 +11,12 @@ pub struct UserLogin {
     pub password: String,
 }
 
-//#[derive(Serialize, Deserialize)]
-//pub struct AppData {
-    //pub jwt_secret: String,
-    //pub secret_key: argonautica::input::SecretKey,
-//}
+#[derive(Clone)]
+pub struct AppData {
+    pub jwt_secret: String,
+    pub secret_key: String,
+    pub db: Db,
+}
 
 //impl Into<User> for UserLogin {
     //fn into(self) -> User {

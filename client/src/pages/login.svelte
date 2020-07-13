@@ -1,6 +1,7 @@
 <script>
   import { Button, Field, Input } from 'svelma'
   import { slide, fade } from 'svelte/transition'
+  import { setContext, getContext, onMount } from 'svelte'
   let loginInfo = {
     username: '',
     password: '',
@@ -9,16 +10,20 @@
   let promise = Promise.resolve([]);
   let submitted = false;
   async function loginUser(userInfo) {
-      const signupPost = await fetch('http://localhost:3001/api/login', {
+      const loginPost = await fetch('http://localhost:3001/api/login', {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
               /*authorization: <authorization>*/
           },
           body: JSON.stringify(userInfo)
       });
-      if (signupPost.ok) {
-        return signupPost;
+      if (loginPost.ok) {
+        setContext("loggedIn", true);
+        setContext("userData", loginPost.json())
+        setContext("token", loginPost.json().token)
+        return loginPost;
       } else {
         throw new Error(users);
       }

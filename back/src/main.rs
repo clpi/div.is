@@ -1,26 +1,29 @@
+#[macro_use]
+extern crate serde;
 mod db;
 mod api;
 
 use warp::{Filter, self};
 use db::models::*; //TODO: Merge models and schema files
 use self::api::handlers;
+use std::collections::HashMap;
 use warp::http::Method;
 use db::Db;
 
 // TODO: Created BoxedFilter routes in api/routes/*.rs modules
 // TODO: Implement CRUD for basic records
+// TODO learn about borowing + references - i.e. is referencing Strings stupid??
 
 #[tokio::main]
 async fn main() -> sqlx::Result<()> {
     
-    let db = setup_db().await?;
-    
-    let wdb = warp::any().map(move || db.clone());
     let cors = warp::cors()
+        .allow_credentials(true)
         .allow_any_origin()
         .allow_headers(vec!["User-Agent", "Sec-Fetch-Mode", 
             "Referer", "Origin", "Access-Control-Request-Method", 
-            "Access-Control-Request-Headers", "content-type"
+            "Access-Control-Request-Headers", "Access-Control-Allow-Origin", 
+            "content-type", "credentials",
         ])
         .allow_methods(&[
             Method::GET,
@@ -30,11 +33,11 @@ async fn main() -> sqlx::Result<()> {
         ]);
 
     let (host, port) = get_host();
-    //let app_data = api::AppData {
-        //jwt_secret: api::auth::get_jwt_secret().await?,
-        //secret_key: api::auth::get_secret_key().await?,
-    //};
-    //ex_user().insert(wdb).await?; // -> IT WORKS!
+    let app_data = api::AppData {
+        jwt_secret: api::auth::get_jwt_secret().await.unwrap(),
+        secret_key: api::auth::get_secret_key().await.unwrap(),
+        db: setup_db().await?,
+    };
 
     let index = warp::path!("index")
         .map(|| "Hello");
@@ -43,12 +46,12 @@ async fn main() -> sqlx::Result<()> {
 
     // NOTE GET /api/user/<username>
     let get_user = warp::get()
-        .and(wdb.clone())
+        .and(with_db(app_data.db.clone()))
         .and(warp::path!("user" / String))
         .and_then(handlers::get_user_by_username);
 
     let get_record = warp::get()
-        .and(wdb.clone())
+        .and(with_db(app_data.db.clone()))
         .and(warp::path!("user" / String / "record" / String))
         .map(|db: Db, u: String, r: String| {
             format!("{}, {}", u, r)
@@ -57,27 +60,33 @@ async fn main() -> sqlx::Result<()> {
     // NOTE POST /api/login
     // TODO Fix login handler
     let login = warp::post()
-        .and(wdb.clone())
+        .and(with_data(app_data.clone()))
         .and(warp::path("login"))
         .and(warp::body::json())
         .and_then(handlers::login);
 
     // NOTE POST /api/register
     let register = warp::post()
-        .and(wdb.clone())
+        .and(with_data(app_data.clone()))
         .and(warp::path("register"))
         .and(warp::body::json())
         .and_then(handlers::register);
-    
+
+    let check_cookie = warp::get()
+        .and(with_data(app_data.clone()))
+        .and(warp::path!("userstatus"))
+        .and(warp::cookie("Authorization"))
+        .and_then(handlers::check_cookie);
+
     // NOTE DELETE /user/<username>
     let delete_user = warp::post()
-        .and(wdb.clone())
+        .and(with_db(app_data.db.clone()))
         .and(warp::path!("user" / String))
         .and_then(handlers::delete_user_by_username);
 
     // NOTE UPDATE /user/<username>
     let update_user = warp::put()
-        .and(wdb.clone())
+        .and(with_db(app_data.db.clone()))
         .and(warp::path!("user" / String))
         .and_then(handlers::update_user_by_username);
 
@@ -85,13 +94,15 @@ async fn main() -> sqlx::Result<()> {
     let user_actions = get_user
         .or(delete_user)
         .or(update_user)
+        .or(check_cookie)
         .or(register)
         .or(login);
 
     let routes = index.or(sum).or(user_actions);
 
+    // TODO register appdata with all routes, exclude from non needed ones
     let api = warp::path("api")
-        .and(routes)
+        .and(routes) 
         .with(cors);
 
     warp::serve(api).run(([127, 0, 0, 1], 3001)).await;
@@ -118,6 +129,16 @@ pub fn ex_user() -> User {
         password: String::from("hashword"),
         created_at: sqlx::types::chrono::Utc::now().timestamp() as i32,
     }
+}
+
+fn with_data(data: api::AppData) 
+    -> impl Filter<Extract = (api::AppData,), Error = std::convert::Infallible> + Clone {
+    warp::any().map(move || data.clone())
+}
+
+fn with_db(db: Db)
+    -> impl Filter<Extract = (Db,), Error = std::convert::Infallible> + Clone {
+    warp::any().map(move || db.clone())
 }
 
 // NOTE: Remember, now is not the time to overengineer things

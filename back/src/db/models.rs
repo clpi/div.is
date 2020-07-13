@@ -263,8 +263,8 @@ impl User {
         } 
     }
 
-    pub async fn hash_pass(mut self) -> Result<Self, std::io::Error> {
-        self.password = hash_pwd(self.password.clone()).await;
+    pub async fn hash_pass(mut self, key: String) -> Result<Self, std::io::Error> {
+        self.password = hash_pwd(&key, &self.password.clone()).await;
         Ok(self)
     }
 
@@ -279,8 +279,8 @@ impl User {
 
     pub async fn insert_into(self, db: Db) -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Users 
-        (email, username, password, created_at) 
-        VALUES ($1, $2, $3, $4);")  
+            (email, username, password, created_at) 
+            VALUES ($1, $2, $3, $4);")  
             .bind(&self.email)
             .bind(&self.username)
             .bind(&self.password)
@@ -288,6 +288,8 @@ impl User {
             .execute(&db.pool).await?;
         Ok(self)
     }
+
+    pub async fn with_user_info(self, info: UserInfo) -> () {  }
 
     pub async fn delete_by_id(db: Db, id:i32) -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users where id=?")
@@ -316,7 +318,7 @@ impl User {
         Self { id: None, ..user }
     }
 
-    pub async fn from_username(db: Db, username: String) 
+    pub async fn from_username(db: &Db, username: String) 
         -> sqlx::Result<Self>
     {
         sqlx::query_as::<Sqlite, Self>
@@ -325,7 +327,7 @@ impl User {
             .fetch_one(&db.pool).await
     }
 
-    pub async fn from_email(db: Db, username: &str) 
+    pub async fn from_email(db: &Db, username: &str) 
         -> sqlx::Result<Self> 
     {
         sqlx::query_as::<Sqlite, Self>
