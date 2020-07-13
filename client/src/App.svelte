@@ -4,8 +4,7 @@
   import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
   import { setContext, getContext, onMount } from 'svelte'
-  import { session, logged, duration } from './stores.js';
-  /*onMount(async () => { */
+  import { session } from 'login.svelte'
       /*await fetch('http://localhost:3001/api/userstatus', {*/
         /*method: "GET",*/
         /*crdentials: "include",*/
@@ -44,11 +43,12 @@
           if (!res.ok) {
             setContext('loggedIn', false);
             setContext('userData', null);
-            session.set(null);
-            logged.set(false);
-            duration.set(0);
-            loggedIn = false;
           }
+      }
+      if (logged == undefined) {
+          logged = writable(false);
+          session = wriable(null);
+          duration = writable(0);
       }
     userData = getContext('userData');
   })

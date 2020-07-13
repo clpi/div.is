@@ -2,12 +2,31 @@
   import { Button, Field, Input } from 'svelma'
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
-  import { session, logged, duration } from '../stores.js';
+  import {writable, readable, get, set} from 'svelte/store'
+
   let loginInfo = {
     username: '',
     password: '',
   }
-  let userData;
+  export const session;
+  export async function logged() {
+    const res = await fetch('http://localhost:3001/api/userstatus', {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                cookie: document.cookie,
+              }
+          });
+          if (!res.ok) {
+            setContext('loggedIn', false);
+            setContext('userData', null);
+              loggedIn = false;
+              return null;
+          } else {
+              return session;
+          }
+
+  }  /*onMount(async () => { */
   let fetching = false;
   let disabled = false;
   let promise = Promise.resolve([]);
@@ -25,10 +44,7 @@
       if (loginPost.ok) {
         setContext("loggedIn", true);
           setContext("userData", loginPost);
-          userData =loginPost;
-          session.set(loginPost);
-          logged.set(true);
-          duration.set(0);
+          session =loginPost;
         return loginPost;
       } else {
         throw new Error(users);
@@ -75,7 +91,7 @@
             {:then userData}
                 {#if submitted}
                     <p>Welcome {loginInfo.username}!</p>
-                    <p>Your ID: {userData.id}</p>
+                    <p>Your ID: {loginInfo.uid}</p>
                 {/if}
             {:catch error}
                 <p style="color: red">{error.message}</p>

@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte';	
-  import Hero from '../comp/hero.svelte'
   import { slide, fade } from 'svelte/transition'
   onMount(async () => {
     await fetch('http://localhost:3001/api/sum/29/69')
