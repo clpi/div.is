@@ -69,7 +69,13 @@ pub async fn get_all_users(
     db: Db
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::fetch_all(db).await {
-        Ok(users) => Ok(users.get(0).unwrap().to_string()), //TODO return all in json string
+        Ok(users) => {
+            println!("OK! {}", &serde_json::to_string(&users[..2]).unwrap());
+            Ok(warp::reply::json(
+                &serde_json::to_string(&users)
+                .unwrap_or("No users".to_string()))
+            )
+        },
         Err(_e) => Err(warp::reject()),
     }
 }
@@ -127,17 +133,34 @@ pub async fn register (
     }
 }
 
-pub async fn check_cookie(data: AppData, val: String) 
+pub async fn check_cookie(data: AppData, cookie: Option<String>) 
     -> Result<impl warp::Reply, warp::Rejection> {
-    println!("Cookie: {}", val);
-    match decode_jwt(&data.jwt_secret, &val) {
-        Ok(claims) => {
-            println!("Cookie is good");
-            Ok(warp::reply::json(&serde_json::to_string(&claims).unwrap()))
+    println!("Checking cookie...");
+    match cookie {
+        Some(token) => {
+            println!("Cookie: {}", token);
+            match decode_jwt(&data.jwt_secret, &token) {
+                Ok(claims) => {
+                    println!("Cookie is good");
+                    Ok(warp::reply::with_header(
+                            warp::reply::json(
+                                &serde_json::to_string(&claims).unwrap()
+                            ), "Authorization", "true"
+                        )
+                    )
+                },
+                Err(_) => {
+                    println!("Cookie is bad");
+                    Ok(warp::reply::with_header(
+                        warp::reply::json(&token), "Authorization", "false"
+                    ))
+                }
+            }
         },
-        Err(_) => {
-            println!("Cookie is bad");
+        None => {
+            println!("No cookie");
             Err(warp::reject())
+
         }
     }
 }

@@ -3,7 +3,11 @@
   import { isActive, url, layout } from "@sveltech/routify";
   import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
   import { slide } from 'svelte/transition';
-  let login=false;
+  import { setContext, getContext, onMount } from 'svelte'
+  let loggedIn=getContext("loggedIn");
+  let userData=getContext("userData");
+  
+
 </script>
 
 <style>
@@ -101,12 +105,22 @@
             <li in:slide={{delay:350}} class:active={$isActive("/admin")}>
                 <a href={$url("/admin")}>admin</a>
             </li>
+            {#if !loggedIn}
             <li in:slide={{delay:200}} id="signupNav" class:active={$isActive("/signup")} >
                 <a href={$url("/signup")}>signup</a>
             </li>
             <li in:slide={{delay:250}} id="loginNav" class:active={$isActive("/login")}>
                 <a href={$url("/login")}>login</a>
             </li>
+            {:else}
+                <li 
+                    in:slide={{delay:250}} 
+                    id="loginNav" 
+                    class:active={$isActive("/u/"+userData.username)}
+                >
+                Welcome, <a href={$url("/u/"+userData.username)}>{ userData.username }</a>
+                </li>
+            {/if}
             <li in:slide={{delay:300}} id="navIcon">
                 <a href="http://github.com/pecusys">
                     <Icon pack="fab" size="is-small" icon="github"/>

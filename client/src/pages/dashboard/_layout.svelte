@@ -2,6 +2,9 @@
   import { isActive, url, layout } from "@sveltech/routify";
   import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
   import { fade } from 'svelte/transition';
+  import { setContext, getContext, onMount } from 'svelte'
+  let userData = getContext("userData");
+  let loggedIn = getContext("loggedIn");
 </script>
 <style>
     .db {
@@ -73,7 +76,7 @@
         <div class="NavLinks">
             <ul class="Nav">
                 <li in:fade class="nav-head">
-                    <p class="nav-ht">admin center</p>
+                    <p class="nav-ht">dashboard</p>
                 </li>
                 <li in:fade class:active={$isActive("/dashboard/index")}>
                     <a href={$url("/dashboard/index")}>home</a>

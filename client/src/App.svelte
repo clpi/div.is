@@ -4,26 +4,41 @@
   import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
   import { setContext, getContext, onMount } from 'svelte'
-  onMount(async () => { 
-      await fetch('http://localhost:3001/api/userstatus', {
-        method: "GET",
-        crdentials: "include",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Cache': 'no-cache',
-            'Token': getContext("token"),
-        }
-      })
-          .then(res => setContext("userData", res.json()))
-          .then(res => setContext("loggedIn", res.ok))
-          .catch(err => {
-            console.log(err);
-            setContext("userData", null);
-            setContext("loggedIn", false);
-              setContext("token", null);
-          });
-  });
+  /*onMount(async () => { */
+      /*await fetch('http://localhost:3001/api/userstatus', {*/
+        /*method: "GET",*/
+        /*crdentials: "include",*/
+        /*headers: {*/
+            /*'Accept': 'application/json',*/
+            /*'Content-Type': 'application/json',*/
+            /*'Cache': 'no-cache',*/
+            /*'Token': getContext("token"),*/
+        /*}*/
+      /*})*/
+          /*.then(res => setContext("userData", res.json()))*/
+          /*.then(res => setContext("loggedIn", res.ok))*/
+          /*.catch(err => {*/
+            /*console.log(err);*/
+            /*setContext("userData", null);*/
+            /*setContext("loggedIn", false);*/
+              /*setContext("token", null);*/
+          /*});*/
+  /*});*/
+  let loggedIn;
+  let userData;
+  onMount(async () => {
+      let res = await fetch('http://localhost:3001/api/userstatus');
+      if (res.ok) {
+        setContext(loggedIn, true);
+        setContext(userData, res.json());
+      } else {
+        /*setContext(loggedIn, false);*/
+        /*setContext(userData, null);*/
+      }
+      console.log(res.json())
+      loggedIn = getContext(loggedIn);
+      userData = getContext(userData);
+  })
   // TODO: Modularize reusable components (cards, ui elements, etc.)
   // TODO: Design your own buttons, etc. instead of bulma stuff
   // TODO: Make properties shared among comps inherited (ie fade in)

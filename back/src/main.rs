@@ -50,6 +50,11 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::path!("user" / String))
         .and_then(handlers::get_user_by_username);
 
+    let get_all_users = warp::get()
+        .and(with_db(app_data.db.clone()))
+        .and(warp::path!("user" / "all"))
+        .and_then(handlers::get_all_users);
+
     let get_record = warp::get()
         .and(with_db(app_data.db.clone()))
         .and(warp::path!("user" / String / "record" / String))
@@ -72,10 +77,9 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::body::json())
         .and_then(handlers::register);
 
-    let check_cookie = warp::get()
+    let check_cookie = warp::path!("userstatus")
         .and(with_data(app_data.clone()))
-        .and(warp::path!("userstatus"))
-        .and(warp::cookie("Authorization"))
+        .and(warp::cookie::optional("Authorization"))
         .and_then(handlers::check_cookie)
         .with(warp::cors().allow_credentials(true))
         .with(warp::cors().allow_any_origin());
@@ -95,6 +99,7 @@ async fn main() -> sqlx::Result<()> {
     // NOTE: /api/user/
     let user_actions = get_user
         .or(delete_user)
+        .or(get_all_users)
         .or(update_user)
         .or(check_cookie)
         .or(register)

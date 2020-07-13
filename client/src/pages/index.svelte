@@ -1,18 +1,20 @@
 <script>
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
+  let loggedIn;
+  let userData;
   onMount(async () => {
       let res = await fetch('http://localhost:3001/api/userstatus');
       if (res.ok) {
         setContext(loggedIn, true);
         setContext(userData, res.json());
       } else {
-        setContext(loggedIn, false);
-        setContext(userData, null);
+        /*setContext(loggedIn, false);*/
+        /*setContext(userData, null);*/
       }
       console.log(res.json())
-      let loggedIn = getContext(loggedIn);
-      let userData = getContext(userData);
+      loggedIn = getContext(loggedIn);
+      userData = getContext(userData);
   })
 </script>
 
@@ -44,7 +46,7 @@
 <div class="home-wrapper" in:fade={{duration:100}}>
     <div class="box">
         <h2>Hello</h2>
-        <p>world</p>
+        <p>{ loggedIn } { userData }</p>
     </div>
     <div class="box">
         <h2>How are you</h2>

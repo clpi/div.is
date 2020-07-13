@@ -3,16 +3,6 @@
   import Hero from '../../comp/hero.svelte'
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
-  onMount(async () => { 
-      await fetch('http://localhost:3001/api/userstatus')
-          .then(res => setContext("userData", res.json()))
-          .then(res => setContext("loggedIn", res.ok))
-          .catch(err => {
-            console.log(err);
-            setContext("userData", null);
-            setContext("loggedIn", false);
-          });
-  });
   let userData = getContext("userData");
   let loggedIn = getContext("loggedIn");
   console.log(userData);
@@ -53,10 +43,10 @@
 
     <div class=dbcontainer>
         <Tabs style="is-fullwidth" position="is_centered">
-        <Tab label="Home" icon="users">
+            <Tab label="Home">
             <Button iconPack="fab" iconLeft="github">Github</Button>
         </Tab>
-        <Tab label="Records" icon="map-marker-alt">
+        <Tab label="Records">
             <div class="recordOptions">
                 <Button iconPack="fab" iconLeft="add" type= "is-primary">Update</Button>
                     <Button iconPack="fab" iconLeft="remove" type="is-danger">No Data</Button>
@@ -75,8 +65,8 @@
                 </tbody>
             </table>
         </Tab>
-        <Tab label="Items" icon="ellipsis-h"></Tab>
-            <Tab label="Entries" icon="ellipsis-h"></Tab>
+        <Tab label="Items"></Tab>
+            <Tab label="Entries"></Tab>
         </Tabs>
     </div>
 </div>
