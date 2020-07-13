@@ -98,6 +98,9 @@
             <li in:slide={{delay:300}} class:active={$isActive("/contact")}>
                 <a href={$url("/contact")}>contact</a>
             </li>
+            <li in:slide={{delay:350}} class:active={$isActive("/admin")}>
+                <a href={$url("/admin")}>admin</a>
+            </li>
             <li in:slide={{delay:200}} id="signupNav" class:active={$isActive("/signup")} >
                 <a href={$url("/signup")}>signup</a>
             </li>

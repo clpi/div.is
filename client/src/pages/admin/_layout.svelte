@@ -4,19 +4,19 @@
   import { fade } from 'svelte/transition';
 </script>
 <style>
-    .db {
+    .admin-db {
         margin-left: 15%;
         margin-right: 10%;
     }
-    .Navbar {
+    .admin-nb {
         float: left;
         min-width: auto;
         margin-right: 7vw;
     }
-    .NavLinks {
+    .admin-nbl {
         margin-bottom: 1rem;
     }
-    .Nav {
+    .admin-nav {
         margin-left: auto;
         margin-right: auto;
         max-width: 1200px;
@@ -68,27 +68,27 @@
     }
 
 </style>
-<div class="db">
-    <div class="Navbar">
-        <div class="NavLinks">
-            <ul class="Nav">
+<div class="admin-db">
+    <div class="admin-nb">
+        <div class="admin-nbl">
+            <ul class="admin-nav">
                 <li in:fade class="nav-head">
                     <p class="nav-ht">admin center</p>
                 </li>
-                <li in:fade class:active={$isActive("/dashboard/index")}>
-                    <a href={$url("/dashboard/index")}>home</a>
+                <li in:fade class:active={$isActive("/admin/index")}>
+                    <a href={$url("/admin/index")}>home</a>
                 </li>
-                <li in:fade class:active={$isActive("/dashboard/records")}>
-                    <a href={$url("/dashboard/records")}>records</a>
+                <li in:fade class:active={$isActive("/admin/db")}>
+                    <a href={$url("/admin/db")}>database</a>
                 </li>
-                <li in:fade class:active={$isActive("/dashboard/items")}>
-                    <a href={$url("/dashboard/items")}>items</a>
+                <li in:fade class:active={$isActive("/admin/users")}>
+                    <a href={$url("/admin/users")}>users</a>
                 </li>
-                <li in:fade class:active={$isActive("/dashboard/entries")}>
-                    <a href={$url("/dashboard/entries")}>entries</a>
+                <li in:fade class:active={$isActive("/admin/records")}>
+                    <a href={$url("/admin/records")}>records</a>
                 </li>
                 <li in:fade class:active={$isActive("/dashboard/stats")}>
-                    <a href={$url("/dashboard/stats")}>stats</a>
+                    <a href={$url("/admin/stats")}>stats</a>
                 </li>
             </ul>
         </div>

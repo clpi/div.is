@@ -76,7 +76,9 @@ async fn main() -> sqlx::Result<()> {
         .and(with_data(app_data.clone()))
         .and(warp::path!("userstatus"))
         .and(warp::cookie("Authorization"))
-        .and_then(handlers::check_cookie);
+        .and_then(handlers::check_cookie)
+        .with(warp::cors().allow_credentials(true))
+        .with(warp::cors().allow_any_origin());
 
     // NOTE DELETE /user/<username>
     let delete_user = warp::post()
