@@ -7,5 +7,7 @@ back/.env
 back/.mem.db
 back/target
 /client/node_modules
-/yew_front/target
-
+/yew_cli/target
+/yew_cli/node_modules
+/back/mem.db-shm
+/back/mem.db-wal

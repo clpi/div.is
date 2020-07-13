@@ -2,6 +2,7 @@ use serde_derive::*;
 use sqlx::FromRow;
 use super::Db;
 use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
+use crate::api::auth::hash_pwd;
 
 //TODO Consider adding custom types for forieng key references, using
 //TODO Severely refactor code to reduce redundancy (query builder?)
@@ -260,6 +261,11 @@ impl User {
             password: String::from(pwd),
             created_at: now_ts(),
         } 
+    }
+
+    pub async fn hash_pass(mut self) -> Result<Self, std::io::Error> {
+        self.password = hash_pwd(self.password.clone()).await;
+        Ok(self)
     }
 
     //pub async fn from_db(db: Db) -> DbQuery { User::default(), DbQuery::from(db) }
@@ -634,6 +640,14 @@ pub enum FieldTypes {
     EnumMultiple,
     Boolean,
     Range,
+}
+
+pub enum GroupRole {
+
+}
+
+pub enum RecordPrivelege {
+    
 }
 
 pub fn now_ts() -> i32 {

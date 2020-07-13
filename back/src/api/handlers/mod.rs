@@ -5,6 +5,7 @@ use crate::db::models::*;
 use crate::db::Db;
 use crate::api::UserLogin;
 use warp::http::header::{HeaderMap, HeaderValue};
+use super::auth::{hash_pwd, verify_pwd};
 
 pub async fn test(
     name: String
@@ -57,7 +58,8 @@ pub async fn login (
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::from_username(db, req_user.username).await {
         Ok(db_user) => {
-            if db_user.password == req_user.password {
+            let (db_pwd, req_pwd) = (db_user.password, req_user.password);
+            if verify_pwd(&req_pwd, &db_pwd).await {
                 println!("LOGIN: Logged in {}", db_user.username);
                 Ok(warp::reply::with_header(
                     StatusCode::OK.to_string(),
@@ -80,15 +82,21 @@ pub async fn login (
 pub async fn register (
     db: Db, req_user: User,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    match &req_user.insert_into(db).await {
+    let req_user = req_user.hash_pass().await.unwrap();
+    println!("Hashed user password");
+    match req_user.insert_into(db).await {
         Ok(user) => {
+            println!("Inserted user into DB");
             Ok(warp::reply::with_header(
                 StatusCode::OK.to_string(),
                 warp::http::header::SET_COOKIE,
                 format!("SESS={}", user.username)
             ))
         },
-        Err(_e) => Err(warp::reject()),
+        Err(_e) => {
+            println!("Could not insert user into DB");
+            Err(warp::reject())
+        }    
     }
 }
 

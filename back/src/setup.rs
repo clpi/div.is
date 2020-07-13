@@ -8,3 +8,7 @@ pub fn setup() {
     let port = dotenv::var("DEV_PORT").expect("PORT not set");
     
 }
+
+pub struct Params {
+    
+}
