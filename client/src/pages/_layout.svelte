@@ -4,9 +4,14 @@
   import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
   import { slide } from 'svelte/transition';
   import { setContext, getContext, onMount } from 'svelte'
+  import { session, logged, duration } from '../store.js';
   let loggedIn=getContext("loggedIn");
   let userData=getContext("userData");
-  
+  function logout() {
+      session.set(null);
+      logged.set(false);
+      duration.set(0);
+  } 
 
 </script>
 
@@ -105,7 +110,7 @@
             <li in:slide={{delay:350}} class:active={$isActive("/admin")}>
                 <a href={$url("/admin")}>admin</a>
             </li>
-            {#if !loggedIn}
+            {#if !logged}
             <li in:slide={{delay:200}} id="signupNav" class:active={$isActive("/signup")} >
                 <a href={$url("/signup")}>signup</a>
             </li>
@@ -116,9 +121,16 @@
                 <li 
                     in:slide={{delay:250}} 
                     id="loginNav" 
-                    class:active={$isActive("/u/"+userData.username)}
+                    class:active={$isActive("/u/"+session.username)}
                 >
-                Welcome, <a href={$url("/u/"+userData.username)}>{ userData.username }</a>
+                <a on:click={logout} href="/">log out</a>
+                </li>
+                <li 
+                    in:slide={{delay:250}} 
+                    id="loginNav" 
+                    class:active={$isActive("/u/"+session.username)}
+                >
+                <a href={$url("/u/"+session.username)}>{ session.username }</a>
                 </li>
             {/if}
             <li in:slide={{delay:300}} id="navIcon">

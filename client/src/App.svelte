@@ -4,6 +4,7 @@
   import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
   import { setContext, getContext, onMount } from 'svelte'
+  import { session, logged, duration } from './stores.js';
   /*onMount(async () => { */
       /*await fetch('http://localhost:3001/api/userstatus', {*/
         /*method: "GET",*/
@@ -24,20 +25,32 @@
               /*setContext("token", null);*/
           /*});*/
   /*});*/
-  let loggedIn;
-  let userData;
+  let loggedIn = getContext('loggedIn'); 
+  let userData = getContext('userData');
   onMount(async () => {
-      let res = await fetch('http://localhost:3001/api/userstatus');
-      if (res.ok) {
-        setContext(loggedIn, true);
-        setContext(userData, res.json());
-      } else {
-        /*setContext(loggedIn, false);*/
-        /*setContext(userData, null);*/
+      if (loggedIn == undefined || userData == undefined) {
+        setContext('loggedIn', false);
+        setContext('userData', null);
+
       }
-      console.log(res.json())
-      loggedIn = getContext(loggedIn);
-      userData = getContext(userData);
+      if (loggedIn) {
+          let res = await fetch('http://localhost:3001/api/userstatus', {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                cookie: document.cookie,
+              }
+          });
+          if (!res.ok) {
+            setContext('loggedIn', false);
+            setContext('userData', null);
+            session.set(null);
+            logged.set(false);
+            duration.set(0);
+            loggedIn = false;
+          }
+      }
+    userData = getContext('userData');
   })
   // TODO: Modularize reusable components (cards, ui elements, etc.)
   // TODO: Design your own buttons, etc. instead of bulma stuff

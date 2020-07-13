@@ -1,20 +1,24 @@
 <script>
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
-  let loggedIn;
-  let userData;
+  import { session, logged, duration } from '../store.js';
+  let loggedIn = getContext('loggedIn'); let userData;
   onMount(async () => {
-      let res = await fetch('http://localhost:3001/api/userstatus');
-      if (res.ok) {
-        setContext(loggedIn, true);
-        setContext(userData, res.json());
-      } else {
-        /*setContext(loggedIn, false);*/
-        /*setContext(userData, null);*/
+      if (loggedIn) {
+          let res = await fetch('http://localhost:3001/api/userstatus', {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                cookie: document.cookie,
+              }
+          });
+          if (!res.ok) {
+            setContext('loggedIn', false);
+            setContext('userData', null);
+            loggedIn = false;
+          }
       }
-      console.log(res.json())
-      loggedIn = getContext(loggedIn);
-      userData = getContext(userData);
+    userData = getContext('userData');
   })
 </script>
 
@@ -46,7 +50,16 @@
 <div class="home-wrapper" in:fade={{duration:100}}>
     <div class="box">
         <h2>Hello</h2>
-        <p>{ loggedIn } { userData }</p>
+        {#if logged}
+            {#await userData}
+                <p>waiting for userdata</p>
+            {:then user}
+                <p>Welcome { user.username }</p>
+            {:catch}
+                <p>couldnt get user</p>
+            {/await}
+        {/if}
+        <p>userData { userData }</p>
     </div>
     <div class="box">
         <h2>How are you</h2>

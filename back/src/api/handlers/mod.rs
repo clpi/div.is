@@ -4,6 +4,7 @@ use warp::http::StatusCode;
 use crate::db::models::*;
 use crate::db::Db;
 use crate::api::AppData;
+use chrono::Utc;
 use super::auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt};
 
 #[derive(Serialize, Deserialize)]
@@ -18,15 +19,19 @@ pub struct SessionData {
     pub token: String,
     pub email: String,
     pub username: String,
+    pub privel: i32,
+    pub created: i32,
 }
 
 impl SessionData {
-    pub fn new(user: &User, token: &String) -> Self {
+    pub fn new(user: &User, token: &String, privelege: i32) -> Self {
         Self {
             uid: user.id.unwrap(), 
             token: token.to_owned(),
             username: user.username.clone(), 
-            email: user.email.clone()
+            email: user.email.clone(),
+            privel: privelege,
+            created: Utc::now().timestamp() as i32,
         }
     }
 }
@@ -92,8 +97,8 @@ pub async fn login (
             let (db_pwd, req_pwd) = (&db_user.password, &req_user.password);
             if verify_pwd(&data.secret_key, &req_pwd, &db_pwd).await {
                 println!("LOGIN: Logged in {}", db_user.username);
-                let jwt = encode_jwt(&data.jwt_secret, db_user.id.unwrap()).unwrap();
-                let resp = SessionData::new(&db_user, &jwt);
+                let jwt = encode_jwt(&data.jwt_secret, &db_user).unwrap();
+                let resp = SessionData::new(&db_user, &jwt, 0);
                 Ok(warp::reply::with_header(
                     serde_json::to_string(&resp).unwrap(),
                     warp::http::header::SET_COOKIE,
@@ -142,12 +147,11 @@ pub async fn check_cookie(data: AppData, cookie: Option<String>)
             match decode_jwt(&data.jwt_secret, &token) {
                 Ok(claims) => {
                     println!("Cookie is good");
+                    let claims_ser =  &serde_json::to_string(&claims).unwrap();
                     Ok(warp::reply::with_header(
-                            warp::reply::json(
-                                &serde_json::to_string(&claims).unwrap()
-                            ), "Authorization", "true"
-                        )
+                        warp::reply::json(claims_ser), "Authorization", "true"
                     )
+                )
                 },
                 Err(_) => {
                     println!("Cookie is bad");

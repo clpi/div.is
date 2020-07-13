@@ -77,12 +77,15 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::body::json())
         .and_then(handlers::register);
 
-    let check_cookie = warp::path!("userstatus")
+    let check_cookie = warp::get()
         .and(with_data(app_data.clone()))
+        .and(warp::path!("userstatus"))
         .and(warp::cookie::optional("Authorization"))
         .and_then(handlers::check_cookie)
-        .with(warp::cors().allow_credentials(true))
-        .with(warp::cors().allow_any_origin());
+        .with(warp::cors().allow_credentials(true)
+            .allow_any_origin()
+            .allow_methods(&[Method::GET])
+            .allow_header("Access-Control-Allow-Origin"));
 
     // NOTE DELETE /user/<username>
     let delete_user = warp::post()

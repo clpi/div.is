@@ -5,6 +5,7 @@
   let disabled = false;
   let promise = Promise.resolve([]);
   let submitted = false;
+  let fetching = false;
   let verifyPwd = "";
   let signupInfo = {
     email: '',
@@ -27,6 +28,7 @@
       }
     }
   function handleSubmit() {
+      fetching=true;
       console.log(signupInfo);
     promise = signupUser(signupInfo);
     disabled = true;
@@ -75,7 +77,7 @@
         <div class="buttons, submitAuth">
             <Button type="is-light" nativeType="reset" on:click={handleReset}>Reset</Button>
             <Button 
-                type="is-primary" 
+                class={fetching? "is-primary is-loading" : "is-primary" }
                 nativeType="submit" 
                 on:click={ handleSubmit } { disabled }
                 >

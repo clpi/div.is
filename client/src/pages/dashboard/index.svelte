@@ -1,6 +1,5 @@
 <script>
   import {Collapse, Field, Button, Input, Icon, Tabs, Tab } from 'svelma'
-  import Hero from '../../comp/hero.svelte'
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
   let userData = getContext("userData");

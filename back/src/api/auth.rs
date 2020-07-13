@@ -7,9 +7,17 @@ use argonautica::{Hasher, Verifier, config::Variant, input::{SecretKey, Salt}};
 use futures::Future;
 use serde::{Serialize, Deserialize};
 use jsonwebtoken::errors::Result as JWTResult;
+use crate::db::models::User;
 
 // TODO implement salt?
+//
 
+#[derive(Deserialize, Serialize, Clone)]
+pub struct UserSession {
+    pub user: User,
+    pub claims: Claims,
+    pub privel: i32,
+}
 
 pub async fn hash_pwd(key: &String, pwd: &String) -> String {
     let secret_key: SecretKey<'static> = 
@@ -52,10 +60,10 @@ impl Claims {
     }
 }
 
-pub fn encode_jwt(secret: &String, uid: i32) -> Result<String, String> {
+pub fn encode_jwt(secret: &String, user: &User) -> Result<String, String> {
     match encode(
         &Header::default(),
-        &Claims::new(uid),
+        &Claims::new(user.id.unwrap()),
         &EncodingKey::from_secret(secret.as_ref()),
     ) {
         Ok(jwt) => Ok(jwt),

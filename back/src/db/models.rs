@@ -11,7 +11,7 @@ use crate::api::auth::hash_pwd;
 //TODO error handling for with_x functions for models w/o ids -- remove unwrap()
 //sqlx::Type and transparent
 //NOTE: Add (?) last login, pwd hash
-#[derive(Default, FromRow, Serialize, Deserialize)]
+#[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
