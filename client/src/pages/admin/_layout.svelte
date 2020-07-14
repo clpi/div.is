@@ -67,6 +67,9 @@
     .nav-ht {
         font-size: 1.4rem;
     }
+    .wrapper {
+        border-right: 2px solid #fa4;
+    }
 
 </style>
 <div class="admin-db">
@@ -95,6 +98,8 @@
         </div>
     </div>
     <div class="content">
-        <slot/>
+        <div class="wrapper">
+            <slot/>
+        </div>
     </div>
 </div>

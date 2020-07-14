@@ -36,8 +36,7 @@ pub struct UserInfo {
     pub img_path: String,
     pub gender: String,
     pub birth_date: i32,
-    pub city: String,
-    pub country: String,
+    pub location: String,
     pub experience: i32,
     pub privelge_level: i32,
     pub created_at: i32,
@@ -352,7 +351,7 @@ impl User {
         -> sqlx::Result<Vec<User>> 
     {
         let res: Vec<User> = sqlx::query_as::<Sqlite, Self>
-            ("SELECT * FROM Users")
+            ("SELECT * FROM Users;")
             .fetch_all(&db.pool).await?;
         Ok(res)
     }

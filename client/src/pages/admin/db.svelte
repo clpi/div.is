@@ -13,21 +13,10 @@
 		margin: 1em 1em 1em 1em;
         height: 400px;
 	}
-    h1 {
-        font-size: 2rem;
-        font-weight: 300;
-    }
-    h2 {
-        font-size: 1.6rem;
-        font-weight: 300;
-    }
-    h3 {
-        font-size: 1.3rem;
-        font-weight: 300;
-    }
-    Field {
-        margin: 10px;
-    }
+    h1 { font-size: 2rem; font-weight: 300; }
+    h2 { font-size: 1.6rem; font-weight: 300; }
+    h3 { font-size: 1.3rem; font-weight: 300;}
+    h4 { font-size: 1.3rem; font-weight: 300; }
     .dbhome {
         display: inline-block;
     }
@@ -65,8 +54,16 @@
                 <Button>Submit</Button>
             </li>
         </Tab>
+        <Tab label="Operations">
+            <ul>
+            <li class="box">
+                <h3>Clear table</h3>
+                <Field label="Table name"><Input label></Input></Field>            
+                <Button type="is-warning">Clear tables</Button>
+                <Button type="is-danger">Clear all tables</Button>
+            </li>
+        </Tab>
     <Tab label="Performance">
     </Tab>
-    <Tab label="Operations"></Tab>
     </Tabs>
 </div>

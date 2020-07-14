@@ -30,7 +30,6 @@
     <h1>Records</h1>
     <Tabs>
         <Tab label = "Home">
-            <h2>Create users/<h2>
         </Tab>
     <Tab label="Update">
     </Tab>

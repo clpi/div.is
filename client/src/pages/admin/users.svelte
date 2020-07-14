@@ -43,7 +43,7 @@
         font-size: 2rem;
         font-weight: 300;
     }
-    h1 {
+    h2 {
         font-size: 1.6rem;
         font-weight: 300;
     }
@@ -80,7 +80,7 @@
                     <p>{users}</p>
                     <div>
                         <ul>
-                            {#each users as user}
+                            {#each users.json() as user}
                                 <li>
                                     <div class="box">
                                         <h3>{ user.usrename }</h3>

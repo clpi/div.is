@@ -1,5 +1,5 @@
 <script>
-  import { Button, Field, Input } from 'svelma'
+  import { Toast, Button, Field, Input } from 'svelma'
   import { slide, fade }from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
 
@@ -7,23 +7,26 @@
     username: '',
     password: '',
   }
-  export async function logged() {
-    const res = await fetch('http://localhost:3001/api/userstatus', {
-              method: 'GET',
-              credentials: 'include',
-              headers: {
-                cookie: document.cookie,
-              }
-          });
-          if (!res.ok) {
-            setContext('loggedIn', false);
-            setContext('userData', null);
-              loggedIn = false;
-              return null;
-          } else {
-              return session;
-          }
 
+  let toast = () => {
+    Toast.create({ message: "Logging in...", type: "is-success", position: "top" })
+  }
+  let checkLogged = async () => {
+    const res = await fetch('http://localhost:3001/api/userstatus', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        cookie: document.cookie,
+      }
+    });
+    if (!res.ok) {
+      setContext('loggedIn', false);
+      setContext('userData', null);
+      loggedIn = false;
+      return true;
+    } else {
+      return false;
+    }
   }
   let fetching = false;
   let disabled = false;
@@ -77,7 +80,7 @@
             <Button 
                 nativeType="submit" 
                 class={fetching ? 'is-primary is-loading' : 'is-primary'}
-                on:click={ handleLogin } { disabled }
+                on:click={ handleLogin } { disabled } { toast }
                 >
                 Login
             </Button>
@@ -87,8 +90,8 @@
                 <p>waiting...</p>
             {:then userData}
                 {#if submitted}
-                    <p>Welcome {loginInfo.username}!</p>
-                    <p>Your ID: {loginInfo.uid}</p>
+                    <p>Welcome {userData.username}!</p>
+                    <p>Your ID: {userData.uid}</p>
                 {/if}
             {:catch error}
                 <p style="color: red">{error.message}</p>

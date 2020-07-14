@@ -16,7 +16,7 @@
         font-size: 2rem;
         font-weight: 300;
     }
-    h1 {
+    h2 {
         font-size: 1.6rem;
         font-weight: 300;
     }
@@ -30,7 +30,6 @@
     <h1>Statistics</h1>
     <Tabs>
         <Tab label = "Users">
-            <h2>Create users/<h2>
         </Tab>
     <Tab label="Traffic">
     </Tab>

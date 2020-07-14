@@ -81,7 +81,11 @@ pub async fn get_all_users(
                 .unwrap_or("No users".to_string()))
             )
         },
-        Err(_e) => Err(warp::reject()),
+        Err(_e) => {
+            println!("Couldnt get users");
+            Err(warp::reject())
+
+        }    
     }
 }
 

@@ -33,4 +33,17 @@ impl Db {
             .execute(&self.pool).await?;
         Ok( self )
    }
+
+    pub async fn clear(self) -> sqlx::Result<()> {
+        sqlx::query_file!("sql/clear.sql")
+            .execute(&self.pool).await?;
+        Ok( () )
+    }
+
+    pub async fn clear_table(self, table: &str) -> sqlx::Result<()> {
+        sqlx::query("DELETE FROM $1;")
+            .bind(&table)
+            .execute(&self.pool).await?;
+        Ok(())
+    }
 }
