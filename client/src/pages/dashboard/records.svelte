@@ -27,7 +27,7 @@
 </style>
 
 <div in:fade={{duration:100}}>
-    <h1>Records</h1>
+        <h1>Records</h1>
     <Tabs>
         <Tab label = "Home">
             <h2>Records Home<h2>

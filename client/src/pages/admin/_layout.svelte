@@ -12,14 +12,13 @@
     .admin-nb {
         float: left;
         min-width: auto;
-        margin-right: 7vw;
+        margin-right: 5vw;
     }
     .admin-nbl {
         margin-bottom: 1rem;
     }
     .admin-nav {
         margin-left: auto;
-        margin-right: auto;
         max-width: 1200px;
         align-items: center;
         align-content: center;
@@ -68,7 +67,7 @@
         font-size: 1.4rem;
     }
     .wrapper {
-        border-right: 2px solid #fa4;
+        padding-top: 12px;
     }
 
 </style>

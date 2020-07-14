@@ -75,14 +75,11 @@ pub async fn get_all_users(
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match User::fetch_all(db).await {
         Ok(users) => {
-            println!("OK! {}", &serde_json::to_string(&users[..2]).unwrap());
-            Ok(warp::reply::json(
-                &serde_json::to_string(&users)
-                .unwrap_or("No users".to_string()))
+            Ok(serde_json::to_string(&users)
+                .unwrap_or("No users".to_string())
             )
         },
         Err(_e) => {
-            println!("Couldnt get users");
             Err(warp::reject())
 
         }    
@@ -198,6 +195,24 @@ pub async fn add_record(
     // first create record! TODO then insert in db! TODO
     match UserRecordLink::create(db, user_id, record_id, privelege).await {
         Ok(_) => Ok(String::from("Created record")),
+        Err(_) => Err(warp::reject()),
+    }
+}
+
+pub async fn clear_database(
+    db: Db
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match db.clear().await {
+        Ok(_) => Ok(StatusCode::OK.to_string()),
+        Err(_) => Err(warp::reject()),
+    }
+}
+
+pub async fn clear_table(
+    db: Db, table: String
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match db.clear_table(table.as_str()).await {
+        Ok(_) => Ok(StatusCode::OK.to_string()),
         Err(_) => Err(warp::reject()),
     }
 }

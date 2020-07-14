@@ -4,10 +4,6 @@
 </script>
 
 <style>
-    .admin-index {
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
-    }
     .box {
 		width: 300px;
         float: left;
@@ -31,7 +27,7 @@
     }
 </style>
 
-<div class="admin-index" in:fade={{duration:100}}>
+<div in:fade={{duration:100}}>
     <h1>Admin Dashboard</h1>
     <div class="box">
         <h3>Admin</h3>

@@ -50,9 +50,14 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::path!("user" / String))
         .and_then(handlers::get_user_by_username);
 
+    let get_user_by_id = warp::get()
+        .and(with_db(app_data.db.clone()))
+        .and(warp::path!("user" / "id" / String))
+        .and_then(handlers::get_user_by_username);
+
     let get_all_users = warp::get()
         .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / "all"))
+        .and(warp::path("users"))
         .and_then(handlers::get_all_users);
 
     let get_record = warp::get()
@@ -99,16 +104,32 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::path!("user" / String))
         .and_then(handlers::update_user_by_username);
 
+    let clear_db = warp::delete()
+        .and(with_db(app_data.db.clone()))
+        .and(warp::path!("db" / "clear"))
+        .and_then(handlers::clear_database);
+
+    let clear_db_table = warp::delete()
+        .and(with_db(app_data.db.clone()))
+        .and(warp::path!("db" / "clear" / String))
+        .and_then(handlers::clear_table);
+
     // NOTE: /api/user/
     let user_actions = get_user
         .or(delete_user)
         .or(get_all_users)
+        .or(get_user_by_id)
         .or(update_user)
         .or(check_cookie)
         .or(register)
         .or(login);
 
-    let routes = index.or(sum).or(user_actions);
+    let db_actions = clear_db
+        .or(clear_db_table);
+
+    let routes = index.or(sum)
+        .or(user_actions)
+        .or(db_actions);
 
     // TODO register appdata with all routes, exclude from non needed ones
     let api = warp::path("api")

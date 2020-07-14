@@ -4,21 +4,63 @@
   let userList;
   let promise = Promise.resolve([]);
   let submitted = false;
+  let submittedUser = false;
+  let userPromise = Promise.resolve([]);
+  let userUsername = ""; let userId = ""; let userEmail = "";
   async function fetchAll() {
-      const usrs = await fetch('http://localhost:3001/api/user/all', {
+      const usrs = await fetch('http://localhost:3001/api/users', {
           method: 'GET',
           headers: {
             'content-type': 'application/json',
-              /*authorization: <authorization>*/
           },
-      });
+      })
+          .catch(err=>{
+              console.log(err);
+          });
       if (usrs.ok) {
           userList = usrs;
-          return usrs;
+          return usrs.json();
       } else {
         throw new Error(users);
       }
     }
+  async function getByEmail() {}
+  async function getByUsername() {
+      const usr = await fetch('http://localhost:3001/api/user/'+userUsername, {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+          },
+      })
+          .catch(err=>{
+              console.log(err);
+          });
+    if (usr.ok) { return usr.json() }
+  }
+  async function getById() {
+      const usr = await fetch('http://localhost:3001/api/user/id'+userId, {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+          },
+      })
+          .catch(err=>{
+              console.log(err);
+          });
+    if (usr.ok) { return usr.json() }
+  }
+  function handleUsername() {
+      userPromise = getByUsername();
+      submittedUser = true;
+  }
+  function handleEmail() {
+      userPromise = getByEmail();
+      submittedUser = true;
+  }
+  function handleId() {
+      userPromise = getById();
+      submittedUser = true;
+  }
   function fetchUsers() {
     promise = fetchAll();
     submitted = true;
@@ -26,10 +68,6 @@
 
 </script>
 <style>
-    .signupForm{
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
-    }
     .box {
 		width: 300px;
         float: left;
@@ -37,7 +75,7 @@
 		border-radius: 2px;
 		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
 		padding: 1em;
-		margin: 1em 1em 1em 1em;
+        margin: 1em;
 	}
     h1 {
         font-size: 2rem;
@@ -51,17 +89,61 @@
         font-size: 1.3rem;
         font-weight: 300;
     }
+    ul {
+        list-style-type: none;
+        display: inline-block;
+    }
+    p { font-size: 1em; }
+    li {
+        float: left;
+    }
+    .utab {
+        padding-left: 10px;
+    }
 </style>
 
-<div in:fade={{duration:100}} class="signupForm">
+<div in:fade={{duration:100}}>
     <h1>User Admininistration</h1>
     <Tabs>
-        <Tab label = "Create">
+        <Tab class="utab" label = "Get">
+            <h2>Get user<h2>
+            <ul>
+                <li>
+                    <div class="box">
+                        <Field label="By username"><Input label="Username" bind:value={userUsername}></Input></Field>             
+                        <Button on:click={handleUsername}>Submit</Button>
+
+                            <Field label="By email"><Input label="Username" bind:value={userEmail}></Input></Field>             
+                        <Button on:click={handleEmail}>Submit</Button>
+                            <Field label="By id"><Input label="Username" bind:value={userId}></Input></Field>             
+                        <Button on:click={handleId}>Submit</Button>
+                    </div>
+                </li>
+                {#if submittedUser}
+                    {#await userPromise}
+                        <p>Getting user...</p>
+                    {:then user}
+                        <li>
+                            <div class="box" in:fade>
+                                <p in:fade>{ user.username }</p>
+                                <p in:fade><b>id: </b>{user.id}</p>
+                                <p in:fade><b>Email: </b>{user.email}</p>
+                                <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
+                                
+                            </div>
+                        </li>
+                    {:catch}
+                        <p>No user found.</p>
+                    {/await}
+
+                {/if}
+            </ul>
+        </Tab>
+        <Tab class="utab" label = "Create">
             <h2>Create users/<h2>
         </Tab>
-    <Tab label="Users">
+    <Tab label="Users" class="utab">
         <h2>Fetch users</h2>
-        <p>{ userList }</p>
         <div class="users-tab">
             <div>
                 <Button 
@@ -75,19 +157,17 @@
             <br/>
             {#if submitted}
                 {#await promise}
-                    <p>PFetching usres...</p>
+                    <p>Fetching users...</p>
                 {:then users}
-                    <p>{users}</p>
                     <div>
                         <ul>
-                            {#each users.json() as user}
+                            {#each users as user}
                                 <li>
-                                    <div class="box">
-                                        <h3>{ user.usrename }</h3>
-                                        <p><em>Created at { user.created_at }</em></p>
-                                        <p><b>id: </b>{user.id}</p>
-                                        <p><b>Email: </b>{user.email}</p>
-                                        <p><b>Password: </b>{user.password}</p>
+                                    <div class="box" in:slide>
+                                        <h3 in:fade>{ user.username }</h3>
+                                        <p in:fade><b>id: </b>{user.id}</p>
+                                        <p in:fade><b>Email: </b>{user.email}</p>
+                                        <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
                                     </div>
                                 </li>
                             {:else}
