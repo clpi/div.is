@@ -4,33 +4,11 @@
   import { slide } from 'svelte/transition'
   import 'bulma/css/bulma.css'
   import { setContext, getContext, onMount } from 'svelte'
-  import { session } from 'login.svelte'
-      /*await fetch('http://localhost:3001/api/userstatus', {*/
-        /*method: "GET",*/
-        /*crdentials: "include",*/
-        /*headers: {*/
-            /*'Accept': 'application/json',*/
-            /*'Content-Type': 'application/json',*/
-            /*'Cache': 'no-cache',*/
-            /*'Token': getContext("token"),*/
-        /*}*/
-      /*})*/
-          /*.then(res => setContext("userData", res.json()))*/
-          /*.then(res => setContext("loggedIn", res.ok))*/
-          /*.catch(err => {*/
-            /*console.log(err);*/
-            /*setContext("userData", null);*/
-            /*setContext("loggedIn", false);*/
-              /*setContext("token", null);*/
-          /*});*/
-  /*});*/
   let loggedIn = getContext('loggedIn'); 
-  let userData = getContext('userData');
   onMount(async () => {
       if (loggedIn == undefined || userData == undefined) {
         setContext('loggedIn', false);
         setContext('userData', null);
-
       }
       if (loggedIn) {
           let res = await fetch('http://localhost:3001/api/userstatus', {
@@ -44,11 +22,6 @@
             setContext('loggedIn', false);
             setContext('userData', null);
           }
-      }
-      if (logged == undefined) {
-          logged = writable(false);
-          session = wriable(null);
-          duration = writable(0);
       }
     userData = getContext('userData');
   })

@@ -1,10 +1,11 @@
 <script>
   import { slide, fade } from 'svelte/transition'
-  import { setContext, getContext, onMount } from 'svelte'
-  import { logged, session } from 'login.svelte'
+  import { setContext, beforeUpdate, getContext, onMount } from 'svelte'
+  import {writable, readable} from 'svelte/store'
+  export const session = writable(null);
   let loggedIn = getContext('loggedIn'); 
   let userData;
-  onMount(async () => {
+  beforeUpdate(async () => {
       if (loggedIn) {
           let res = await fetch('http://localhost:3001/api/userstatus', {
               method: 'GET',
@@ -51,16 +52,7 @@
 <div class="home-wrapper" in:fade={{duration:100}}>
     <div class="box">
         <h2>Hello</h2>
-        <p>{document.cookie}</p>
-        <p>{session}</p>
-            {#await logged()}
-                <p>waiting for userdata</p>
-            {:then user}
-                <p>Welcome { session.username }</p>
-            {:catch}
-                <p>couldnt get user</p>
-            {/await}
-        <p>userData { userData }</p>
+        <p>{userData}</p>
     </div>
     <div class="box">
         <h2>How are you</h2>
