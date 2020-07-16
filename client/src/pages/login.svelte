@@ -1,5 +1,4 @@
 <script>
-  import { Toast, Button, Field, Input } from 'svelma'
   import { slide, fade }from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
 
@@ -9,7 +8,7 @@
   }
 
   let toast = () => {
-    Toast.create({ message: "Logging in...", type: "is-success", position: "top" })
+      console.log("toasted");
   }
   let checkLogged = async () => {
     const res = await fetch('http://localhost:3001/api/userstatus', {
@@ -64,26 +63,29 @@
         padding-left: 15.5vw;
         padding-right: 15.5vw;
     }
+    .loading {
+        box-shadow: 2px 2px #000;
+    }
 </style>
 
 <div>
     <div in:fade={{duration:100}} class="loginForm">
 
-        <Field label="Username"> 
-            <Input type="email" bind:value={loginInfo.username} />
-        </Field>
+        <form label="Username"> 
+            <input type="email" bind:value={loginInfo.username} />
+        </form>
 
-        <Field label="Password"> 
-            <Input type="password" bind:value={loginInfo.password} passwordReveal={true} />
-        </Field>
+        <form label="Password"> 
+            <input type="password" bind:value={loginInfo.password} passwordReveal={true} />
+        </form>
         <div class="buttons, submitAuth">
-            <Button 
-                nativeType="submit" 
-                class={fetching ? 'is-primary is-loading' : 'is-primary'}
+            <button 
+                type="submit" 
+                class={fetching ? 'loading' : ''}
                 on:click={ handleLogin } { disabled } { toast }
                 >
                 Login
-            </Button>
+            </button>
         </div>
         <div class=loginRes>
             {#await promise}

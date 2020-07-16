@@ -2,7 +2,6 @@
   import { Router } from "@sveltech/routify";
   import { routes } from "@sveltech/routify/tmp/routes";
   import { slide } from 'svelte/transition'
-  import 'bulma/css/bulma.css'
   import { setContext, getContext, onMount } from 'svelte'
   let loggedIn = getContext('loggedIn'); 
   onMount(async () => {
@@ -36,7 +35,8 @@
     }
     .contain {
         min-width: max-content;
-        margin: auto;
+        margin-left: auto;
+        margin-right: auto;
         background-color: #fffefd;
     }
 

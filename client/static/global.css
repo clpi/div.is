@@ -63,3 +63,15 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+h1 {
+    font-size: 2rem;
+    font-weight: 300;
+}
+h2 {
+    font-size: 1.6rem;
+    font-weight: 300;
+}
+h3 {
+    font-size: 1.3rem;
+    font-weight: 300;
+}

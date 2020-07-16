@@ -1,42 +1,18 @@
 <script>
-  import { Tabs, Tab, Button, Field, Input } from 'svelma'
   import { slide, fade } from 'svelte/transition'
+  import Box from '../../comp/ui/box.svelte';
+  import Tab from '../../comp/ui/tab.svelte';
 </script>
 <style>
-    .box {
-		width: 300px;
-        float: left;
-		border: 1px solid #fa4;
-		border-radius: 2px;
-		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-		padding: 1em;
-		margin: 1em 1em 1em 1em;
-	}
-    h1 {
-        font-size: 2rem;
-        font-weight: 300;
-    }
-    h2 {
-        font-size: 1.6rem;
-        font-weight: 300;
-    }
-    h3 {
-        font-size: 1.3rem;
-        font-weight: 300;
-    }
 </style>
 
 <div in:fade={{duration:100}}>
     <h1>Stats</h1>
-    <Tabs>
         <Tab label = "Home">
             <h2>Stats Dashboard<h2>
-            <div class="box">
-                <h3>hello</h3>
-            </div>
+                    <Box title="stats">dsf</Box>
         </Tab>
     <Tab label="Records">
     </Tab>
     <Tab label="Entries"></Tab>
-    </Tabs>
 </div>

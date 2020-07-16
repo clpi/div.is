@@ -1,6 +1,8 @@
 <script>
-  import { Tabs, Tab, Button, Field, Input } from 'svelma'
-  import { slide, fade } from 'svelte/transition'
+  import { slide, fade } from 'svelte/transition';
+  import Box from '../../comp/ui/box.svelte';
+  import Tab from '../../comp/ui/tab.svelte';
+  import Infobox from '../../comp/ui/box.svelte';
   let userList;
   let promise = Promise.resolve([]);
   let submitted = false;
@@ -68,27 +70,6 @@
 
 </script>
 <style>
-    .box {
-		width: 300px;
-        float: left;
-		border: 1px solid #fa4;
-		border-radius: 2px;
-		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-		padding: 1em;
-        margin: 1em;
-	}
-    h1 {
-        font-size: 2rem;
-        font-weight: 300;
-    }
-    h2 {
-        font-size: 1.6rem;
-        font-weight: 300;
-    }
-    h3 {
-        font-size: 1.3rem;
-        font-weight: 300;
-    }
     ul {
         list-style-type: none;
         display: inline-block;
@@ -104,38 +85,46 @@
 
 <div in:fade={{duration:100}}>
     <h1>User Admininistration</h1>
-    <Tabs>
         <Tab class="utab" label = "Get">
             <h2>Get user<h2>
+                <Box title="hello">poopoo</Box>
+                <Infobox title="info">info</Infobox>
             <ul>
                 <li>
-                    <div class="box">
-                        <Field label="By username"><Input label="Username" bind:value={userUsername}></Input></Field>             
-                        <Button on:click={handleUsername}>Submit</Button>
-
-                            <Field label="By email"><Input label="Username" bind:value={userEmail}></Input></Field>             
-                        <Button on:click={handleEmail}>Submit</Button>
-                            <Field label="By id"><Input label="Username" bind:value={userId}></Input></Field>             
-                        <Button on:click={handleId}>Submit</Button>
-                    </div>
+                    <Box title="By username">
+                        <form label="Username">
+                            <Input label="Username" bind:value={userUsername}/>
+                        </form>             
+                        <button on:click={handleUsername}>Submit</button>
+                    </Box>
+                    <Box title="By email">
+                        <form label="Email">
+                            <Input label="Email" bind:value={userEmail}/>
+                        </form>             
+                        <button on:click={handleEmail}>Submit</button>
+                    </Box>
+                    <Box title="By ID">
+                        <form label="ID">
+                            <input label="ID" bind:value={userId}/>
+                        </form>             
+                        <button on:click={handleId}>Submit</button>
+                    </Box>
                 </li>
                 {#if submittedUser}
                     {#await userPromise}
                         <p>Getting user...</p>
                     {:then user}
                         <li>
-                            <div class="box" in:fade>
+                            <Box title="User">
                                 <p in:fade>{ user.username }</p>
                                 <p in:fade><b>id: </b>{user.id}</p>
                                 <p in:fade><b>Email: </b>{user.email}</p>
                                 <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
-                                
-                            </div>
+                            </Box>
                         </li>
                     {:catch}
                         <p>No user found.</p>
                     {/await}
-
                 {/if}
             </ul>
         </Tab>
@@ -146,13 +135,12 @@
         <h2>Fetch users</h2>
         <div class="users-tab">
             <div>
-                <Button 
-                    type="is-primary" 
-                    nativeType="submit" 
+                <button 
+                    type="submit" 
                     on:click={ fetchUsers }
                 >
                     Fetch
-                </Button>
+                </button>
             </div>
             <br/>
             {#if submitted}
@@ -163,19 +151,19 @@
                         <ul>
                             {#each users as user}
                                 <li>
-                                    <div class="box" in:slide>
+                                    <Box title="User">
                                         <h3 in:fade>{ user.username }</h3>
                                         <p in:fade><b>id: </b>{user.id}</p>
                                         <p in:fade><b>Email: </b>{user.email}</p>
                                         <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
-                                    </div>
+                                    </Box>
                                 </li>
                             {:else}
                                 <li>
-                                    <div class="box">
+                                    <Box>
                                         <h3>No users found</h3>
                                         <p><em>Try creating some</em></p>
-                                    </div>
+                                    </Box>
                                 </li>
                             {/each}
                         </ul>
@@ -187,5 +175,4 @@
             {/if}
         </div>
     </Tab>
-    </Tabs>
 </div>

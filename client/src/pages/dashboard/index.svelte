@@ -1,7 +1,8 @@
 <script>
-  import {Collapse, Field, Button, Input, Icon, Tabs, Tab } from 'svelma'
   import { slide, fade } from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
+  import Box from '../../comp/ui/box.svelte';
+  import Tab from '../../comp/ui/tab.svelte';
   let userData = getContext("userData");
   let loggedIn = getContext("loggedIn");
   console.log(userData);
@@ -19,36 +20,31 @@
     }
     .dbindex {
     }
-    h1 {
-        font-size: 2rem;
-        font-weight: 300;
-    }
 </style>
 <div class="dbindex" in:fade={{duration:100}}>
     <h1>dashboard</h1>
     <div class="buttons">
-        <Button type="is-success" iconPack="fa" iconLeft="plus">Save</Button>
-        <Button iconPack="fa" iconLeft="edit">Save</Button>
-            <Button outline iconPack="fa" iconLeft="times">Delete</Button>
+        <button>Save</button>
+        <button>Save</button>
+            <button>Delete</button>
             <div class="searchbar">
-                <Field id="searchbar">
-                    <Input type="search" placeholder="Search" icon="search" position="is-centered"/>
+                <form id="searchbar">
+                    <input type="search" placeholder="Search"/>
                     <p class="control">
-                        <Button type="is-primary">Search</Button>
+                        <button>Search</button>
                     </p>
-                </Field>
+                </form>
             </div>
     </div>
 
     <div class=dbcontainer>
-        <Tabs style="is-fullwidth" position="is_centered">
             <Tab label="Home">
-            <Button iconPack="fab" iconLeft="github">Github</Button>
+            <button>Github</button>
         </Tab>
         <Tab label="Records">
             <div class="recordOptions">
-                <Button iconPack="fab" iconLeft="add" type= "is-primary">Update</Button>
-                    <Button iconPack="fab" iconLeft="remove" type="is-danger">No Data</Button>
+                <button>Update</button>
+                    <button>No Data</button>
             </div>
             <table class="table is-fullwidth">
                 <thead>
@@ -66,6 +62,5 @@
         </Tab>
         <Tab label="Items"></Tab>
             <Tab label="Entries"></Tab>
-        </Tabs>
     </div>
 </div>

@@ -1,6 +1,5 @@
 
 <script>
-  import { Button, Field, Input } from 'svelma'
   import { slide, fade } from 'svelte/transition'
   let disabled = false;
   let promise = Promise.resolve([]);
@@ -42,8 +41,8 @@
   }
 
   // maybe get a library for this
-  function verifyInput(){}
-  // add name field to user model
+  function verifyinput(){}
+  // add name form to user model
 </script>
 
 <style>
@@ -62,27 +61,27 @@
     <div in:fade={{duration:100}} class="signupForm">
         <!-- Maybe do this with traditional form input instead of binding -->
         <!-- Get a form validator library -->
-        <Field label="Email" type="text">
-            <Input type="email" bind:value={signupInfo.email} maxlength="30" />
-        </Field>
-        <Field label="Username" type="text">
-            <Input type="username" bind:value={signupInfo.username} />
-        </Field>
-        <Field label="Password"> 
-            <Input type="password" bind:value={signupInfo.password} passwordReveal={true} />
-        </Field>
-        <Field label="Verify Password"> 
-            <Input type="password" bind:value={verifyPwd} passwordReveal={true} />
-        </Field>
+        <form label="Email" type="text">
+            <input type="email" bind:value={signupInfo.email} maxlength="30" />
+        </form>
+        <form label="Username" type="text">
+            <input type="username" bind:value={signupInfo.username} />
+        </form>
+        <form label="Password"> 
+            <input type="password" bind:value={signupInfo.password} passwordReveal={true} />
+        </form>
+        <form label="Verify Password"> 
+            <input type="password" bind:value={verifyPwd} passwordReveal={true} />
+        </form>
         <div class="buttons, submitAuth">
-            <Button type="is-light" nativeType="reset" on:click={handleReset}>Reset</Button>
-            <Button 
+            <button type="is-light" nativeType="reset" on:click={handleReset}>Reset</button>
+            <button 
                 class={fetching? "is-primary is-loading" : "is-primary" }
                 nativeType="submit" 
                 on:click={ handleSubmit } { disabled }
                 >
                 Submit
-            </Button>
+            </button>
         </div>
         <div class=loginRes>
             {#await promise}

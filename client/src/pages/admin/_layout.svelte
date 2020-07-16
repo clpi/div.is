@@ -1,6 +1,5 @@
 <script>
   import { isActive, url, layout } from "@sveltech/routify";
-  import { Button, Collapse, Icon, Field, Input, Modal} from 'svelma';
   import { setContext, getContext, onMount } from 'svelte'
   import { fade } from 'svelte/transition';
 </script>

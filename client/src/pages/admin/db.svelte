@@ -1,22 +1,9 @@
 <script>
-  import { Tabs, Tab, Button, Field, Input } from 'svelma'
   import { slide, fade } from 'svelte/transition'
+  import Box from '../../comp/ui/box.svelte';
+  import Tab from '../../comp/ui/tab.svelte';
 </script>
 <style>
-    .box {
-		width: 300px;
-        float: left;
-		border: 1px solid #fa4;
-		border-radius: 2px;
-		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-		padding: 1em;
-		margin: 1em 1em 1em 1em;
-        height: 400px;
-	}
-    h1 { font-size: 2rem; font-weight: 300; }
-    h2 { font-size: 1.6rem; font-weight: 300; }
-    h3 { font-size: 1.3rem; font-weight: 300;}
-    h4 { font-size: 1.3rem; font-weight: 300; }
     .dbhome {
         display: inline-block;
     }
@@ -24,46 +11,49 @@
 
 <div in:fade={{duration:100}}>
     <h1>Database</h1>
-    <Tabs>
         <Tab label = "Home" class="dbhome">
             <ul>
-            <li class="box">
-                <h3>Create user</h3>
-                <Field label=Email><Input label=Email></Input></Field>             
-                <Field label=Username><Input label=Username></Input></Field>             
-                <Field label=Password><Input label=Passsword></Input></Field>             
-                <Button>Submit</Button>
+            <li>
+                <Box label="Create user">
+                    <form label=Email><input label="Email"/></form>             
+                    <form label=Username><input label="Username"/></form>             
+                    <form label=Password><input label="Passsword"/></form>             
+                            <button>Submit</button>
+                </Box>
             </li>
-            <li class="box">
-                <h3>Create Record</h3>
-                <Field label=Name><Input label=Email></Input></Field>             
-                <Field label=User><Input label=Username></Input></Field>             
-                <Button>Submit</Button>
+            <li>
+                <Box label="Create record">
+                <form label=Name><input label="Email"/></form>             
+                <form label=User><input label="Username"/></form>             
+                <button>Submit</button>
+                </Box>
             </li>
-            <li class="box">
-                <h3>Create Item</h3>
-                <Field label=Name><Input label=Email></Input></Field>             
-                <Field label=User><Input label=Username></Input></Field>             
-                <Button>Submit</Button>
+            <li>
+                <Box label="Create item">
+                <form label=Name><input label="Email"/></form>             
+                <form label=User><input label="Username"/></form>             
+                <button>Submit</button>
+                </Box>
             </li>
-            <li class="box">
-                <h3>Create Field</h3>
-                <Field label=Name><Input label=Email></Input></Field>             
-                <Field label=Type><Input label=Username></Input></Field>             
-                <Field label=Value><Input label=Username></Input></Field>             
-                <Button>Submit</Button>
+            <li>
+                <Box label="Create form">
+                <form label=Name><input label="Email"/></form>             
+                <form label=Type><input label="Username"/></form>             
+                <form label=Value><input label="Username"/></form>             
+                <button>Submit</button>
+                </Box>
             </li>
         </Tab>
         <Tab label="Operations">
             <ul>
-            <li class="box">
-                <h3>Clear table</h3>
-                <Field label="Table name"><Input label></Input></Field>            
-                <Button type="is-warning">Clear tables</Button>
-                <Button type="is-danger">Clear all tables</Button>
+            <li>
+                <Box label="Clear table">
+                <form label="Table name"><input label="table"/></form>            
+                <button type="is-warning">Clear tables</button>
+                <button type="is-danger">Clear all tables</button>
+                </Box>
             </li>
         </Tab>
     <Tab label="Performance">
     </Tab>
-    </Tabs>
 </div>
