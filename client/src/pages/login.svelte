@@ -44,7 +44,7 @@
       if (loginPost.ok) {
         setContext("loggedIn", true);
         setContext("userData", loginPost);
-        return loginPost;
+        return loginPost.json();
       } else {
         throw new Error(users);
       }

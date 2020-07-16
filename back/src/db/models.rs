@@ -290,20 +290,20 @@ impl User {
 
     pub async fn with_user_info(self, info: UserInfo) -> () {  }
 
-    pub async fn delete_by_id(db: Db, id:i32) -> sqlx::Result<u64> {
+    pub async fn delete_by_id(db: &Db, id:i32) -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users where id=?")
             .bind(id)
             .execute(&db.pool).await
     }
 
-    pub async fn delete_by_username(db: Db, username: String) 
+    pub async fn delete_by_username(db: &Db, username: String) 
     -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users where username=?")
             .bind(username)
             .execute(&db.pool).await
     }
 
-    pub async fn from_id(db: Db, id: i32 )
+    pub async fn from_id(db: &Db, id: i32 )
         -> sqlx::Result<Self> 
     {
         let res: Self = sqlx::query_as::<Sqlite, Self>(
@@ -335,7 +335,7 @@ impl User {
             .fetch_one(&db.pool).await
     }
 
-    pub async fn from_db<T: Into<String>>(db: Db, param: &str, value: T)
+    pub async fn from_db<T: Into<String>>(db: &Db, param: &str, value: T)
         -> sqlx::Result<Self> 
     {
         let val: String = value.into();
@@ -347,7 +347,7 @@ impl User {
         Ok(res)
     }
 
-    pub async fn fetch_all(db: Db)
+    pub async fn fetch_all(db: &Db)
         -> sqlx::Result<Vec<User>> 
     {
         let res: Vec<User> = sqlx::query_as::<Sqlite, Self>
@@ -370,13 +370,13 @@ impl User {
         }
     }
 
-    pub async fn with_record(&self, db: Db, record_id: i32, privelege: i32) 
+    pub async fn with_record(&self, db: &Db, record_id: i32, privelege: i32) 
         -> sqlx::Result<()> {
-        UserRecordLink::create(db, self.id.unwrap(), record_id, privelege).await?;
+        UserRecordLink::create(&db, self.id.unwrap(), record_id, privelege).await?;
         Ok(())
     }
 
-    pub async fn get_records(&self, db: Db) -> sqlx::Result<Vec<Record>> {
+    pub async fn get_records(&self, db: &Db) -> sqlx::Result<Vec<Record>> {
         let res: Vec<Record> = sqlx::query_as::<Sqlite, Record>(
             "SELECT * FROM Records WHERE uid=?;")
             .bind(self.id)
@@ -407,7 +407,7 @@ impl Record {
         }
     }
 
-    pub async fn insert(self, db: Db) -> sqlx::Result<()> {
+    pub async fn insert(self, db: &Db) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO Records 
         (uid, name, status, private, created_at) 
         VALUES ($1, $2, $3, $4, $5);")  
@@ -420,7 +420,7 @@ impl Record {
         Ok(())
     }
 
-    pub async fn get_items(self, db: Db) -> sqlx::Result<Vec<Item>> {
+    pub async fn get_items(self, db: &Db) -> sqlx::Result<Vec<Item>> {
         let items: Vec<Item> = sqlx::query_as::<Sqlite, Item>("
             SELECT * FROM Items INNER JOIN RecordItemLinks 
             ON RecordItemLinks.iid=Items.id WHERE RecordItemLinks.iid=?;")
@@ -445,28 +445,31 @@ impl Record {
    }
 
     pub async fn with_item(&self, 
-        db: Db, 
+        db: &Db, 
         item_id: i32, 
         priority: Option<i32>
     ) -> sqlx::Result<()> {
-        RecordItemLink::create(db, self.id.unwrap(), item_id, priority).await?;
+        RecordItemLink::create(&db, self.id.unwrap(), item_id, priority).await?;
         Ok(())
     }
+
 }
+
+//TODO allow for requests like User::with_id(id).delete() or User::with_username(
 
 impl Item {
     pub async fn new() {}
 
     pub async fn with_field(&self, 
-        db: Db, 
+        db: &Db, 
         field_id: i32, 
         priority: Option<i32>
     ) -> sqlx::Result<()> {
-        ItemFieldLink::create(db, self.id.unwrap(), field_id, priority).await?;
+        ItemFieldLink::create(&db, self.id.unwrap(), field_id, priority).await?;
         Ok(())
     }
 
-    pub async fn get_fields(self, db: Db) -> sqlx::Result<Vec<Field>> {
+    pub async fn get_fields(self, db: &Db) -> sqlx::Result<Vec<Field>> {
         let items: Vec<Field> = sqlx::query_as::<Sqlite, Field>("
             SELECT * FROM Fields INNER JOIN ItemFieldLinks 
             ON ItemFieldLinks.fid=Fields.id WHERE ItemFieldLinks.fid=?")
@@ -478,7 +481,7 @@ impl Item {
 
 impl RecordItemLink {
     pub async fn create(
-        db: Db,
+        db: &Db,
         record_id: i32,
         item_id: i32,
         priority: Option<i32>
@@ -497,7 +500,7 @@ impl RecordItemLink {
 
 impl ItemFieldLink {
     pub async fn create(
-        db: Db,
+        db: &Db,
         item_id: i32,
         field_id: i32,
         priority: Option<i32>
@@ -516,7 +519,7 @@ impl ItemFieldLink {
 
 impl FieldEntryLink {
     pub async fn create(
-        db: Db,
+        db: &Db,
         field_id: i32,
         entry_type_id: i32,
     ) -> sqlx::Result<()> {
@@ -532,7 +535,7 @@ impl FieldEntryLink {
 
 impl UserGroupLink {
     pub async fn create(
-        db: Db,
+        db: &Db,
         user_id: i32,
         group_id: i32,
         role: String,
@@ -550,7 +553,7 @@ impl UserGroupLink {
 
 impl UserRecordLink {
     pub async fn create(
-        db: Db,
+        db: &Db,
         user_id: i32,
         record_id: i32,
         privelege: i32,
@@ -569,8 +572,8 @@ impl UserRecordLink {
 impl EntryType {
     pub async fn new() {}
     
-    pub async fn with_field(&self, db: Db, field_id: i32) -> sqlx::Result<()> {
-        FieldEntryLink::create(db, field_id, self.id.unwrap()).await?;
+    pub async fn with_field(&self, db: &Db, field_id: i32) -> sqlx::Result<()> {
+        FieldEntryLink::create(&db, field_id, self.id.unwrap()).await?;
         Ok(())
     }
 }
@@ -583,9 +586,9 @@ impl Field {
 impl Group {
     pub async fn new() {}
 
-    pub async fn with_user(&self, db: Db, user_id: i32, role: String) 
+    pub async fn with_user(&self, db: &Db, user_id: i32, role: String) 
         -> sqlx::Result<()> {
-        UserGroupLink::create(db, user_id, self.id.unwrap(), role).await?;
+        UserGroupLink::create(&db, user_id, self.id.unwrap(), role).await?;
         Ok(())
     }
 }

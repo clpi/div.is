@@ -9,6 +9,7 @@ use self::api::handlers;
 use std::collections::HashMap;
 use warp::http::Method;
 use db::Db;
+use api::using;
 
 // TODO: Created BoxedFilter routes in api/routes/*.rs modules
 // TODO: Implement CRUD for basic records
@@ -75,6 +76,11 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::body::json())
         .and_then(handlers::login);
 
+    //let login = warp::post()
+        //.and(with_data(app_data))
+        //.and(warp::path!("auth" / "login"))
+        //.and(warp::header("Authorization"))
+
     // NOTE POST /api/register
     let register = warp::post()
         .and(with_data(app_data.clone()))
@@ -127,9 +133,13 @@ async fn main() -> sqlx::Result<()> {
     let db_actions = clear_db
         .or(clear_db_table);
 
+    let test_routes = api::routes::routes(app_data);
+
     let routes = index.or(sum)
+        .or(api::routes::test())
         .or(user_actions)
-        .or(db_actions);
+        .or(db_actions)
+        .or(test_routes);
 
     // TODO register appdata with all routes, exclude from non needed ones
     let api = warp::path("api")
