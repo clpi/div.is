@@ -67,7 +67,7 @@ pub fn encode_jwt(secret: &String, user: &User) -> Result<String, String> {
         &EncodingKey::from_secret(secret.as_ref()),
     ) {
         Ok(jwt) => Ok(jwt),
-        Err(err) => Err(String::from("Couldn't encode")),
+        Err(_) => Err(String::from("Couldn't encode")),
     }
 }
 

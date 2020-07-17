@@ -3,8 +3,15 @@
   import { setContext, getContext, onMount } from 'svelte'
   import Box from '../../comp/ui/box.svelte';
   import Tab from '../../comp/ui/tab.svelte';
-  let userData = getContext("userData");
-  let loggedIn = getContext("loggedIn");
+  import { afterPageLoad } from "@sveltech/routify";
+
+  let userData;
+  let loggedIn;
+$afterPageLoad(page => {
+  userData = getContext("userData");
+  loggedIn = getContext("loggedIn");
+})
+
   console.log(userData);
   console.log(loggedIn);
 </script>
@@ -23,6 +30,7 @@
 </style>
 <div class="dbindex" in:fade={{duration:100}}>
     <h1>dashboard</h1>
+    <p> {userData} {loggedIn}
     <div class="buttons">
         <button>Save</button>
         <button>Save</button>

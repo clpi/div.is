@@ -53,8 +53,8 @@ async fn main() -> sqlx::Result<()> {
 
     let get_user_by_id = warp::get()
         .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / "id" / String))
-        .and_then(handlers::get_user_by_username);
+        .and(warp::path!("user" / "id" / i32))
+        .and_then(handlers::get_user_by_id);
 
     let get_all_users = warp::get()
         .and(with_db(app_data.db.clone()))
@@ -133,13 +133,17 @@ async fn main() -> sqlx::Result<()> {
     let db_actions = clear_db
         .or(clear_db_table);
 
+    let statc = warp::path("static").and(warp::fs::dir("../../client/public`"));
+
     let test_routes = api::routes::routes(app_data);
 
     let routes = index.or(sum)
         .or(api::routes::test())
         .or(user_actions)
         .or(db_actions)
-        .or(test_routes);
+        .or(test_routes)
+        .or(statc);
+
 
     // TODO register appdata with all routes, exclude from non needed ones
     let api = warp::path("api")

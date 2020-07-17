@@ -10,23 +10,6 @@
   let toast = () => {
       console.log("toasted");
   }
-  let checkLogged = async () => {
-    const res = await fetch('http://localhost:3001/api/userstatus', {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        cookie: document.cookie,
-      }
-    });
-    if (!res.ok) {
-      setContext('loggedIn', false);
-      setContext('userData', null);
-      loggedIn = false;
-      return true;
-    } else {
-      return false;
-    }
-  }
   let fetching = false;
   let disabled = false;
   let promise = Promise.resolve([]);
@@ -51,9 +34,9 @@
     }
   function handleLogin() {
     fetching = true;
-    promise = loginUser(loginInfo);
     disabled = true;
     submitted = true;
+    promise = loginUser(loginInfo);
   }
   // allow username OR email for signin
 </script>
@@ -92,6 +75,7 @@
                 <p>waiting...</p>
             {:then userData}
                 {#if submitted}
+                    <p>{userData}</p>
                     <p>Welcome {userData.username}!</p>
                     <p>Your ID: {userData.uid}</p>
                 {/if}

@@ -88,18 +88,17 @@
         <Tab class="utab" label = "Get">
             <h2>Get user<h2>
                 <Box title="hello">poopoo</Box>
-                <Infobox title="info">info</Infobox>
             <ul>
                 <li>
                     <Box title="By username">
                         <form label="Username">
-                            <Input label="Username" bind:value={userUsername}/>
+                            <input label="Username" bind:value={userUsername}/>
                         </form>             
                         <button on:click={handleUsername}>Submit</button>
                     </Box>
                     <Box title="By email">
                         <form label="Email">
-                            <Input label="Email" bind:value={userEmail}/>
+                            <input label="Email" bind:value={userEmail}/>
                         </form>             
                         <button on:click={handleEmail}>Submit</button>
                     </Box>

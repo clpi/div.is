@@ -3,9 +3,9 @@ use warp::http::Response;
 use warp::http::StatusCode;
 use crate::db::models::*;
 use crate::db::Db;
-use crate::api::AppData;
 use chrono::Utc;
-use super::auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt};
+use super::{using, AppData,
+    auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt}};
 
 #[derive(Serialize, Deserialize)]
 pub struct UserLogin {
@@ -117,6 +117,40 @@ pub async fn login (
     }
 }
 
+pub fn refresh(data: AppData) -> impl Filter<Extract=impl warp::Reply, Error=warp::Rejection> + Clone {
+    warp::post().and(warp::path("auth"))
+        .and(warp::path("check"))
+        .and(using(data))
+        .and(warp::cookie::optional("Authorization"))
+        .and_then(check_cookie)
+}
+
+pub async fn login_header (
+    data: AppData, req_user: UserLogin,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match User::from_username(&data.db, req_user.username).await {
+        Ok(db_user) => {
+            let (db_pwd, req_pwd) = (&db_user.password, &req_user.password);
+            if verify_pwd(&data.secret_key, &req_pwd, &db_pwd).await {
+                println!("LOGIN: Logged in {}", db_user.username);
+                let jwt = encode_jwt(&data.jwt_secret, &db_user).unwrap();
+                let resp = SessionData::new(&db_user, &jwt, 0);
+                Ok(warp::reply::with_header(
+                    serde_json::to_string(&resp).unwrap(),
+                    warp::http::header::SET_COOKIE,
+                    format!("Authorization={}", jwt)
+                ))
+            } else {
+                println!("LOGIN: Incorrect password for {}", db_user.username);
+                Err(warp::reject())
+            }
+        },
+        Err(_e) => {
+            println!("LOGIN: No user with username found");
+            Err(warp::reject::not_found())
+        },
+    }
+}
 // TODO implement hashing creation
 pub async fn register (
     data: AppData, req_user: User,
@@ -148,17 +182,15 @@ pub async fn check_cookie(data: AppData, cookie: Option<String>)
             match decode_jwt(&data.jwt_secret, &token) {
                 Ok(claims) => {
                     println!("Cookie is good");
-                    let claims_ser =  &serde_json::to_string(&claims).unwrap();
                     Ok(warp::reply::with_header(
-                        warp::reply::json(claims_ser), "Authorization", "true"
+                        serde_json::to_string(&claims).unwrap(),
+                        "Authorization", "true"
                     )
                 )
                 },
                 Err(_) => {
                     println!("Cookie is bad");
-                    Ok(warp::reply::with_header(
-                        warp::reply::json(&token), "Authorization", "false"
-                    ))
+                    Err(warp::reject())
                 }
             }
         },
