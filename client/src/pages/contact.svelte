@@ -4,8 +4,6 @@
 
 <style>
     .contact {
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
     }
 </style>
 

@@ -8,11 +8,4 @@
 
 <div in:fade={{duration:100}}>
     <h1>Entries</h1>
-        <Tab label = "Entries">
-            <h2>Entries Home<h2>
-                    <Box title="entries">dsf</Box>
-        </Tab>
-    <Tab label="Types">
-    </Tab>
-    <Tab label="Log"></Tab>
 </div>

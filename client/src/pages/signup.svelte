@@ -11,6 +11,7 @@
     username: '',
     password: '',
   }
+  let notAllowed = ["about", "contact", "index", "login", "signup", "dashboard", "admin"];
   async function signupUser(userInfo) {
       const signupPost = await fetch('http://localhost:3001/api/register', {
           method: 'POST',
@@ -27,8 +28,11 @@
       }
     }
   function handleSubmit() {
-      fetching=true;
-      console.log(signupInfo);
+    fetching=true;
+    console.log(signupInfo);
+    if (notAllowed.includes(userInfo.username)) { // TODO actually verify input
+        throw new Error("Can't use username " + userInfo.username);
+    }
     promise = signupUser(signupInfo);
     disabled = true;
     submitted = true;

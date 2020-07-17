@@ -74,65 +74,51 @@
         list-style-type: none;
         display: inline-block;
     }
-    p { font-size: 1em; }
     li {
         float: left;
-    }
-    .utab {
-        padding-left: 10px;
     }
 </style>
 
 <div in:fade={{duration:100}}>
     <h1>User Admininistration</h1>
-        <Tab class="utab" label = "Get">
-            <h2>Get user<h2>
-                <Box title="hello">poopoo</Box>
-            <ul>
-                <li>
-                    <Box title="By username">
-                        <form label="Username">
-                            <input label="Username" bind:value={userUsername}/>
-                        </form>             
-                        <button on:click={handleUsername}>Submit</button>
-                    </Box>
-                    <Box title="By email">
-                        <form label="Email">
-                            <input label="Email" bind:value={userEmail}/>
-                        </form>             
-                        <button on:click={handleEmail}>Submit</button>
-                    </Box>
-                    <Box title="By ID">
-                        <form label="ID">
-                            <input label="ID" bind:value={userId}/>
-                        </form>             
-                        <button on:click={handleId}>Submit</button>
-                    </Box>
-                </li>
-                {#if submittedUser}
-                    {#await userPromise}
-                        <p>Getting user...</p>
-                    {:then user}
-                        <li>
-                            <Box title="User">
-                                <p in:fade>{ user.username }</p>
-                                <p in:fade><b>id: </b>{user.id}</p>
-                                <p in:fade><b>Email: </b>{user.email}</p>
-                                <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
-                            </Box>
-                        </li>
-                    {:catch}
-                        <p>No user found.</p>
-                    {/await}
-                {/if}
-            </ul>
-        </Tab>
-        <Tab class="utab" label = "Create">
-            <h2>Create users/<h2>
-        </Tab>
-    <Tab label="Users" class="utab">
-        <h2>Fetch users</h2>
-        <div class="users-tab">
+        <ul>
+            <li>
+                <Box title="Get user">
+                    <form label="Username">
+                        Username: <input label="Username" bind:value={userUsername}/>
+                    </form>             
+                    <button on:click={handleUsername}>Submit</button>
+                </Box>
+                <Box title="Get user">
+                    <form label="Email">
+                        Email: <input label="Email" bind:value={userEmail}/>
+                    </form>             
+                    <button on:click={handleEmail}>Submit</button>
+                </Box>
+                <Box title="By ID">
+                    <form label="ID">
+                        ID: <input label="ID" bind:value={userId}/>
+                    </form>             
+                    <button on:click={handleId}>Submit</button>
+                </Box>
+            </li>
+            {#if submittedUser}
+                {#await userPromise}
+                    <p>Getting user...</p>
+                {:then user}
+                    <li>
+                        <Box title="User">
+                            <p in:fade>{ user.username }</p>
+                            <p in:fade><b>id: </b>{user.id}</p>
+                            <p in:fade><b>Email: </b>{user.email}</p>
+                            <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
+                        </Box>
+                    </li>
+                {:catch}
+                    <p>No user found.</p>
+                {/await}
+            {/if}
+        </ul>
             <div>
                 <button 
                     type="submit" 
@@ -142,36 +128,34 @@
                 </button>
             </div>
             <br/>
-            {#if submitted}
-                {#await promise}
-                    <p>Fetching users...</p>
-                {:then users}
-                    <div>
-                        <ul>
-                            {#each users as user}
-                                <li>
-                                    <Box title="User">
-                                        <h3 in:fade>{ user.username }</h3>
-                                        <p in:fade><b>id: </b>{user.id}</p>
-                                        <p in:fade><b>Email: </b>{user.email}</p>
-                                        <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
-                                    </Box>
-                                </li>
-                            {:else}
-                                <li>
-                                    <Box>
-                                        <h3>No users found</h3>
-                                        <p><em>Try creating some</em></p>
-                                    </Box>
-                                </li>
-                            {/each}
-                        </ul>
-                    </div>
-                {:catch}
-                    <p>ERROR!</p>
-                    <p>{ userList }</p>
-                {/await}
-            {/if}
-        </div>
-    </Tab>
+        {#if submitted}
+            {#await promise}
+                <p>Fetching users...</p>
+            {:then users}
+                <div>
+                    <ul>
+                        {#each users as user}
+                            <li>
+                                <Box title="User">
+                                    <h3 in:fade>{ user.username }</h3>
+                                    <p in:fade><b>id: </b>{user.id}</p>
+                                    <p in:fade><b>Email: </b>{user.email}</p>
+                                    <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
+                                </Box>
+                            </li>
+                        {:else}
+                            <li>
+                                <Box>
+                                    <h3>No users found</h3>
+                                    <p><em>Try creating some</em></p>
+                                </Box>
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
+            {:catch}
+                <p>ERROR!</p>
+                <p>{ userList }</p>
+            {/await}
+        {/if}
 </div>

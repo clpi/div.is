@@ -8,9 +8,7 @@
         float: left;
         min-width: auto;
         margin-right: 5vw;
-    }
-    .admin-nbl {
-        margin-bottom: 1rem;
+        position: fixed;
     }
     .admin-nav {
         margin-left: auto;
@@ -61,29 +59,29 @@
     .nav-ht {
         font-size: 1.4rem;
     }
+    .wrapper {
+        padding-top: 12px;
+    }
 </style>
 <div class="admin-nb">
-    <div class="admin-nbl">
-        <ul class="admin-nav">
-            <li in:fade class="nav-head">
-                <p class="nav-ht">admin center</p>
-            </li>
-            <li in:fade class:active={$isActive("/admin/index")}>
-                <a href={$url("/admin/index")}>home</a>
-            </li>
-            <li in:fade class:active={$isActive("/admin/db")}>
-                <a href={$url("/admin/db")}>database</a>
-            </li>
-            <li in:fade class:active={$isActive("/admin/users")}>
-                <a href={$url("/admin/users")}>users</a>
-            </li>
-            <li in:fade class:active={$isActive("/admin/records")}>
-                <a href={$url("/admin/records")}>records</a>
-            </li>
-            <li in:fade class:active={$isActive("/dashboard/stats")}>
-                <a href={$url("/admin/stats")}>stats</a>
-            </li>
-        </ul>
-    </div>
+    <ul class="admin-nav">
+        <li in:fade class="nav-head">
+            <p class="nav-ht">admin center</p>
+        </li>
+        <li in:fade class:active={$isActive("/admin/index")}>
+            <a href={$url("/admin/index")}>home</a>
+        </li>
+        <li in:fade class:active={$isActive("/admin/db")}>
+            <a href={$url("/admin/db")}>database</a>
+        </li>
+        <li in:fade class:active={$isActive("/admin/users")}>
+            <a href={$url("/admin/users")}>users</a>
+        </li>
+        <li in:fade class:active={$isActive("/admin/records")}>
+            <a href={$url("/admin/records")}>records</a>
+        </li>
+        <li in:fade class:active={$isActive("/dashboard/stats")}>
+            <a href={$url("/admin/stats")}>stats</a>
+        </li>
+    </ul>
 </div>
-<slot/>

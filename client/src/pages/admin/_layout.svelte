@@ -5,12 +5,9 @@
   import Sidenav from '../../comp/ui/adm-nav.svelte'
 </script>
 <style>
-    .admin-db {
-        margin-left: 15%;
-        margin-right: 10%;
-    }
     .content {
-        padding-top: 5%;
+        position: relative;
+        margin-left: 15vw;
     }
 </style>
 <div class="admin-db">

@@ -30,8 +30,6 @@
         font-size: 6rem;
     }
     .home-wrapper {
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
         margin: auto;
         align-content: center;
         display: inline-block;

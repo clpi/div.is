@@ -135,6 +135,10 @@
     #navIcon{
         float: right;
     }
+    .content {
+        padding-left: 15.5vw;
+        padding-right: 15.5vw;
+    }
 </style>
 
 <div class="wrapper">
@@ -167,16 +171,15 @@
                 <li 
                     in:fade
                     id="loginNav" 
-                    class:active={$isActive("/u/"+userRes.username)}
                 >
                 <a on:click={logout} href="/">log out</a>
                 </li>
                 <li 
                     in:fade 
                     id="loginNav" 
-                    class:active={$isActive("/u/"+userRes.username)}
+                    class:active={$isActive("/"+userRes.username)}
                 >
-                    <a href={$url('/user/:username', {username: userRes.username})}>
+                    <a href={$url('/:username', {username: userRes.username})}>
                         {userRes.username}
                     </a>
                 </li>

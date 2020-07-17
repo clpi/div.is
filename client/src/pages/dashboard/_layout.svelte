@@ -6,10 +6,10 @@
   let loggedIn = getContext("loggedIn");
 </script>
 <style>
-    .db {
-        margin-left: 15%;
-        margin-right: 10%;
-    }
+    /*.db {*/
+        /*margin-left: 15%;*/
+        /*margin-right: 10%;*/
+    /*}*/
     .Navbar {
         float: left;
         min-width: auto;
