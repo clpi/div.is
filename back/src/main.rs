@@ -76,6 +76,16 @@ async fn main() -> sqlx::Result<()> {
         .and(warp::body::json())
         .and_then(handlers::login);
 
+    let logout = warp::post()
+        .and(with_data(app_data.clone()))
+        .and(warp::path!("logout"))
+        .and(warp::cookie::optional("Authorization"))
+        .and_then(handlers::logout)
+        .with(warp::cors().allow_credentials(true)
+            .allow_any_origin()
+            .allow_methods(&[Method::POST])
+            .allow_header("Access-Control-Allow-Origin"));
+
     //let login = warp::post()
         //.and(with_data(app_data))
         //.and(warp::path!("auth" / "login"))
@@ -128,7 +138,8 @@ async fn main() -> sqlx::Result<()> {
         .or(update_user)
         .or(check_cookie)
         .or(register)
-        .or(login);
+        .or(login)
+        .or(logout);
 
     let db_actions = clear_db
         .or(clear_db_table);

@@ -34,9 +34,6 @@ pub async fn hash_pwd(key: &String, pwd: &String) -> String {
 }
 
 pub async fn verify_pwd(key: &String, pwd: &String, db_pwd: &String) -> bool {
-    println!("secretkey {}", &key);
-    println!("pwd {}", &pwd);
-    println!("db_pwd {}", &db_pwd);
     let secret_key: SecretKey<'static> = 
         SecretKey::from_base64_encoded(key).unwrap();
     let mut verifier = Verifier::default();
@@ -54,7 +51,7 @@ pub struct Claims {
 }
 
 impl Claims {
-    fn new(uid: i32) -> Claims {
+    pub fn new(uid: i32) -> Claims {
         let exp = (Utc::now() + Duration::weeks(2)).timestamp() as i32;
         Self { sub: uid, exp }
     }

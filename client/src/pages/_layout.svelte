@@ -1,11 +1,13 @@
 <!-- _layout.svelte -->
 <script>
     import Nav from '../comp/ui/nav.svelte';
-    import { afterPageLoad } from "@sveltech/routify";
+    import { afterPageLoad, url } from "@sveltech/routify";
     import { user, logged } from '../store.js';
     let isLoggedIn = false;
     let loggedIn = Promise.resolve([]);
     let userData = Promise.resolve([]);
+    // TODO have everything load at once in fetch call
+    // and then declare $ready instead of having await in DOM
     $afterPageLoad(async () => {
         handleRefresh();
         if (loggedIn.sub != null) {
@@ -17,6 +19,15 @@
     } 
     function handleUserData(id) {
         userData = getUser(id);
+    }
+    let logout = async () => {
+        await fetch('http://localhost:3001/api/logout', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                cookie: document.cookie,
+            }
+        });
     }
     // TODO just return necessary user data in sub of jwt
     // TODO don't use JWT in cookie ... or do use JWT but in header?
@@ -34,6 +45,15 @@
             cookie: document.cookie,
           }
         })
+            /*.then(res => {*/
+                /*if (res.headers.get("Authorized") == "false"){*/
+                    /*isLoggedIn = false;*/
+                    /*return res;*/
+                /*} else {*/
+                    /*isLoggedIn = true;*/
+                /*}*/
+                    
+            /*})*/
             .then(res => res.json())
             .then(res => loggedIn = res);
         return res;
@@ -46,7 +66,7 @@
 </style>
 
 <Nav/>
-<button on:click={handleUserData}>test</button>
+<button on:click={logout}>logout</button>
 {#await loggedIn}
     <p> checking login status...</p>
 {:then res}
@@ -55,6 +75,7 @@
         {#await getUser(res.sub)}
             <p> getting user data... </p>
         {:then userRes}
+            <a href={$url('/user/:username', {username: userRes.username})}>{userRes.username}</a>
             <p> {userRes.email} </p>
             <p> {userData.email} {loggedIn.sub} {isLoggedIn}</p>
         {/await}
@@ -62,5 +83,4 @@
         <p> Not logged in </p>
     {/if}
 {/await}
-
 <slot />

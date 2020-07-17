@@ -5,7 +5,7 @@ use crate::db::models::*;
 use crate::db::Db;
 use chrono::Utc;
 use super::{using, AppData,
-    auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt}};
+    auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt, Claims}};
 
 #[derive(Serialize, Deserialize)]
 pub struct UserLogin {
@@ -184,7 +184,7 @@ pub async fn check_cookie(data: AppData, cookie: Option<String>)
                     println!("Cookie is good");
                     Ok(warp::reply::with_header(
                         serde_json::to_string(&claims).unwrap(),
-                        "Authorization", "true"
+                        "Authorization", "false",
                     )
                 )
                 },
@@ -198,6 +198,27 @@ pub async fn check_cookie(data: AppData, cookie: Option<String>)
             println!("No cookie");
             Err(warp::reject())
         }
+    }
+}
+
+// TODO actually implement
+// TODO make fn for match cookie => some token => match decode jwt
+pub async fn logout(data: AppData, cookie: Option<String>)
+    -> Result<impl warp::Reply, warp::Rejection> {
+    match cookie {
+        Some(token) => {
+            match decode_jwt(&data.jwt_secret, &token) {
+                Ok(_) => {
+                    Ok(warp::reply::with_header(
+                        StatusCode::OK.to_string(),
+                        warp::http::header::SET_COOKIE,
+                        format!("Authorization={}", "")
+                    )
+                )},
+                Err(_) => Err(warp::reject()),
+            }
+        },
+        None => Err(warp::reject()),
     }
 }
 
