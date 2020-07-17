@@ -1,6 +1,7 @@
 <script>
   import { slide, fade }from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
+  import { goto } from '@sveltech/routify';
 
   let loginInfo = {
     username: '',
@@ -78,6 +79,7 @@
                     <p>{userData}</p>
                     <p>Welcome {userData.username}!</p>
                     <p>Your ID: {userData.uid}</p>
+                    <button on:click={()=>{$goto('/index')}}>Go home</button>
                 {/if}
             {:catch error}
                 <p style="color: red">{error.message}</p>

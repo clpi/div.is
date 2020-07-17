@@ -4,12 +4,8 @@ mod db;
 mod api;
 
 use warp::{Filter, self};
-use db::models::*; //TODO: Merge models and schema files
-use self::api::handlers;
-use std::collections::HashMap;
 use warp::http::Method;
-use db::Db;
-use api::using;
+use api::routes;
 
 // TODO: Created BoxedFilter routes in api/routes/*.rs modules
 // TODO: Implement CRUD for basic records
@@ -40,128 +36,9 @@ async fn main() -> sqlx::Result<()> {
         db: setup_db().await?,
     };
 
-    let index = warp::path!("index")
-        .map(|| "Hello");
-    let sum = warp::path!("sum" / u32 / u32)
-        .map(|a, b| format!("{} + {} = {}", a, b, a + b));
+    let routes = warp::path("api").and(routes::routes(app_data)).with(cors);
 
-    // NOTE GET /api/user/<username>
-    let get_user = warp::get()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / String))
-        .and_then(handlers::get_user_by_username);
-
-    let get_user_by_id = warp::get()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / "id" / i32))
-        .and_then(handlers::get_user_by_id);
-
-    let get_all_users = warp::get()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path("users"))
-        .and_then(handlers::get_all_users);
-
-    let get_record = warp::get()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / String / "record" / String))
-        .map(|db: Db, u: String, r: String| {
-            format!("{}, {}", u, r)
-        });
-
-    // NOTE POST /api/login
-    // TODO Fix login handler
-    let login = warp::post()
-        .and(with_data(app_data.clone()))
-        .and(warp::path("login"))
-        .and(warp::body::json())
-        .and_then(handlers::login);
-
-    let logout = warp::post()
-        .and(with_data(app_data.clone()))
-        .and(warp::path!("logout"))
-        .and(warp::cookie::optional("Authorization"))
-        .and_then(handlers::logout)
-        .with(warp::cors().allow_credentials(true)
-            .allow_any_origin()
-            .allow_methods(&[Method::POST])
-            .allow_header("Access-Control-Allow-Origin"));
-
-    //let login = warp::post()
-        //.and(with_data(app_data))
-        //.and(warp::path!("auth" / "login"))
-        //.and(warp::header("Authorization"))
-
-    // NOTE POST /api/register
-    let register = warp::post()
-        .and(with_data(app_data.clone()))
-        .and(warp::path("register"))
-        .and(warp::body::json())
-        .and_then(handlers::register);
-
-    let check_cookie = warp::get()
-        .and(with_data(app_data.clone()))
-        .and(warp::path!("userstatus"))
-        .and(warp::cookie::optional("Authorization"))
-        .and_then(handlers::check_cookie)
-        .with(warp::cors().allow_credentials(true)
-            .allow_any_origin()
-            .allow_methods(&[Method::GET])
-            .allow_header("Access-Control-Allow-Origin"));
-
-    // NOTE DELETE /user/<username>
-    let delete_user = warp::post()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / String))
-        .and_then(handlers::delete_user_by_username);
-
-    // NOTE UPDATE /user/<username>
-    let update_user = warp::put()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("user" / String))
-        .and_then(handlers::update_user_by_username);
-
-    let clear_db = warp::delete()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("db" / "clear"))
-        .and_then(handlers::clear_database);
-
-    let clear_db_table = warp::delete()
-        .and(with_db(app_data.db.clone()))
-        .and(warp::path!("db" / "clear" / String))
-        .and_then(handlers::clear_table);
-
-    // NOTE: /api/user/
-    let user_actions = get_user
-        .or(delete_user)
-        .or(get_all_users)
-        .or(get_user_by_id)
-        .or(update_user)
-        .or(check_cookie)
-        .or(register)
-        .or(login)
-        .or(logout);
-
-    let db_actions = clear_db
-        .or(clear_db_table);
-
-    let statc = warp::path("static").and(warp::fs::dir("../../client/public`"));
-
-    let test_routes = api::routes::routes(app_data);
-
-    let routes = index.or(sum)
-        .or(api::routes::test())
-        .or(user_actions)
-        .or(db_actions)
-        .or(test_routes)
-        .or(statc);
-
-
-    // TODO register appdata with all routes, exclude from non needed ones
-    let api = warp::path("api")
-        .and(routes) 
-        .with(cors);
-
-    warp::serve(api).run(([127, 0, 0, 1], 3001)).await;
+    warp::serve(routes).run(([127, 0, 0, 1], 3001)).await;
     Ok(())
 }
 
@@ -177,24 +54,3 @@ pub fn get_host() -> (String, String) {
     (host, port) 
 }
 
-
-pub fn ex_user() -> User {
-    db::models::User {
-        id: None, email: String::from("chris@pecu.cc"),
-        username: String::from("chrisp"),
-        password: String::from("hashword"),
-        created_at: sqlx::types::chrono::Utc::now().timestamp() as i32,
-    }
-}
-
-fn with_data(data: api::AppData) 
-    -> impl Filter<Extract = (api::AppData,), Error = std::convert::Infallible> + Clone {
-    warp::any().map(move || data.clone())
-}
-
-fn with_db(db: Db)
-    -> impl Filter<Extract = (Db,), Error = std::convert::Infallible> + Clone {
-    warp::any().map(move || db.clone())
-}
-
-// NOTE: Remember, now is not the time to overengineer things

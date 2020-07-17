@@ -31,9 +31,10 @@
 </style>
 
 <div class="userPage">
-    <div class="box">
+    <div class="bod">
         <h2>Hello</h2>
         <p>{$params}</p>
+        <slot/>
     </div>
 </div>
 

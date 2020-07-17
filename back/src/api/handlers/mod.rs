@@ -73,6 +73,7 @@ pub async fn get_user_by_id(
 pub async fn get_all_users(
     db: Db
 ) -> Result<impl warp::Reply, warp::Rejection> {
+    println!("fetching users...");
     match User::fetch_all(&db).await {
         Ok(users) => {
             Ok(serde_json::to_string(&users)

@@ -176,7 +176,7 @@
                     id="loginNav" 
                     class:active={$isActive("/u/"+userRes.username)}
                 >
-                    <a href={$url('/u/:username', {username: userRes.username})}>
+                    <a href={$url('/user/:username', {username: userRes.username})}>
                         {userRes.username}
                     </a>
                 </li>
