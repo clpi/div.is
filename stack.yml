@@ -5,7 +5,7 @@ services:
     volumes:
       - ./web:/usr/src/app
     ports:
-      - "3000:3000"
+      - "3001:3001"
     comand: bash -c "yarn && yarn start"
 
   back:

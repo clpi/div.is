@@ -1,28 +1,47 @@
 ---
 - name: Deploy to droplet
-  host: div.is
-  collections: 
-    - containers.podman
-  become: root
-  task:
+  hosts: div.is
+  remote_user: root
+  tasks:
+    - name: Install Podman
+      command: dnf install podman -y
     - name: Create install directory
       file:
         state: directory
-        path: /app
-    - name: Copy files to remote host
-      copy:
-        src: back/
-        dest: /opt/client
-    - name: Build dockerfile to image
-      command: cd /app && podman build . mem
-    - name: Run redis container
-      containers.podman.podman_container:
-        name: myredis
-        image: redis
-        command: redis-server --appendonly yes
-        state: present
-        recreate: yes
-        expose:
-          - 6379
-        volumes_from:
-          - mydata
+        path: /usr/src/app
+    - name: Copy back end files
+    - synchronize:
+        src: ./*
+        dest: /usr/src/app/
+        rsync_opts:
+          - "--exclude=client/target"
+          - "--exclude=front/node_modules"
+          - "--exclude=wiki"
+          - "--exclude=yew/target"
+    - name: Copy front end files
+    - synchronize:
+        src: ./client
+        dest: /usr/src/app/client
+        rsync_opts:
+          - "--exclude=node_modules"
+    - name: Copy front end files
+    - synchronize:
+        src: ./client
+        dest: /usr/src/app/client
+        rsync_opts:
+          - "--exclude=node_modules"
+
+    - name: Create app pod
+      command: podman pod create --name divis -p 80 -p 5432 -p 3001
+    - name: Build backend image
+      command: podman build /usr/src/div/back -t divb
+    - name: Build frontend image
+      command: podman build /usr/src/div/client -t divf
+    - name: Run frontend container in pod
+      command: podman run -d --pod divis -p 80:5005 -t divf
+    - name: Run backend container in pod
+      command: podman run -d --pod divis -p 3001:3001 -e PG_URL="postgresql://postgres:password@localhost:5432/postgres?sslmode=disable" -t divb
+    - name: Run postgres container in pod
+      command: podman run -d --pod postgresql -e POSTGRES_USER=divadm -e POSTGRES_PASSWORD=amanitoomer399! postgres:latest
+    - name: 
+

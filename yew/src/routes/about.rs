@@ -30,7 +30,7 @@ impl Component for About {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            { "Create Yew App" }
+                            { "test Yew App" }
                         </a>
                         { ", Set up a modern yew web app by running one command." }
                     </p>

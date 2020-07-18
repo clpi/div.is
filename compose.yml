@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  db:
+    image: 'postgres:13-alpine'
+    container-name: 'divdb'
+    volumes:
+      - div-data: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB:divdb
+      - POSTGRES_USER:divadm
+      - POSTGRES_PASSWORD:amanitoomer399!!
+
+  back:
+    build: ./back
+    container-name: 'divback'
+    environment:
+      - DB_SERVER=db
+    ports:
+      - 3001:3001
+    links:
+      - db
+
+  client:
+    build: ./client
+    container-name: 'divclient'
+    ports:
+      - 5005:80
+    links:
+      - back
+
+  volumes:
+    div-data

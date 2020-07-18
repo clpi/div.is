@@ -1,6 +1,6 @@
 FROM node:lts-alpine
 RUN apk add --no-cache git
-WORKDIR /app
+WORKDIR /usr/src/app/front
 RUN npm init -y && npm install spassr@1.0.2
 COPY ./dist ./dist
 EXPOSE 5000 5005
