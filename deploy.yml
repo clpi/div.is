@@ -1,6 +1,6 @@
 ---
 - name: Deploy to droplet
-  host: me.pecu.cc
+  host: div.is
   collections: 
     - containers.podman
   become: root

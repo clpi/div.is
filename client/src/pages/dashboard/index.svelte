@@ -4,6 +4,8 @@
   import Box from '../../comp/ui/box.svelte';
   import Tab from '../../comp/ui/tab.svelte';
   import { afterPageLoad } from "@sveltech/routify";
+  import { metatags } from '@sveltech/routify';
+  metatags.title = "dashboard home";
 
   let userData;
   let loggedIn;
@@ -17,16 +19,6 @@ $afterPageLoad(page => {
 </script>
 
 <style>
-    .dbcontainer{
-    }
-    .buttons{
-        padding: 20px 10px 20px 10px;
-    }
-    .searchbar {
-        width:max-content;
-    }
-    .dbindex {
-    }
 </style>
 <div class="dbindex" in:fade={{duration:100}}>
     <h1>dashboard</h1>

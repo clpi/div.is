@@ -1,14 +1,12 @@
-FROM rust:latest-buster
+FROM rust:1.45-slim-buster
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get update && apt-get install nodejs
-RUN cargo install diesel_cli --no-default-features --features postgres
-RUN cargo install cargo-watch
-
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/back
 COPY . .
 
-RUN npm install
+RUN apt-get install clang llvm-dev libclang-dev
+RUN cargo build --release
+RUN cargo install --path ./
+
 EXPOSE 8000
 
-VOLUME ["/usr/local/cargo"]
+CMD ["/usr/local/cargo/bin/mem"]

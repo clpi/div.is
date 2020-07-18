@@ -2,8 +2,10 @@
   import { slide, fade } from 'svelte/transition'
   import { setContext, beforeUpdate, getContext, onMount } from 'svelte'
   import {writable, readable} from 'svelte/store'
-  export const session = writable(null);
   import Box from '../comp/ui/box.svelte';
+  import { metatags } from '@sveltech/routify';
+  metatags.title = "memri";
+  export const session = writable(null);
   let loggedIn = getContext('loggedIn'); 
   let userData;
   beforeUpdate(async () => {

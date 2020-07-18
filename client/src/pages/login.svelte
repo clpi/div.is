@@ -2,6 +2,8 @@
   import { slide, fade }from 'svelte/transition'
   import { setContext, getContext, onMount } from 'svelte'
   import { goto } from '@sveltech/routify';
+  import { metatags } from '@sveltech/routify';
+  metatags.title = "login";
 
   let loginInfo = {
     username: '',

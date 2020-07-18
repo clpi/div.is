@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';	
   import { slide, fade } from 'svelte/transition'
+  import { metatags } from '@sveltech/routify';
+  metatags.title = "about";
   onMount(async () => {
     await fetch('http://localhost:3001/api/sum/29/69')
       .then(res => res.text())

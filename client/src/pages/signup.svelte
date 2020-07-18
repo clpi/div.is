@@ -1,6 +1,8 @@
 
 <script>
   import { slide, fade } from 'svelte/transition'
+  import { metatags } from '@sveltech/routify';
+  metatags.title = "signup";
   let disabled = false;
   let promise = Promise.resolve([]);
   let submitted = false;

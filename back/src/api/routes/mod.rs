@@ -7,8 +7,10 @@ pub mod record;
 pub mod auth;
 
 // TODO Figure out how to do this
-pub fn routes(data: AppData) -> impl Filter<Extract=(impl warp::Reply,), Error=warp::Rejection> + Clone {
-
+pub fn routes(data: AppData) -> impl Filter
+        <Extract=(impl warp::Reply,), 
+        Error=warp::Rejection> + Clone 
+{
     let index = warp::path!("index")
         .map(|| "Hello");
 

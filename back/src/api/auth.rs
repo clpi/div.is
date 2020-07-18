@@ -1,3 +1,5 @@
+extern crate futures;
+
 use jsonwebtoken::{
     Header, EncodingKey, DecodingKey, 
     Validation, encode, decode, errors::ErrorKind,
@@ -19,6 +21,7 @@ pub struct UserSession {
     pub privel: i32,
 }
 
+// TODO figure out what's going on with hash_non_blocking and verify_non_blocking
 pub async fn hash_pwd(key: &String, pwd: &String) -> String {
     let secret_key: SecretKey<'static> = 
         SecretKey::from_base64_encoded(key).unwrap();
@@ -29,8 +32,7 @@ pub async fn hash_pwd(key: &String, pwd: &String) -> String {
         .with_salt(Salt::random(16))
         .with_secret_key(&secret_key)
         .with_password(pwd)
-        .hash_non_blocking()
-        .wait().unwrap()
+        .hash().unwrap()
 }
 
 pub async fn verify_pwd(key: &String, pwd: &String, db_pwd: &String) -> bool {
@@ -40,8 +42,7 @@ pub async fn verify_pwd(key: &String, pwd: &String, db_pwd: &String) -> bool {
     verifier.with_secret_key(&secret_key)
         .with_hash(&db_pwd)
         .with_password(pwd)
-        .verify_non_blocking()
-        .wait().unwrap()
+        .verify().unwrap()
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
