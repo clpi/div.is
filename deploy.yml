@@ -8,40 +8,31 @@
     - name: Create install directory
       file:
         state: directory
-        path: /usr/src/app
+        path: /usr/src/
     - name: Copy back end files
-    - synchronize:
-        src: ./*
-        dest: /usr/src/app/
+      synchronize:
+        src: .
+        dest: /usr/src/
         rsync_opts:
           - "--exclude=client/target"
-          - "--exclude=front/node_modules"
+          - "--exclude=client/node_modules"
           - "--exclude=wiki"
           - "--exclude=yew/target"
-    - name: Copy front end files
-    - synchronize:
-        src: ./client
-        dest: /usr/src/app/client
-        rsync_opts:
-          - "--exclude=node_modules"
-    - name: Copy front end files
-    - synchronize:
-        src: ./client
-        dest: /usr/src/app/client
-        rsync_opts:
-          - "--exclude=node_modules"
-
-    - name: Create app pod
-      command: podman pod create --name divis -p 80 -p 5432 -p 3001
+          - "--exclude=yew/node_modules"
+    - name: Create podman pod
+      command: sudo podman pod create -p 80 -p 5432 -p 3001 --name divis
     - name: Build backend image
-      command: podman build /usr/src/div/back -t divb
+      command: sudo podman build /usr/src/div/back -t divb
     - name: Build frontend image
-      command: podman build /usr/src/div/client -t divf
-    - name: Run frontend container in pod
-      command: podman run -d --pod divis -p 80:5005 -t divf
-    - name: Run backend container in pod
-      command: podman run -d --pod divis -p 3001:3001 -e PG_URL="postgresql://postgres:password@localhost:5432/postgres?sslmode=disable" -t divb
-    - name: Run postgres container in pod
-      command: podman run -d --pod postgresql -e POSTGRES_USER=divadm -e POSTGRES_PASSWORD=amanitoomer399! postgres:latest
-    - name: 
+      command: sudo podman build /usr/src/div/client -t divf
+    - name: Run backend image
+      command: sudo podman run -dt --pod divis 3001:3001 localhost/divb
+    - name: Run frontend image
+      command: sudo podman run -dt --pod divis 80:5005 localhost/divf
 
+# to add: build, run postgres db
+# to add: build, run redis
+# to add: build, run ip networking w/ api.div.is or something
+# to add: build, run yew website
+# to add: second host droplet
+# to add: create pod + networking

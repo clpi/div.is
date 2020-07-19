@@ -1,7 +1,0 @@
----
-- host: me.pecu.cc
-  task:
-    - name: Pull files from mem repo
-      git:
-        repo: 'https://github.com/pecusys/mem.git'
-        dest: /app

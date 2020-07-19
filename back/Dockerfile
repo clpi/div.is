@@ -12,4 +12,5 @@ RUN cargo install --path ./
 
 EXPOSE 3001
 
-CMD ["/usr/local/cargo/bin/mem"]
+CMD ["/usr/local/cargo/bin/div"]
+#CMD ["cargo", "run"]

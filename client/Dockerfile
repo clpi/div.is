@@ -8,8 +8,8 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5005
+RUN npm run build
 
-ENV HOST=0.0.0.0
+EXPOSE 5005
 
 CMD [ "npm", "run", "serve" ]

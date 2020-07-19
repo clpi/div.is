@@ -437,6 +437,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "div"
+version = "0.1.0"
+dependencies = [
+ "argonautica",
+ "chrono",
+ "dotenv",
+ "futures 0.3.5",
+ "jsonwebtoken",
+ "oauth2",
+ "rand 0.4.6",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "warp",
+]
+
+[[package]]
 name = "dotenv"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1046,25 +1065,6 @@ dependencies = [
  "block-buffer",
  "digest",
  "opaque-debug",
-]
-
-[[package]]
-name = "mem"
-version = "0.1.0"
-dependencies = [
- "argonautica",
- "chrono",
- "dotenv",
- "futures 0.3.5",
- "jsonwebtoken",
- "oauth2",
- "rand 0.7.3",
- "serde",
- "serde_derive",
- "serde_json",
- "sqlx",
- "tokio",
- "warp",
 ]
 
 [[package]]

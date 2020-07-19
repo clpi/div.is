@@ -8,8 +8,6 @@ mem.db
 back/.env
 back/.mem.db
 back/target
-compose.yml
-deploy.yml
 /client/node_modules
 /yew_cli/target
 /yew_cli/node_modules

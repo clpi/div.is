@@ -1,5 +1,5 @@
 [package]
-name = "mem"
+name = "div"
 version = "0.1.0"
 authors = ["Chris P <chrisp1877@gmail.com>"]
 edition = "2018"

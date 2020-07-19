@@ -64,11 +64,7 @@
 
 <style>
     .Navbar {
-        /*border-top: 4px solid #feba80;*/
         background-image: linear-gradient(#fffffd, #fffdfe);
-        /*margin-top: 0.5rem;*/
-    }
-    .NavLinks {
         margin-bottom: 1rem;
     }
     #navHome {
@@ -143,10 +139,9 @@
 
 <div class="wrapper">
     <div class="Navbar">
-      <div class="NavLinks">
         <ul class="Nav">
             <li in:slide={{delay:100}} id="navHome"class:active={$isActive("/")}>
-                <a href={$url("/")}>memri</a>
+                <a href={$url("/")}>div.is</a>
             </li>
             <li in:slide={{delay:150}} class:active={$isActive("/index")}>
                 <a href={$url("/index")}>home</a>
@@ -199,7 +194,6 @@
                 </a>
             </li>
         </ul>
-    </div>
     </div>
     <div class = "content">
         <slot />

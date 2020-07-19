@@ -30,26 +30,28 @@ async fn main() -> sqlx::Result<()> {
             Method::DELETE,
         ]);
 
-    let (host, port) = get_host();
+    let (host, port) = hosts();
+    let db = db().await?;
+
     let app_data = api::AppData {
         jwt_secret: api::auth::get_jwt_secret().await.unwrap(),
         secret_key: api::auth::get_secret_key().await.unwrap(),
-        db: setup_db().await?,
+        db: db,
     };
 
     let routes = warp::path("api").and(routes::routes(app_data)).with(cors);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3001)).await;
+    warp::serve(routes).run(([0, 0, 0, 0], 3001)).await;
     Ok(())
 }
 
-
-pub async fn setup_db() -> sqlx::Result<db::Db> {
+pub async fn db() -> sqlx::Result<db::Db> {
+    //let db_type = dotenv::var("DB_TYPE").expect("SQLite");
     let db_url = dotenv::var("DB_URL").expect("DB_URL not set");
     Ok( db::Db::new(&db_url).await? )
 }
 
-pub fn get_host() -> (String, String) {
+pub fn hosts() -> (String, String) {
     let host = dotenv::var("DEV_HOST").expect("DEV_HOST not set");
     let port = dotenv::var("DEV_PORT").expect("DEV_PORT not set");
     (host, port) 

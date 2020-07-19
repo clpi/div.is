@@ -1,0 +1,46 @@
+version: '4'
+
+services:
+  db:
+    build: ./data/pg
+    #image: divdb:dev
+    container_name: cdivdb
+    env_file:
+      - .env
+    networks:
+      - divnet
+    ports:
+      - "5432:5432"
+
+  back:
+    build: ./back
+    #image: divb:dev
+    container_name: cdivb
+    environment:
+      - DB_SERVER=db
+    ports:
+      - "3001:3001"
+    networks:
+      - divnet
+    links:
+      - db
+    depends_on:
+      - db
+      #- redis
+
+  client:
+    build: ./client
+    #image: divc:dev
+    container_name: cdivf
+    networks:
+      - divnet
+    ports:
+      - "5005:5005"
+    links:
+      - back
+
+  volumes:
+    div-data:
+
+  networks:
+    divnet:

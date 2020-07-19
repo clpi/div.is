@@ -6,9 +6,8 @@ build pod: `podman pod create --name divis --network divnet -p 3001:3001 -p 5432
 ### to run front:
 `cd client && npm run dev`
 
-build image: `podman image build ./client -t divf`
-create container: `podman container create localhost/divf:latest`
-run container: `podman run -dt --pod divis divf` 
+build image: `sudo podman image build client -t divf`
+run container: `sudo podman run -dt -p 3001:3001 localhost/divf` 
 
 SPA on localhost:5000, SSR on localhost:5005. uses Svelte + Routify
 
@@ -17,14 +16,13 @@ SPA on localhost:5000, SSR on localhost:5005. uses Svelte + Routify
 or
 `cd back && cargo-watch -x run`
 
-build image: `podman image build ./back -t divb`
-create container: `podman container create localhost/divb:latest`
-run container: `podman run -dt -p 80:5005 --pod divis divb` 
+build image: `sudo podman image build back -t divb`
+run container: `sudo podman run -dt -p 80:5005 localhost/divb` 
 
 API on localhost:3000. Uses Warp + sqlx
 
 ## db:
-run postgres: `podman run -d --pod divis -e POSTGRES_PASSWORD=password postgres:latest`
+run postgres: `sudo podman run -dt -e POSTGRES_PASSWORD=password postgres:latest`
 url: `postgresql://postgres:password@localhost:5432/postgres`
 
 ### deploying:
@@ -34,5 +32,16 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set up sqlx parts for postgres, automate postgres deployment/migrations/etc
 - [ ] implement cookie sessions with OAuth2 instead of JWT
 - [ ] generate kubernetes YML file for podman containerized deploy
-- [ ] make ansible-playbook build and deploy to digitalocean 
-- [ ] make minimal but functional dockerfiles for backend, frontend, and postgres db
+- [X] make ansible-playbook build and deploy to digitalocean 
+- [X] make minimal but functional dockerfiles for backend, frontend, and postgres db
+- [ ] reconfigure sqlx/restructure queries/schema for postgres after setting up pg deployment
+- [ ] add record CRUD functionality + display on frontend
+- [ ] add entry CRUD funcitonality + display on frontend
+- [ ] currently need to look into exposig networking ports and pod networking for podman, so just run each container separately
+- [ ] get rust backend build to work properly
+- [ ] figure out routing with pods / routing on instance for subdomain configuration (using traefik?)
+- [ ] create yew parallel site (skeletal) for testing
+- [ ] set up api credentials (for mobile app, other users, etc.)
+- [ ] set up redis db dockerfile  
+- [ ] set up fetch calls on client side to be called from express or otherwise to be called more elegantly and dynamically (api not on port 3001)
+- [ ] set up postgres db migration automation
