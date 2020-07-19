@@ -11,7 +11,6 @@ services:
     environment:
       - POSTGRES_DB:divdb
       - POSTGRES_USER:divadm
-      - POSTGRES_PASSWORD:amanitoomer399!!
 
   back:
     build: ./back
