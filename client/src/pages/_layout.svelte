@@ -123,8 +123,8 @@
         float: right;
     }
     .content {
-        padding-left: 15.5vw;
-        padding-right: 15.5vw;
+        padding-left: 13.5vw;
+        padding-right: 13.5vw;
     }
 </style>
 
@@ -188,5 +188,6 @@
     </div>
     <div class = "content">
         <slot />
+        <!-- <slot scoped={{user: userData, loggedIn: loggedIn}}/> -->
     </div>
 </div>

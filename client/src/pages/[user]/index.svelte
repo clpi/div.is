@@ -1,4 +1,5 @@
 <script>
+  import { params } from '@sveltech/routify';
   export let slug;
 </script>
 
@@ -9,5 +10,5 @@
 </style>
 
 <div class = "user">
-  <h1>user</h1>
+  <h1>{$params}</h1>  
 </div>

@@ -52,6 +52,9 @@
 </script>
 
 <style>
+    .signup {
+      padding-left: 5vw;
+    }
     .signupForm{
         padding-left: 15.5vw;
         padding-right: 15.5vw;
@@ -63,7 +66,7 @@
     }
 </style>
 
-<div>
+<div class="signup">
     <div in:fade={{duration:100}} class="signupForm">
         <!-- Maybe do this with traditional form input instead of binding -->
         <!-- Get a form validator library -->

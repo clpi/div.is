@@ -5,8 +5,9 @@
 </script>
 
 <style>
-    .contact {
-    }
+  .contact {
+    padding-left: 3vw;
+  }
 </style>
 
 <div class="contact" in:fade={{duration:100}}>

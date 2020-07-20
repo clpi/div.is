@@ -45,6 +45,9 @@
 </script>
 
 <style>
+    .login {
+      padding-left: 5vw;
+    }
     .loginForm {
         padding-left: 15.5vw;
         padding-right: 15.5vw;
@@ -54,7 +57,7 @@
     }
 </style>
 
-<div>
+<div class="login">
     <div in:fade={{duration:100}} class="loginForm">
 
         <form label="Username"> 

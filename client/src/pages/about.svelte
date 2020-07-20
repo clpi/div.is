@@ -22,6 +22,9 @@
 </script>
 
 <style>
+  .about {
+    padding-left: 3vw;
+  }
 </style>
 <div class="about" in:fade={{duration:100}}>
     <h1>About</h1>

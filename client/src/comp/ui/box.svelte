@@ -18,15 +18,24 @@
     .Box {
         width: 300px;
         float: left;
+        /*border: 1px solid #fa4;*/
+        border: 1px solid #eee;
+        border-radius: 2px;
+        box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+		padding: 0.8em;
+        margin: 0.8em;
+    }
+    .Box-Orange {
+        width: 300px;
+        float: left;
         border: 1px solid #fa4;
         border-radius: 2px;
-        border-bottom: 1px solid #fa4;
-        box-shadow: 1px 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 		padding: 0.8em;
         margin: 0.8em;
     }
     .Box:hover {
-        box-shadow: 1px 2px 8px rgba(0,0,0,0.15);
+        box-shadow: 2px 2px 3px rgba(0,0,0,0.15);
         transition: box-shadow;
     }
 </style>
