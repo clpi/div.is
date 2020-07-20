@@ -20,7 +20,7 @@
 
 <div class="home-wrapper" in:fade={{duration:100}}>
     <Box title={"Hello"}>
-        <p>API_URL: {API_URL}</p>
+        <p>API_URL</p>
     </Box>
     <Box title={"How are you"}>
         <p>Look for <a href="/user">users</a></p>

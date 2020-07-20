@@ -21,11 +21,13 @@ const production = !process.env.ROLLUP_WATCH;
 const staticDir = 'static'
 const distDir = 'dist'
 const buildDir = `${distDir}/build`
-const apiUrl = process.env.API_URL;
 const buildStaticExports = process.env.PRERENDER !== "false" && !!production
 const useDynamicImports = process.env.BUNDLING === 'dynamic' || isNollup || !!production
 
-if (apiUrl == undefined) {
+let apiUrl = "";
+if (process.env.API_URL != undefined) {
+  apiUrl = process.env.API_URL;
+} else {
   apiUrl = "http://localhost:3001/api"
 }
 
