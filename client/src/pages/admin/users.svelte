@@ -10,7 +10,7 @@
   let userPromise = Promise.resolve([]);
   let userUsername = ""; let userId = ""; let userEmail = "";
   async function fetchAll() {
-      const usrs = await fetch('http://localhost:3001/api/users', {
+      const usrs = await fetch(API_URL+'/users', {
           method: 'GET',
           headers: {
             'content-type': 'application/json',
@@ -28,7 +28,7 @@
     }
   async function getByEmail() {}
   async function getByUsername() {
-      const usr = await fetch('http://localhost:3001/api/user/'+userUsername, {
+      const usr = await fetch(API_URL+'/user/'+userUsername, {
           method: 'GET',
           headers: {
             'content-type': 'application/json',
@@ -40,7 +40,7 @@
     if (usr.ok) { return usr.json() }
   }
   async function getById() {
-      const usr = await fetch('http://localhost:3001/api/user/id'+userId, {
+      const usr = await fetch(API_URL+'/user/id'+userId, {
           method: 'GET',
           headers: {
             'content-type': 'application/json',

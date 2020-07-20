@@ -18,7 +18,7 @@
   let promise = Promise.resolve([]);
   let submitted = false;
   async function loginUser(userInfo) {
-      const loginPost = await fetch('http://localhost:3001/api/login', {
+      const loginPost = await fetch(API_URL+'/login', {
           method: 'POST',
           credentials: 'include',
           headers: {

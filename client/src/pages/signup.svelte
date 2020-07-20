@@ -15,7 +15,7 @@
   }
   let notAllowed = ["about", "contact", "index", "login", "signup", "dashboard", "admin"];
   async function signupUser(userInfo) {
-      const signupPost = await fetch('http://localhost:3001/api/register', {
+      const signupPost = await fetch(API_URL+'/register', {
           method: 'POST',
           headers: {
             'content-type': 'application/json',

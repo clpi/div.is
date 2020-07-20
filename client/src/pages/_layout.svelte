@@ -22,7 +22,7 @@
         userData = getUser(id);
     }
     let logout = async () => {
-        await fetch('http://localhost:3001/api/logout', {
+        await fetch(API_URL+'/logout', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -33,28 +33,19 @@
     // TODO just return necessary user data in sub of jwt
     // TODO don't use JWT in cookie ... or do use JWT but in header?
     let getUser = async (id) => {
-        const res = await fetch('http://localhost:3001/api/user/id/'+id)
+        const res = await fetch(API_URL+'/user/id/'+id)
             .then(res => res.json())
             .then(res => userData = res)
         return res;
     }
     let getLogged = async () => {
-        const res = await fetch('http://localhost:3001/api/userstatus', {
+        const res = await fetch(API_URL+'/userstatus', {
           method: 'GET',
           credentials: 'include',
           headers: {
             cookie: document.cookie,
           }
         })
-            /*.then(res => {*/
-                /*if (res.headers.get("Authorized") == "false"){*/
-                    /*isLoggedIn = false;*/
-                    /*return res;*/
-                /*} else {*/
-                    /*isLoggedIn = true;*/
-                /*}*/
-                    
-            /*})*/
             .then(res => res.json())
             .then(res => loggedIn = res);
         return res;

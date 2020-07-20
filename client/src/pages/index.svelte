@@ -5,26 +5,6 @@
   import Box from '../comp/ui/box.svelte';
   import { metatags } from '@sveltech/routify';
   metatags.title = "memri";
-  export const session = writable(null);
-  let loggedIn = getContext('loggedIn'); 
-  let userData;
-  beforeUpdate(async () => {
-      if (loggedIn) {
-          let res = await fetch('http://localhost:3001/api/userstatus', {
-              method: 'GET',
-              credentials: 'include',
-              headers: {
-                cookie: document.cookie,
-              }
-          });
-          if (!res.ok) {
-            setContext('loggedIn', false);
-            setContext('userData', null);
-            loggedIn = false;
-          }
-      }
-    userData = getContext('userData');
-  })
 </script>
 
 <style>
@@ -40,7 +20,7 @@
 
 <div class="home-wrapper" in:fade={{duration:100}}>
     <Box title={"Hello"}>
-        <p>{userData}</p>
+        <p>API_URL: {API_URL}</p>
     </Box>
     <Box title={"How are you"}>
         <p>Look for <a href="/user">users</a></p>

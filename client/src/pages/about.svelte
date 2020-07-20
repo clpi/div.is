@@ -4,13 +4,13 @@
   import { metatags } from '@sveltech/routify';
   metatags.title = "about";
   onMount(async () => {
-    await fetch('http://localhost:3001/api/sum/29/69')
+    await fetch(API_URL+'/sum/29/69')
       .then(res => res.text())
       .then(body => expression = body)
       .catch(err=>{
         console.log(err);
     });
-    await fetch('http://localhost:3001/api/user/chrisp')
+    await fetch(API_URL+'/user/chrisp')
       .then(res=> res.json())
       .then(body => userInfo = body)
       .catch(err=>{

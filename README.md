@@ -45,3 +45,6 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set up redis db dockerfile  
 - [ ] set up fetch calls on client side to be called from express or otherwise to be called more elegantly and dynamically (api not on port 3001)
 - [ ] set up postgres db migration automation
+- [ ] set up in-instance / between container / in pod networking for client/api/db comms, instead of calling api url from .env
+- [ ] add $ready to frontend to render prettily when data is fetched
+- [ ] remove .env files and dotenv usage in backend, provision environmental variables in container specs

@@ -14,26 +14,32 @@ if [ "$1" == "up" ]; then
     FRONT_CON_PORT=5005
     BACK_HOST_PORT=3001
     BACK_CON_PORT=3001
+    ENV="dev"
     echo "${green}Building div.is containers...${res}"
-    if [ "$2" == "spa" ]; then
+    if [ "$3" == "spa" ]; then
         FRONT_CON_PORT=5000
     else
         FRONT_CON_PORT=5005
     fi
-    if [ "$1" == "dev" ]; then
-        echo "${green}${und}DEV: Running div.is front end container..."
+    if [ "$2" == "dev" ]; then
+        echo "${green}${und}DEV: Running div.is front end container...${res}"
         FRONT_HOST_PORT=$FRONT_CON_PORT
+        ENV="dev"
+        sudo podman build back -t divb
+        sudo podman build client -f Dockerfile.dev -t divfdev
+        sudo podman run -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT localhost/divfdev
+        sudo podman run -dt -p $BACK_HOST_PORT:$BACK_CON_PORT localhost/divb
     elif [ "$2" == "prod" ]; then
-        echo "${green}${und}PROD: Running div.is front end container..."
+        echo "${green}${und}PROD: Running div.is front end container...${res}"
         FRONT_HOST_PORT=80
+        ENV="prod"
+        sudo podman build back -t divb
+        sudo podman build client -f Dockerfile.prod -t divfprod
+        sudo podman run -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT localhost/divfprod
+        sudo podman run -dt -p $BACK_HOST_PORT:$BACK_CON_PORT localhost/divb
     else
-        echo "ERR: Invalid param" 
         break
     fi
-    sudo podman build back -t divb
-    sudo podman build client -t divf
-    sudo podman run -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT localhost/divf
-    sudo podman run -dt -p $BACK_HOST_PORT:$BACK_CON_PORT localhost/divb
     echo "${green}${bold}Running frontend on http://localhost:$FRONTEND_HOST_PORT" 
     echo "${green}${bold}Running backend on http://localhost:$FRONTEND_HOST_PORT${res}" 
 elif [ "$1" == "down" ]; then

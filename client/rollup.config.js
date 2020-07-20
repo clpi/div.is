@@ -21,8 +21,13 @@ const production = !process.env.ROLLUP_WATCH;
 const staticDir = 'static'
 const distDir = 'dist'
 const buildDir = `${distDir}/build`
+const apiUrl = process.env.API_URL;
 const buildStaticExports = process.env.PRERENDER !== "false" && !!production
 const useDynamicImports = process.env.BUNDLING === 'dynamic' || isNollup || !!production
+
+if (apiUrl == undefined) {
+  apiUrl = "http://localhost:3001/api"
+}
 
 
 del.sync(distDir + '/**') // clear previous builds
@@ -37,6 +42,9 @@ const baseConfig = () => ({
     sourcemap: true,
   },
   plugins: [
+    replace({
+      API_URL: JSON.stringify(apiUrl),
+    }),
     copy({
       targets: [
         { src: [`${staticDir}/*`, "!*/(__index.html)"], dest: distDir },
@@ -124,7 +132,8 @@ const serviceWorkerConfig = {
       globPatterns: ['**/*.{js,css,svg}', '__app.html'],
       maximumFileSizeToCacheInBytes: 10000000, // 10 MB
     }),
-    replace({ 'process.env.NODE_ENV': JSON.stringify('production'), }),
+    replace({ 
+      'process.env.NODE_ENV': JSON.stringify('production'), }),
     production && terser(),
   ]
 }

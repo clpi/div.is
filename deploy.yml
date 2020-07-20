@@ -16,15 +16,13 @@
           - "--exclude=wiki"
           - "--exclude=yew/target"
           - "--exclude=yew/node_modules"
+          - "--exclude=yew/.cache"
+          - "--exclude=.git"
       run_once: true
-    - name: Build backend image
-      command: sudo podman build /usr/src/div/back -t divb
-    - name: Build frontend image
-      command: sudo podman build /usr/src/div/client -t divf
-    - name: Run backend image
-      command: sudo podman run -dt -p 3001:3001 localhost/divb
-    - name: Run frontend image
-      command: sudo podman run -dt -p 80:5005 localhost/divf
+    - name: Remove existing containers
+      command: sudo ./pod.sh down
+    - name: Start production containers
+      command: sudo ./pod.sh up prod
 
 # to add: build, run postgres db
 # to add: build, run redis
