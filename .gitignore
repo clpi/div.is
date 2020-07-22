@@ -3,8 +3,6 @@
 mem.db
 .gitlab-ci.yml
 /wiki
-/pg
-/data
 back/.env
 back/.mem.db
 back/target
@@ -14,3 +12,8 @@ back/target
 /yew_cli/.cache
 /back/mem.db-shm
 /back/mem.db-wal
+/scripts/inv
+/data/pg/pg.env
+/data/pg/pgadmin.env
+/data/redis/redis.env
+/data/redis/redis.conf

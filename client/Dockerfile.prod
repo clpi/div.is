@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-ENV API_URL http://div.is:3001/api
+ENV API_URL http://io.div.is:3001/api
 
 COPY . .
 

@@ -9,6 +9,7 @@ res=`tput sgr0`
 
 
 #TODO add params for port mapping
+#TODO figure out why this doesnt work with ansible playbook
 if [ "$1" == "up" ]; then
     FRONT_HOST_PORT=80
     FRONT_CON_PORT=5005
@@ -27,16 +28,16 @@ if [ "$1" == "up" ]; then
         ENV="dev"
         sudo podman build back -t divb
         sudo podman build client -f Dockerfile.dev -t divfdev
-        sudo podman run -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT localhost/divfdev
-        sudo podman run -dt -p $BACK_HOST_PORT:$BACK_CON_PORT localhost/divb
+        sudo podman run --rm -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT --name divfdev localhost/divfdev
+        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divb
     elif [ "$2" == "prod" ]; then
         echo "${green}${und}PROD: Running div.is front end container...${res}"
         FRONT_HOST_PORT=80
         ENV="prod"
         sudo podman build back -t divb
         sudo podman build client -f Dockerfile.prod -t divfprod
-        sudo podman run -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT localhost/divfprod
-        sudo podman run -dt -p $BACK_HOST_PORT:$BACK_CON_PORT localhost/divb
+        sudo podman run --rm -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT --name divfprod localhost/divfprod
+        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divb
     else
         break
     fi
@@ -46,8 +47,6 @@ elif [ "$1" == "down" ]; then
     echo "${green}Tearing down pods...${res}"
     sudo podman image rm --all --force
     sudo podman image prune --force
-    sudo podman pod rm --all --force
-    sudo podman pod prune --force
     sudo podman container rm --all --force
     sudo podman container prune --force
     echo "${green}Pods have been torn down."

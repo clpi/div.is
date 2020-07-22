@@ -1,13 +1,7 @@
-# memuri (memri?)
-
-build net: `sudo podman network create --name divnet`
-build pod: `podman pod create --name divis --network divnet -p 3001:3001 -p 5432:5432` 
+# div.is
 
 ### to run front:
 `cd client && npm run dev`
-
-build image: `sudo podman image build client -t divf`
-run container: `sudo podman run -dt -p 3001:3001 localhost/divf` 
 
 SPA on localhost:5000, SSR on localhost:5005. uses Svelte + Routify
 
@@ -16,14 +10,10 @@ SPA on localhost:5000, SSR on localhost:5005. uses Svelte + Routify
 or
 `cd back && cargo-watch -x run`
 
-build image: `sudo podman image build back -t divb`
-run container: `sudo podman run -dt -p 80:5005 localhost/divb` 
-
-API on localhost:3000. Uses Warp + sqlx
+API on localhost:3001. Uses Warp + sqlx
 
 ## db:
-run postgres: `sudo podman run -dt -e POSTGRES_PASSWORD=password postgres:latest`
-url: `postgresql://postgres:password@localhost:5432/postgres`
+wip (using sqlite right now)
 
 ### deploying:
 Currently using Podman and Ansible to deploy to DigitalOcean
@@ -48,3 +38,7 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set up in-instance / between container / in pod networking for client/api/db comms, instead of calling api url from .env
 - [ ] add $ready to frontend to render prettily when data is fetched
 - [ ] remove .env files and dotenv usage in backend, provision environmental variables in container specs
+- [ ] use certbot to get ssl certs
+- [ ] set deploy script to run psql and rust backend on api.div.is, front on div.is (or api + front on div.is?)
+- [ ] fix container run scripts in ansible playbook to actually tear down containers and images (also appears to create 2 of each? according to cockpit? look into that)
+- [ ] don't build images, just run containers from

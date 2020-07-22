@@ -1,0 +1,23 @@
+---
+- name: Deploy to api.div.is
+  hosts: api.div.is
+  remote_user: root
+  vars:
+    pg_user: user
+    pg_pass: pass
+    pg_db: db
+    host_port: 80
+    cont_port: 5005
+  tasks:
+    - name: Install podman
+      dnf:
+        name:
+          - podman
+        state: latest
+    - name: Copy back end files
+      synchronize:
+        src: data/pg
+        dest: /usr/src/div/data/pg/pgdata
+        mode: push
+    - name: Run postgres container
+      command: sudo podman run postgres:latest

@@ -1,0 +1,41 @@
+- name: Initialize instance for deployment
+  hosts: div.is
+  remote_user: root
+  vars:
+    - cockpit: true
+    - password: password
+  tasks:
+    - name: Install prereqs for web app
+      dnf:
+        name:
+          - podman
+          - cockpit
+          - cockpit-podman
+          - cockpit-selinux
+        state: latest
+    #- name: Set password
+      #command: sudo passwd root 
+    #- name: Enable cockpit
+      #command: sudo systemctl start cockpit
+
+- name: Initialize api.div.is for deployment
+  hosts: div.is
+  remote_user: root
+  vars:
+    - cockpit: true
+    - password: password
+  tasks:
+    - name: Install prereqs for web app
+      dnf:
+        name:
+          - podman
+          - cockpit
+          - cockpit-podman
+          - cockpit-selinux
+          - postgres-server
+          - redis
+        state: latest
+    #- name: Set password
+      #command: sudo passwd root 
+    #- name: Enable cockpit
+      #command: sudo systemctl start cockpit

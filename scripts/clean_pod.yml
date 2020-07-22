@@ -1,0 +1,17 @@
+- name: Clean podman containers and images
+  hosts: div.is, api.div.is
+  remote_user: root
+  tasks:
+    - name: Install Podman
+      dnf:
+        name:
+          - podman
+        state: latest
+    - name: Clean images
+      command: sudo podman image rm --all --force
+    - name: Prune images
+      command: sudo podman image prune --force
+    - name: Clean containers
+      command: sudo podman container rm --all --force
+    - name: Prune containers
+      command: sudo podman container prune --force
