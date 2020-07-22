@@ -242,12 +242,26 @@ pub async fn update_user_by_username(
     }
 }
 
-pub async fn add_record(
-    db: Db, user_id: i32, record_id: i32, privelege: i32,
+pub async fn get_record_by_id(
+    db: Db, id: i32,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    // first create record! TODO then insert in db! TODO
-    match UserRecordLink::create(&db, user_id, record_id, privelege).await {
-        Ok(_) => Ok(String::from("Created record")),
+    match Record::from_id(&db, id).await {
+        Ok(record) => Ok(record.to_string()),
+        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+    }
+}
+
+pub async fn add_record(
+    db: Db, record: Record,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match &record.insert(&db).await {
+        Ok(rec) => {
+            let (uid, rid) = (rec.uid, rec.id.unwrap());
+            match UserRecordLink::create(&db, uid, rid).await {
+                Ok(_) => Ok(rec.to_string()),
+                Err(_) => Err(warp::reject()),
+            }
+        },    
         Err(_) => Err(warp::reject()),
     }
 }
@@ -269,3 +283,4 @@ pub async fn clear_table(
         Err(_) => Err(warp::reject()),
     }
 }
+

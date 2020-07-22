@@ -37,6 +37,18 @@ pub fn routes(data: AppData) -> impl Filter
         //.and(warp::path!(i32 / "record" / String))
         //.and_then(handlers::get_record);
 
+    // TODO Make this route only available to users currently authorized
+    let add_record = warp::post()
+        .and(using(data.db.clone()))
+        .and(warp::path!("record"))
+        .and(warp::body::json())
+        .and_then(handlers::add_record);
+
+    let get_record = warp::get()
+        .and(using(data.db.clone()))
+        .and(warp::path!("record" / i32))
+        .and_then(handlers::get_record_by_id);
+
     let delete_user = warp::post()
         .and(using(data.db.clone()))
         .and(warp::path!("user" / String))
@@ -96,7 +108,9 @@ pub fn routes(data: AppData) -> impl Filter
             .or(delete_user)
             .or(get_all_users)
             .or(get_user_by_id)
-            .or(update_user);
+            .or(update_user)
+            .or(get_record)
+            .or(add_record);
 
     let auth_routes = 
         refresh

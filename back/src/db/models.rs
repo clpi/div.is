@@ -1,4 +1,5 @@
 use serde_derive::*;
+use serde::{Serialize, Deserialize};
 use sqlx::FromRow;
 use super::Db;
 use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
@@ -238,7 +239,6 @@ pub struct UserRecordLink {
     pub id: Option<i32>,
     pub uid: i32,
     pub rid: i32,
-    pub privelege: i32,
     #[serde(default = "now_ts")]
     pub created_at: i32,
 }
@@ -247,7 +247,11 @@ pub struct UserRecordLink {
 // a task is an item
 // a goal is an item
 
-pub trait Model: Sized {  }
+pub trait Model: Sized + Serialize { 
+    fn to_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+}
 pub trait ModelLink { } 
 
 impl User {
@@ -370,9 +374,9 @@ impl User {
         }
     }
 
-    pub async fn with_record(&self, db: &Db, record_id: i32, privelege: i32) 
+    pub async fn with_record(&self, db: &Db, record_id: i32) 
         -> sqlx::Result<()> {
-        UserRecordLink::create(&db, self.id.unwrap(), record_id, privelege).await?;
+        UserRecordLink::create(&db, self.id.unwrap(), record_id).await?;
         Ok(())
     }
 
@@ -407,7 +411,14 @@ impl Record {
         }
     }
 
-    pub async fn insert(self, db: &Db) -> sqlx::Result<()> {
+    pub async fn from_id(db: &Db, id: i32) -> sqlx::Result<Self> {
+        let record = sqlx::query_as::<Sqlite, Self>("SELECT * FROM Records WHERE id=?;")  
+            .bind(id)
+            .fetch_one(&db.pool).await?;
+        Ok(record)
+    }
+
+    pub async fn insert(self, db: &Db) -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Records 
         (uid, name, status, private, created_at) 
         VALUES ($1, $2, $3, $4, $5);")  
@@ -417,7 +428,7 @@ impl Record {
             .bind(&self.private)
             .bind(&self.created_at)
             .execute(&db.pool).await?;
-        Ok(())
+        Ok(self)
     }
 
     pub async fn get_items(self, db: &Db) -> sqlx::Result<Vec<Item>> {
@@ -556,13 +567,11 @@ impl UserRecordLink {
         db: &Db,
         user_id: i32,
         record_id: i32,
-        privelege: i32,
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO UserRecordLinks
-            (uid, rid, privelege, created_at) VALUES ($1, $2, $3, $4);")
+            (uid, rid, created_at) VALUES ($1, $2, $3);")
             .bind(user_id)
             .bind(record_id)
-            .bind(privelege)
             .bind(now_ts())
             .execute(&db.pool).await?;
         Ok(())

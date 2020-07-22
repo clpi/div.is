@@ -7,25 +7,27 @@
       dnf:
         name:
           - podman
+          - cockpit
+          - cockpit-podman
         state: latest
     - name: Clean images
-      command: podman image rm --all --force
-      become: sudo
+      command: sudo podman image rm --all --force
+    - name: Prune images
+      command: sudo podman image prune --force
     - name: Clean containers
-      command: podman container rm --all --force
-      become: sudo
+      command: sudo podman container rm --all --force
+    - name: Prune images
+      command: sudo podman container prune --force
+    - name: Create base app dir
+      file:
+        path: /usr/src/div
+        state: directory
 
 - name: Deploy to div.is
   hosts: div.is
   remote_user: root
-  vars:
-    api_url: default
-    host_front_port: 80
-    cont_front_port: 5005
-    host_back_port: 3001
-    cont_back_port: 3001
   tasks:
-    - name: Copy back end files
+    - name: Copy front end files
       synchronize:
         src: client
         dest: /usr/src/div/
@@ -54,31 +56,32 @@
         name:
           - podman
         state: latest
+    - name: Create app data dir
+      file:
+        path: /usr/src/div/data
+        state: directory
     - name: Copy postgres files
       synchronize:
-        src: data/pg
-        dest: /usr/src/div/data/
+        src: data
+        dest: /usr/src/div/
         mode: push
     - name: Copy back end files
       synchronize:
         src: back
         dest: /usr/src/div/
         mode: push
+        rsync_opts:
+          - "--exclude=target"
     - name: Build postgres image
-      command: podman build /usr/src/div/data/pg -t divdb
-      become: sudo
+      command: sudo podman build /usr/src/div/data/pg -t divdb
     - name: Run postgres container
-      command: podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/usr/src/div/data/pg/pgdata --env-file /usr/src/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
-      become: sudo
+      command: sudo podman run -dt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql/data --env-file /usr/src/div/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
     - name: Run pgadmin container
-      command: podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/usr/src/div/data/pg/pgadmin --env-file /usr/src/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
-      become: sudo
+      command: sudo podman run -dt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
     - name: Build backend image
-      command: podman build /usr/src/div/back -t divb
-      become: sudo
+      command: sudo podman build /usr/src/div/back -t divb
     - name: Run backend image
-      command: podman run --rm -dt -p 3001:3001 --name divb localhost/divb
-      become: sudo
+      command: sudo podman run --rm -dt -p 3001:3001 --name divb localhost/divb
 
 # to add: build, run postgres db
 # to add: build, run redis
@@ -86,3 +89,4 @@
 # to add: build, run yew website
 # to add: second host droplet
 # to add: create pod + networking
+# to add: become sudo before each sudo podman command

@@ -38,7 +38,7 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set up in-instance / between container / in pod networking for client/api/db comms, instead of calling api url from .env
 - [ ] add $ready to frontend to render prettily when data is fetched
 - [ ] remove .env files and dotenv usage in backend, provision environmental variables in container specs
-- [ ] use certbot to get ssl certs
+- [ ] *next* use certbot to get ssl certs
 - [ ] set deploy script to run psql and rust backend on api.div.is, front on div.is (or api + front on div.is?)
 - [ ] fix container run scripts in ansible playbook to actually tear down containers and images (also appears to create 2 of each? according to cockpit? look into that)
 - [ ] don't build images, just run containers from

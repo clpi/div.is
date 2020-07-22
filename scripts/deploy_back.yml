@@ -19,6 +19,8 @@
         src: data/pg
         dest: /usr/src/div/data/
         mode: push
+        rsync_opts:
+          - "--exclude=target"
     - name: Copy back end files
       synchronize:
         src: back

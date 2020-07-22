@@ -17,8 +17,6 @@
         /*console.log(err);*/
       /*});*/
   /*});*/
-  let expression = "";
-  let userInfo = "";
 </script>
 
 <style>
@@ -28,6 +26,4 @@
 </style>
 <div class="about" in:fade={{duration:100}}>
     <h1>About</h1>
-    <p>Logged in as: <code>{userInfo.username}</code> ({userInfo.email})</p>
-    <p>{expression}</p>
 </div>
