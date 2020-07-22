@@ -3,10 +3,17 @@
   hosts: div.is, io.div.is
   remote_user: root
   tasks:
+    - name: Install Podman
+      dnf:
+        name:
+          - podman
+        state: latest
     - name: Clean images
-      command: sudo podman image rm --all --force
+      command: podman image rm --all --force
+      become: sudo
     - name: Clean containers
-      command: sudo podman container rm --all --force
+      command: podman container rm --all --force
+      become: sudo
 
 - name: Deploy to div.is
   hosts: div.is
@@ -18,11 +25,6 @@
     host_back_port: 3001
     cont_back_port: 3001
   tasks:
-    - name: Install Podman
-      dnf:
-        name:
-          - podman
-        state: latest
     - name: Copy back end files
       synchronize:
         src: client
@@ -63,15 +65,20 @@
         dest: /usr/src/div/
         mode: push
     - name: Build postgres image
-      command: sudo podman build /usr/src/div/data/pg -t divdb
+      command: podman build /usr/src/div/data/pg -t divdb
+      become: sudo
     - name: Run postgres container
-      command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/usr/src/div/data/pg/pgdata --env-file /usr/src/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
+      command: podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/usr/src/div/data/pg/pgdata --env-file /usr/src/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
+      become: sudo
     - name: Run pgadmin container
-      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/usr/src/div/data/pg/pgadmin --env-file /usr/src/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
+      command: podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/usr/src/div/data/pg/pgadmin --env-file /usr/src/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
+      become: sudo
     - name: Build backend image
-      command: sudo podman build /usr/src/div/back -t divb
+      command: podman build /usr/src/div/back -t divb
+      become: sudo
     - name: Run backend image
-      command: sudo podman run --rm -dt -p 3001:3001 --name divb localhost/divb
+      command: podman run --rm -dt -p 3001:3001 --name divb localhost/divb
+      become: sudo
 
 # to add: build, run postgres db
 # to add: build, run redis

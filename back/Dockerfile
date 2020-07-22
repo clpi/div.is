@@ -1,6 +1,6 @@
 FROM rust:1.45-slim
 
-WORKDIR /usr/src/app/back
+WORKDIR /usr/src/div/back
 
 COPY . .
 
