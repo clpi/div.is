@@ -1,0 +1,4 @@
+- name: Build backend image
+  command: sudo podman build /usr/src/div/back -t divb
+- name: Run backend image
+  command: sudo podman run --rm -dt -p 3001:3001 --name divb localhost/divb

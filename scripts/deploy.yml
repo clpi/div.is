@@ -29,7 +29,7 @@
   tasks:
     - name: Copy front end files
       synchronize:
-        src: client
+        src: ../client
         dest: /usr/src/div/
         mode: push
         rsync_opts:
@@ -57,12 +57,12 @@
         state: directory
     - name: Copy postgres files
       synchronize:
-        src: data
+        src: ../data
         dest: /usr/src/div/
         mode: push
     - name: Copy back end files
       synchronize:
-        src: back
+        src: ../back
         dest: /usr/src/div/
         mode: push
         rsync_opts:

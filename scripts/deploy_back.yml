@@ -1,3 +1,4 @@
+---
 - name: Deploy to io.div.is
   hosts: io.div.is
   remote_user: root
@@ -15,12 +16,12 @@
         state: directory
     - name: Copy postgres files
       synchronize:
-        src: data
+        src: ../data
         dest: /usr/src/div/
         mode: push
     - name: Copy back end files
       synchronize:
-        src: back
+        src: ../back
         dest: /usr/src/div/
         mode: push
         rsync_opts:

@@ -4,7 +4,7 @@
   tasks:
     - name: Copy front end files
       synchronize:
-        src: client
+        src: ../client
         dest: /usr/src/div/
         mode: push
         rsync_opts:

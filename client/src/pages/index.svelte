@@ -1,11 +1,12 @@
 <script>
   import { slide, fade } from 'svelte/transition'
   import { setContext, beforeUpdate, getContext, onMount } from 'svelte'
-  import {writable, readable} from 'svelte/store'
+  import { user, logged } from '../store.js';
   import Box from '../comp/ui/box.svelte';
   import { metatags } from '@sveltech/routify';
+
   metatags.title = "div.is";
-  export let scoped;
+  /*export let scoped;*/
 </script>
 
 <style>
@@ -21,7 +22,10 @@
 
 <div class="home-wrapper" in:fade={{duration:100}}>
     <Box title={"Hello"}>
-      <p>Welcome, {scoped.user.username}</p>
+      <p>sup {$user.username}</p>
+      <!-- 
+        <p>Welcome, {scoped.user.username}</p> 
+      -->
     </Box>
     <Box title={"How are you"}>
         <p>Look for <a href="/user">users</a></p>

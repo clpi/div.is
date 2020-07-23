@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
 
 export let user = writable({});
-export let logged = writable(false);
+export let isLogged = writable(false);
+export let logged = writable({});

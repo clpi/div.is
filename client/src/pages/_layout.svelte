@@ -1,49 +1,49 @@
 <!-- _layout.svelte -->
 <script>
     /*import Nav from '../comp/ui/nav.svelte';*/
-    import { afterPageLoad, url, isActive } from "@sveltech/routify";
-    import { user, logged } from '../store.js';
+    import { beforeUrlChange, isChangingPage, afterPageLoad, url, isActive, ready } from "@sveltech/routify";
+    import { user, isLogged, logged } from '../store.js';
     import { slide, fade } from 'svelte/transition';
-    let usr = Promise.resolve([]);
-    let loggedIn = Promise.resolve([]);
-    let userData = Promise.resolve([]);
     // TODO have everything load at once in fetch call
     // and then declare $ready instead of having await in DOM
     // TODO handle auth like routify suggests on their website
-    $afterPageLoad(async () => {
-        handleRefresh();
-        if (loggedIn.sub != null) {
-            isLoggedIn = true;
-        }
+
+    let authUser = Promise.resolve([]);
+    let authLogged = Promise.resolve([]);
+    $beforeUrlChange(() => {
+      refresh();
+      return true;
     })
-    function fetchUser() {
-      usr = getUser(getLogged.sub)
+    let refresh = async () => {
+      logged.set(await getLogged());
+      user.set(await getUser());
+      if ($logged != undefined) {
+        isLogged.set(true);
+      }
+      console.log($logged);
+      console.log($user);
+      console.log($isLogged);
     }
-    function handleRefresh() {
-        loggedIn = getLogged();
-    } 
-    function handleUserData(id) {
-        userData = getUser(id);
-    }
+
     let logout = async () => {
-        await fetch(API_URL+'/logout', {
+        let res = await fetch(API_URL+'/logout', {
             method: 'POST',
             credentials: 'include',
             headers: {
                 cookie: document.cookie,
             }
-        });
+        })
+        .then(isLogged.set(false))
+        .then(user.set({}))
+        .then(logged.set({}));
+        
+      return res;
     }
     // TODO just return necessary user data in sub of jwt
     // TODO don't use JWT in cookie ... or do use JWT but in header?
-    let getUser = async (id) => {
-      if (id == undefined) {
-        return undefined ;
-      }
-      const res = await fetch(API_URL+'/user/id/'+id)
-        .then(res => res.json())
-        .then(res => userData = res);
-      console.log(userData);
+    let getUser = async () => {
+      const res = await fetch(API_URL+'/user/id/'+$logged.sub)
+        .then(res => res.json());
       return res;
     }
     let getLogged = async () => {
@@ -54,11 +54,10 @@
           cookie: document.cookie,
         }
       })
-        .then(res => res.json())
-        .then(res => loggedIn = res);
+        .then(res => res.json());
       return res;
     }
-
+    getLogged().then($ready);
 </script>
 
 <style>
@@ -157,27 +156,31 @@
             <li in:slide={{delay:350}} class:active={$isActive("/admin")}>
                 <a href={$url("/admin")}>admin</a>
             </li>
-            {#await loggedIn}
+            {#await refresh}
             {:then res}
-            {#if loggedIn.sub != null}
+            {#if $isLogged}
                 <li 
                     in:fade
                     id="loginNav" 
                 >
                 <a on:click={logout} href="/">log out</a>
                 </li>
-              {#await getUser(loggedIn.sub)}
-              {:then userRes}
                 <li 
                     in:fade 
                     id="loginNav" 
-                    class:active={$isActive("/"+userRes.username)}
+                    class:active={$isActive("/"+$user.username)}
                 >
-                    <a href={$url('/:username', {username: userRes.username})}>
-                        {userRes.username}
+                    <a href={$url('/:username', {username: $user.username})}>
+                        {$user.username}
                     </a>
                 </li>
-              {/await}
+              {:else}
+                <li in:fade id="signupNav" class:active={$isActive("/signup")} >
+                    <a href={$url("/signup")}>signup</a>
+                </li>
+                <li in:fade id="loginNav" class:active={$isActive("/login")}>
+                    <a href={$url("/login")}>login</a>
+                </li>
             {/if}
             {:catch}
                 <li in:fade id="signupNav" class:active={$isActive("/signup")} >
@@ -195,7 +198,9 @@
         </ul>
     </div>
     <div class = "content">
-      <slot scoped={{user: userData, logged: loggedIn}}/>
-        <!-- <slot scoped={{user: userData, loggedIn: loggedIn}}/> -->
+      <slot/>
+      <!-- 
+        <slot scoped={{user: userData, loggedIn: loggedIn}}/> 
+      -->
     </div>
 </div>

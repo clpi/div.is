@@ -174,6 +174,7 @@ CREATE TABLE IF NOT EXISTS UserRecordLinks (
     uid INTEGER NOT NULL,
     rid INTEGER NOT NULL,
     privelege  INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id),
     FOREIGN KEY (rid) REFERENCES Records(id)
 );

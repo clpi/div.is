@@ -42,7 +42,8 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set up fetch calls on client side to be called from express or otherwise to be called more elegantly and dynamically (api not on port 3001)
 - [ ] set up postgres db migration automation
 - [ ] set up in-instance / between container / in pod networking for client/api/db comms, instead of calling api url from .env
-- [ ] add $ready to frontend to render prettily when data is fetched
+- [ ] add $ready to frontend to render prettily when data is fetched:
+    - [ ] *IMPORTANT* TODO fix authentication scoping in frontend so it doesn't freeze on passing user data to child pages
 - [ ] remove .env files and dotenv usage in backend, provision environmental variables in container specs
 - [ ] *next* use certbot to get ssl certs
 - [ ] set deploy script to run psql and rust backend on api.div.is, front on div.is (or api + front on div.is?)
@@ -51,3 +52,6 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] don't reject cookie refresh requests -- return falsy value
 - [ ] *important* actually implement frontend api fetching error handling properly
 - [ ] consider entirely restructuring your frontend, now that fetching logic is done, there's nothing special about it besides how messy it is
+- [ ] add ansible playbooks to automate provisioning of digitalocean droplets / ec2 instances
+- [ ] optimize api fetches on frontend so read/write is minimized and redundant api calls are reduced
+- [ ] store authentication memory server side instead of in svelte store (?)

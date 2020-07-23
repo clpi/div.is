@@ -62,7 +62,7 @@ pub struct UserInfo {
 pub struct Record {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
-    pub uid: i32, //user id
+    pub uid: i32,
     pub name: String,
     pub status: i32,
     pub private: bool,
@@ -249,6 +249,7 @@ pub struct UserRecordLink {
     pub id: Option<i32>,
     pub uid: i32,
     pub rid: i32,
+    pub privelege: i32,
     #[serde(default = "now_ts")]
     pub created_at: i32,
 }
@@ -428,16 +429,17 @@ impl Record {
         Ok(record)
     }
 
-    pub async fn insert(self, db: &Db) -> sqlx::Result<Self> {
+    pub async fn insert(self, db: &Db) 
+    -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Records 
-        (uid, name, status, private, created_at) 
-        VALUES ($1, $2, $3, $4, $5);")  
+        (uid, name, status, private, created_at) VALUES ($1, $2, $3, $4, $5);")  
             .bind(&self.uid)
             .bind(&self.name)
             .bind(&self.status)
             .bind(&self.private)
-            .bind(&self.created_at)
+            .bind(now_ts())
             .execute(&db.pool).await?;
+        UserRecordLink::create(db, self.uid, self.id.unwrap()).await?;
         Ok(self)
     }
 
@@ -448,6 +450,20 @@ impl Record {
             .bind(&self.id)
             .fetch_all(&db.pool).await?;
         Ok(items)
+    }
+
+    pub async fn add_user(self, db: &Db, uid: i32) -> sqlx::Result<Self> {
+        UserRecordLink::create(db, uid, self.id.unwrap()).await?;
+        Ok(self)
+    }
+
+    pub async fn get_users(self, db: &Db) -> sqlx::Result<Vec<User>> {
+        let users: Vec<User> = sqlx::query_as::<Sqlite, User>("
+            SELECT * FROM Users INNER JOIN UserRecordLinks
+            ON UserRecordLinks.uid=Users.id WHERE UserRecordLinks.rid=?;")
+            .bind(&self.id)
+            .fetch_all(&db.pool).await?;
+        Ok(users)
     }
 
     pub async fn with_name(mut self, name: String) -> Record {

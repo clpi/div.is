@@ -1,4 +1,9 @@
-- name: Build postgres image
-  command: sudo podman build /usr/src/div/data/pg -t divdb
-- name: Run postgres container
-  command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql --env-file /usr/src/div/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
+---
+- name: Build and run postgres image
+  hosts: div.is, io.div.is
+  remote_user: root
+  tasks:
+  - name: Build postgres image
+    command: sudo podman build /usr/src/div/data/pg -t divdb
+  - name: Run postgres container
+    command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql --env-file /usr/src/div/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
