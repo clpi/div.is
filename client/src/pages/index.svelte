@@ -4,7 +4,8 @@
   import {writable, readable} from 'svelte/store'
   import Box from '../comp/ui/box.svelte';
   import { metatags } from '@sveltech/routify';
-  metatags.title = "memri";
+  metatags.title = "div.is";
+  export let scoped;
 </script>
 
 <style>
@@ -20,7 +21,7 @@
 
 <div class="home-wrapper" in:fade={{duration:100}}>
     <Box title={"Hello"}>
-        <p>API_URL</p>
+      <p>Welcome, {scoped.user.username}</p>
     </Box>
     <Box title={"How are you"}>
         <p>Look for <a href="/user">users</a></p>

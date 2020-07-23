@@ -9,6 +9,7 @@ res=`tput sgr0`
 
 
 #TODO add params for port mapping
+#TODO add postgres container deployment after sqlx is configured for postgres
 #TODO figure out why this doesnt work with ansible playbook
 if [ "$1" == "up" ]; then
     FRONT_HOST_PORT=80
@@ -49,11 +50,11 @@ elif [ "$1" == "down" ]; then
     sudo podman image prune --force
     sudo podman container rm --all --force
     sudo podman container prune --force
-    echo "${green}Pods have been torn down."
+    echo "${green}Pods have been torn down.${res}"
 elif [ "$1" == "check" ]; then
-    echo "Checking pods..."
+    echo "Checking pods...${res}"
 elif [ "$1" == "test" ]; then
-    echo -e "${red}ERR"
+    echo -e "${red}ERR${res}"
 else
-    echo "${red}No valid argument passed"
+    echo "${red}No valid argument passed${res}"
 fi

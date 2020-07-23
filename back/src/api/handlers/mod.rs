@@ -247,7 +247,16 @@ pub async fn get_record_by_id(
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match Record::from_id(&db, id).await {
         Ok(record) => Ok(record.to_string()),
-        Err(_e) => Ok(StatusCode::BAD_REQUEST.to_string()),
+        Err(_) => Err(warp::reject()),
+    }
+}
+
+pub async fn get_user_records(
+    db: Db, user: User
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match user.get_records(&db).await {
+        Ok(records) => Ok(serde_json::to_string(&records).unwrap()),
+        Err(_) => Err(warp::reject())
     }
 }
 

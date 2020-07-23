@@ -1,0 +1,19 @@
+- name: Install Podman
+  dnf:
+    name:
+      - podman
+      - cockpit
+      - cockpit-podman
+    state: latest
+- name: Clean images
+  command: sudo podman image rm --all --force
+- name: Prune images
+  command: sudo podman image prune --force
+- name: Clean containers
+  command: sudo podman container rm --all --force
+- name: Prune images
+  command: sudo podman container prune --force
+- name: Create base app dir
+  file:
+    path: /usr/src/div
+    state: directory

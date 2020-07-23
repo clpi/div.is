@@ -1,0 +1,16 @@
+- name: Create app data dir
+  file:
+    path: /usr/src/div/data
+    state: directory
+- name: Copy postgres files
+  synchronize:
+    src: data
+    dest: /usr/src/div/
+    mode: push
+- name: Copy back end files
+  synchronize:
+    src: back
+    dest: /usr/src/div/
+    mode: push
+    rsync_opts:
+      - "--exclude=target"

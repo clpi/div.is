@@ -12,6 +12,9 @@ use crate::api::auth::hash_pwd;
 //TODO error handling for with_x functions for models w/o ids -- remove unwrap()
 //sqlx::Type and transparent
 //NOTE: Add (?) last login, pwd hash
+//TODO make password option??
+//TODO only make async what needs to be async
+//TODO split up models into src/models in appropriate files
 #[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {
@@ -22,6 +25,13 @@ pub struct User {
     pub password: String,
     #[serde(default = "now_ts")]
     pub created_at: i32,
+}
+
+#[derive(Default, Serialize, Deserialize, Clone)]
+pub struct UserSession {
+    pub id: Option<i32>,
+    pub email: String,
+    pub username: String,
 }
 
 // NOTE: Add (?) preferences
@@ -602,8 +612,10 @@ impl Group {
     }
 }
 
-
-
+// TODO actually implement -- without db query
+//impl From<UserSession> for User {
+    //fn from(user: UserSession) -> User {}
+//}
 
 impl Into<String> for User {
     fn into(self) -> String { String::from("User") }

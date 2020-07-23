@@ -19,16 +19,22 @@ wip (using sqlite right now)
 Currently using Podman and Ansible to deploy to DigitalOcean
 
 ### to do
-- [ ] set up sqlx parts for postgres, automate postgres deployment/migrations/etc
+- [o] set up sqlx parts for postgres, automate postgres deployment/migrations/etc
+    - [X] implement postgres deployment in podman deployment ansible playbook
+    - [ ] implement postgres in sqlx in backend
 - [ ] implement cookie sessions with OAuth2 instead of JWT
 - [ ] generate kubernetes YML file for podman containerized deploy
 - [X] make ansible-playbook build and deploy to digitalocean 
 - [X] make minimal but functional dockerfiles for backend, frontend, and postgres db
 - [ ] reconfigure sqlx/restructure queries/schema for postgres after setting up pg deployment
-- [ ] add record CRUD functionality + display on frontend
-- [ ] add entry CRUD funcitonality + display on frontend
+- [o] Record CRUD
+    - [X] Record CRUD in backend 
+    - [ ] Record CRUD functionality in frontend
+- [ ] Item CRUD
+    - [ ] Item CRUD in backend 
+    - [ ] Item CRUD functionality in frontend
 - [ ] currently need to look into exposig networking ports and pod networking for podman, so just run each container separately
-- [ ] get rust backend build to work properly
+- [X] get rust backend build to work properly
 - [ ] figure out routing with pods / routing on instance for subdomain configuration (using traefik?)
 - [ ] create yew parallel site (skeletal) for testing
 - [ ] set up api credentials (for mobile app, other users, etc.)
@@ -42,3 +48,6 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] set deploy script to run psql and rust backend on api.div.is, front on div.is (or api + front on div.is?)
 - [ ] fix container run scripts in ansible playbook to actually tear down containers and images (also appears to create 2 of each? according to cockpit? look into that)
 - [ ] don't build images, just run containers from
+- [ ] don't reject cookie refresh requests -- return falsy value
+- [ ] *important* actually implement frontend api fetching error handling properly
+- [ ] consider entirely restructuring your frontend, now that fetching logic is done, there's nothing special about it besides how messy it is

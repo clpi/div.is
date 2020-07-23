@@ -1,3 +1,4 @@
+---
 - name: Deploy to io.div.is
   hosts: io.div.is
   remote_user: root
@@ -8,31 +9,30 @@
     host_port: 80
     cont_port: 5005
   tasks:
-    - import_tasks: common.yml
-    - name: Create app data dir
-      file:
-        path: /usr/src/div/data
-        state: directory
+    - name: Install podman
+      dnf:
+        name:
+          - podman
+        state: latest
     - name: Copy postgres files
       synchronize:
-        src: data
-        dest: /usr/src/div/
+        src: data/pg
+        dest: /usr/src/div/data/
         mode: push
+        rsync_opts:
+          - "--exclude=target"
     - name: Copy back end files
       synchronize:
         src: back
         dest: /usr/src/div/
         mode: push
-        rsync_opts:
-          - "--exclude=target"
     - name: Build postgres image
       command: sudo podman build /usr/src/div/data/pg -t divdb
     - name: Run postgres container
-      command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql --env-file /usr/src/div/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
+      command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/usr/src/div/data/pg/pgdata --env-file /usr/src/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
     - name: Run pgadmin container
-      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
+      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/usr/src/div/data/pg/pgadmin --env-file /usr/src/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
     - name: Build backend image
       command: sudo podman build /usr/src/div/back -t divb
     - name: Run backend image
       command: sudo podman run --rm -dt -p 3001:3001 --name divb localhost/divb
-

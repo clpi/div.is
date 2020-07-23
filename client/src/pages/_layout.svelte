@@ -4,17 +4,21 @@
     import { afterPageLoad, url, isActive } from "@sveltech/routify";
     import { user, logged } from '../store.js';
     import { slide, fade } from 'svelte/transition';
-    let isLoggedIn = false;
+    let usr = Promise.resolve([]);
     let loggedIn = Promise.resolve([]);
     let userData = Promise.resolve([]);
     // TODO have everything load at once in fetch call
     // and then declare $ready instead of having await in DOM
+    // TODO handle auth like routify suggests on their website
     $afterPageLoad(async () => {
         handleRefresh();
         if (loggedIn.sub != null) {
             isLoggedIn = true;
         }
     })
+    function fetchUser() {
+      usr = getUser(getLogged.sub)
+    }
     function handleRefresh() {
         loggedIn = getLogged();
     } 
@@ -33,22 +37,26 @@
     // TODO just return necessary user data in sub of jwt
     // TODO don't use JWT in cookie ... or do use JWT but in header?
     let getUser = async (id) => {
-        const res = await fetch(API_URL+'/user/id/'+id)
-            .then(res => res.json())
-            .then(res => userData = res)
-        return res;
+      if (id == undefined) {
+        return undefined ;
+      }
+      const res = await fetch(API_URL+'/user/id/'+id)
+        .then(res => res.json())
+        .then(res => userData = res);
+      console.log(userData);
+      return res;
     }
     let getLogged = async () => {
-        const res = await fetch(API_URL+'/userstatus', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            cookie: document.cookie,
-          }
-        })
-            .then(res => res.json())
-            .then(res => loggedIn = res);
-        return res;
+      const res = await fetch(API_URL+'/userstatus', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          cookie: document.cookie,
+        }
+      })
+        .then(res => res.json())
+        .then(res => loggedIn = res);
+      return res;
     }
 
 </script>
@@ -152,14 +160,14 @@
             {#await loggedIn}
             {:then res}
             {#if loggedIn.sub != null}
-            {#await getUser(res.sub)}
-            {:then userRes}
                 <li 
                     in:fade
                     id="loginNav" 
                 >
                 <a on:click={logout} href="/">log out</a>
                 </li>
+              {#await getUser(loggedIn.sub)}
+              {:then userRes}
                 <li 
                     in:fade 
                     id="loginNav" 
@@ -169,7 +177,7 @@
                         {userRes.username}
                     </a>
                 </li>
-            {/await}
+              {/await}
             {/if}
             {:catch}
                 <li in:fade id="signupNav" class:active={$isActive("/signup")} >
@@ -187,7 +195,7 @@
         </ul>
     </div>
     <div class = "content">
-        <slot />
+      <slot scoped={{user: userData, logged: loggedIn}}/>
         <!-- <slot scoped={{user: userData, loggedIn: loggedIn}}/> -->
     </div>
 </div>

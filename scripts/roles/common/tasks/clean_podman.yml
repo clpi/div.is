@@ -1,5 +1,5 @@
 - name: Clean podman containers and images
-  hosts: div.is, api.div.is
+  hosts: div.is, io.div.is
   remote_user: root
   tasks:
     - name: Install Podman

@@ -49,6 +49,12 @@ pub fn routes(data: AppData) -> impl Filter
         .and(warp::path!("record" / i32))
         .and_then(handlers::get_record_by_id);
 
+    let get_user_records = warp::get()
+        .and(using(data.db.clone()))
+        .and(warp::path!("record"))
+        .and(warp::body::json())
+        .and_then(handlers::get_user_records);
+
     let delete_user = warp::post()
         .and(using(data.db.clone()))
         .and(warp::path!("user" / String))
@@ -110,6 +116,7 @@ pub fn routes(data: AppData) -> impl Filter
             .or(get_user_by_id)
             .or(update_user)
             .or(get_record)
+            .or(get_user_records)
             .or(add_record);
 
     let auth_routes = 
