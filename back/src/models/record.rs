@@ -28,6 +28,7 @@ pub struct Record {
 }
 
 // NOTE: pass user ID into all user header requests, so it can be passed ot Record::new()
+// TODO: make sure uid exists (user exists) before inserting into db, etc.
 impl Record {
 
     pub fn new(uid: i32, name: String) -> Record {
