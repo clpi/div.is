@@ -14,14 +14,14 @@
     password: '',
   }
   let notAllowed = ["about", "contact", "index", "login", "signup", "dashboard", "admin"];
-  async function signupUser(userInfo) {
+  async function signupUser(loginInfo) {
       const signupPost = await fetch(API_URL+'/register', {
           method: 'POST',
           headers: {
             'content-type': 'application/json',
               /*authorization: <authorization>*/
           },
-          body: JSON.stringify(userInfo)
+          body: JSON.stringify(loginInfo)
       });
       if (signupPost.ok) {
         return "OK";
@@ -32,7 +32,7 @@
   function handleSubmit() {
     fetching=true;
     console.log(signupInfo);
-    if (notAllowed.includes(userInfo.username)) { // TODO actually verify input
+    if (notAllowed.includes(signupInfo.username)) { // TODO actually verify input
         throw new Error("Can't use username " + userInfo.username);
     }
     promise = signupUser(signupInfo);

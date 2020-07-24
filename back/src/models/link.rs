@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts,
+    Time, Status, Priority, Permission,
 };
 
 
@@ -14,9 +14,11 @@ pub struct RecordItemLink {
     pub id: Option<i32>,
     pub rid: i32,
     pub iid: i32,
-    pub status: i32,
-    pub priority: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Priority::lowest")]
+    pub priority: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -27,9 +29,11 @@ pub struct ItemFieldLink {
     pub id: Option<i32>,
     pub iid: i32,
     pub fid: i32,
-    pub status: i32,
-    pub priority: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Priority::lowest")]
+    pub priority: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -40,10 +44,11 @@ pub struct FieldEntryLink {
     pub id: Option<i32>,
     pub fid: i32,
     pub etid: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
+// TODO enumerate roles add default
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct UserGroupLink {
@@ -52,11 +57,13 @@ pub struct UserGroupLink {
     pub uid: i32,
     pub gid: i32,
     pub role: String,
-    pub status: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
+// TODO enumerate priveleges? or make role merge with usertype?
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct UserRecordLink {
@@ -64,8 +71,7 @@ pub struct UserRecordLink {
     pub id: Option<i32>,
     pub uid: i32,
     pub rid: i32,
-    pub privelege: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -82,7 +88,7 @@ impl RecordItemLink {
             .bind(record_id)
             .bind(item_id)
             .bind(priority)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -101,7 +107,7 @@ impl ItemFieldLink {
             .bind(item_id)
             .bind(field_id)
             .bind(priority)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -117,7 +123,7 @@ impl FieldEntryLink {
         (fid, etid, created_at) VALUES ($1, $2, $3);")
             .bind(field_id)
             .bind(entry_type_id)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -135,7 +141,7 @@ impl UserGroupLink {
             .bind(user_id)
             .bind(group_id)
             .bind(role)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
     }
@@ -151,7 +157,7 @@ impl UserRecordLink {
             (uid, rid, created_at) VALUES ($1, $2, $3);")
             .bind(user_id)
             .bind(record_id)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
     }

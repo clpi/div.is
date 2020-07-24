@@ -38,6 +38,7 @@ impl SessionData {
     }
 }
 
+//TODO Maybe make a macro for route -> handler relationship? the way rocket does it?
 pub async fn test(
     name: String
 ) -> Result<impl warp::Reply, warp::Rejection> {
@@ -262,9 +263,20 @@ pub async fn get_user_records(
     }
 }
 
+pub async fn get_records_shared_with(
+    db: Db, user: User
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match Record::associated_with_user(&db, &user).await {
+        Ok(records) => Ok(serde_json::to_string(&records).unwrap()),
+        Err(_) => Err(warp::reject())
+    }
+}
+
 pub async fn add_record(
     db: Db, record: Record,
 ) -> Result<impl warp::Reply, warp::Rejection> {
+    println!("Adding record... ");
+    println!("{}", serde_json::to_string(&record).unwrap());
     match record.insert(&db).await {
         Ok(record) => {
             Ok(serde_json::to_string(&record).unwrap())

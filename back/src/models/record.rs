@@ -1,11 +1,16 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Model, Status, Permission,
     entry::EntryType,
     user::User, item::Item,
     link::{UserRecordLink, RecordItemLink},
 };
+
+// TODO: Think out "tagging" functionality for records --
+// want this to be "default", but also want it to be implemented
+// in a more dynamic way than simply adding a tag, taglink table --
+// handle through items associated with record?
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
@@ -14,9 +19,11 @@ pub struct Record {
     pub id: Option<i32>,
     pub uid: i32,
     pub name: String,
-    pub status: i32,
-    pub private: bool,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Permission::private")]
+    pub permission: bool,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -26,9 +33,9 @@ impl Record {
     pub fn new(uid: i32, name: String) -> Record {
         Self { 
             id: None, uid, name, 
-            status: 1,
-            private: true,
-            created_at: now_ts(),
+            status: Status::active(),
+            permission: Permission::private(),
+            created_at: Time::now(),
         }
     }
 
@@ -42,14 +49,16 @@ impl Record {
     pub async fn insert(self, db: &Db) 
     -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Records 
-        (uid, name, status, private, created_at) VALUES ($1, $2, $3, $4, $5);")  
+        (uid, name, status, private, created_at) 
+        VALUES ($1, $2, $3, $4, $5);")  
             .bind(&self.uid)
             .bind(&self.name)
             .bind(&self.status)
-            .bind(&self.private)
-            .bind(now_ts())
+            .bind(&self.permission)
+            .bind(Time::now())
             .execute(&db.pool).await?;
-        UserRecordLink::create(db, self.uid, self.id.unwrap()).await?;
+        // TODO: Create userRecordLink by retrieveing rid after inserting new record
+        //UserRecordLink::create(db, self.uid, self.id.unwrap()).await?;
         Ok(self)
     }
 
@@ -76,18 +85,29 @@ impl Record {
         Ok(users)
     }
 
+    // TODO: Get records where user has UserRecordLink association,
+    // but record's uid != user's uid
+    pub async fn associated_with_user(db: &Db, user: &User) -> sqlx::Result<Vec<Self>> {
+        let records: Vec<Self> = sqlx::query_as::<Sqlite, Self>("
+            SELECT * FROM Records INNER JOIN UserRecordLinks
+            ON UserRecordLinks.uid=Users.id 
+            WHERE UserRecordLinks.uid=?
+              AND Records.uid!=?;")
+            .bind(user.id)
+            .fetch_all(&db.pool).await?;
+        Ok(records)
+    }
+
     pub async fn with_name(mut self, name: String) -> Record {
         self.name = name; self
     }
 
     pub async fn create_entry_type(&self, uid: i32, name: String) -> EntryType {
         EntryType {
-            id: None,
-            uid: uid,
-            name: name,
-            private: true,
-            status: 1,
-            created_at: now_ts(),
+            id: None, uid: uid, name: name,
+            private: Permission::private(),
+            status: Status::active(),
+            created_at: Time::now(),
         }
    }
 

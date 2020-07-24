@@ -17,8 +17,50 @@ pub trait Model: Sized + Serialize {
 }
 
 pub trait ModelLink { } 
-pub fn now_ts() -> i32 {
-    Utc::now().timestamp() as i32
+
+//TODO rename private field to permission field
+//TODO figure out how to best use enums // best practices for them
+//TODO think this through -- all enums
+pub enum Time {
+    Now,
+    Tomorrow,
+    DayAfterTomorrow,
+    WeekLater,
+    MonthLater,
+}
+
+impl Time {
+    pub fn now() -> i32 { Utc::now().timestamp() as i32 }
+}
+
+pub enum Status {
+    Archived,    
+    Deleted,
+    Active,
+}
+
+impl Status {
+    pub fn active() -> String { "active".to_string() }
+    pub fn archived() -> String { "archived".to_string() }
+}
+
+// TODO think this through
+pub enum Permission {
+    Public,
+    Private,
+    Selective,
+}
+
+impl Permission {
+    pub fn private() -> bool { true }
+}
+
+pub enum Priority {
+    Lowest,
+    Highest,
+}
+impl Priority {
+    pub fn lowest() -> String { "lowest".to_string() }
 }
 
 //pub struct DbQuery<T: Model> {

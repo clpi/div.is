@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Status, Permission, Model,
     link::FieldEntryLink,
 };
 
@@ -12,9 +12,11 @@ pub struct EntryType {
     pub id: Option<i32>,
     pub uid: i32,
     pub name: String,
-    pub status: i32,
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Permission::private")]
     pub private: bool,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -26,7 +28,7 @@ pub struct EntryEntry {
     pub uid: i32,
     pub rid: i32,
     pub etid: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 

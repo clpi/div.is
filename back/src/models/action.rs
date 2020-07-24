@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Permission, Status, Priority, Model,
     link::FieldEntryLink,
 };
 
@@ -15,9 +15,11 @@ pub struct Rule {
     pub rid: Option<i32>, // record ID
     pub aid: Option<i32>, //action id
     pub name: String,
-    pub priority: Option<i32>,
-    pub status: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Priority::lowest")]
+    pub priority: String,
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -28,7 +30,7 @@ pub struct Action {
     pub id: Option<i32>,
     pub target: String,
     pub action: String,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -47,8 +49,9 @@ pub struct Condition {
     pub iid2: Option<i32>, 
     pub fid2: i32,
     pub cond: i32, // < <= = >= > etc
-    pub status: bool,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 

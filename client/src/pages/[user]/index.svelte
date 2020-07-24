@@ -1,6 +1,10 @@
 <script>
   import { params } from '@sveltech/routify';
-  export let slug;
+  import { onMount } from 'svelte';
+
+  onMount(async () => {
+    console.log($params)
+  });
 </script>
 
 <style>

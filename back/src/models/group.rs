@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Permission, Status, Model,
     link::UserGroupLink,
 };
 
@@ -11,9 +11,11 @@ pub struct Group {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub name: String,
+    #[serde(default = "Permission::private")]
     pub private: bool, 
-    pub status: i32,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 

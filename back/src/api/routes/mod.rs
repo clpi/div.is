@@ -32,12 +32,6 @@ pub fn routes(data: AppData) -> impl Filter
         .and(warp::path!("users"))
         .and_then(handlers::get_all_users);
 
-    //let get_record = warp::get()
-        //.and(using(data.db.clone()))
-        //.and(warp::path!(i32 / "record" / String))
-        //.and_then(handlers::get_record);
-
-    // TODO Make this route only available to users currently authorized
     let add_record = warp::post()
         .and(using(data.db.clone()))
         .and(warp::path!("record"))
@@ -54,6 +48,12 @@ pub fn routes(data: AppData) -> impl Filter
         .and(warp::path!("record"))
         .and(warp::body::json())
         .and_then(handlers::get_user_records);
+
+    let get_records_shared_with = warp::get()
+        .and(using(data.db.clone()))
+        .and(warp::body::json())
+        .and(warp::path!("user" / "record" / "shared"))
+        .and_then(handlers::get_records_shared_with);
 
     let delete_user = warp::post()
         .and(using(data.db.clone()))
@@ -117,6 +117,7 @@ pub fn routes(data: AppData) -> impl Filter
             .or(update_user)
             .or(get_record)
             .or(get_user_records)
+            .or(get_records_shared_with)
             .or(add_record);
 
     let auth_routes = 

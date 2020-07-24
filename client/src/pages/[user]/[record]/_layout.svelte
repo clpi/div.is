@@ -5,14 +5,17 @@
   onMount(async () => {
     console.log($params)
   });
+
+  console.log($params);
 </script>
 
 <style>
-  .user {
-    padding-left: 3vw;
+  .record {
   }
+
 </style>
 
-<div class = "user">
-  <h1>user</h1>
+<div class = "record">
+
 </div>
+

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS UserInfo (
     birth_date INTEGER,
     location VARCHAR(255),
     experience INTEGER NOT NULL,
-    privelege_level INTEGER NOT NULL,
+    user_type INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id)
 );
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,    
-    status INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(255) NOT NULL,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id)
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Items (
     uid INTEGER NOT NULL,
     pid INTEGER,
     name VARCHAR(255) NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(255) NOT NULL,
     private BOOLEAN NOT NULL DEFAULT TRUE,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id),
@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS RecordItemLinks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     rid INTEGER NOT NULL,
     iid INTEGER NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
-    priority INTEGER DEFAULT 0,
+    status VARCHAR(255) NOT NULL,
+    priority VARCHAR(255),
     created_at INTEGER NOT NULL,
     FOREIGN KEY (rid) REFERENCES Records(id),
     FOREIGN KEY (iid) REFERENCES Items(id)
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS ItemFieldLinks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     iid INTEGER NOT NULL,
     fid INTEGER NOT NULL,
-    priority INTEGER DEFAULT 0,
+    priority VARCHAR(255),
     created_at INTEGER NOT NULL,
     FOREIGN KEY (iid) REFERENCES Items(id),
     FOREIGN KEY (fid) REFERENCES Fields(id)
@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS Rules (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
-    priority INTEGER DEFAULT 0,
-    status INTEGER NOT NULL DEFAULT 1,
+    priority VARCHAR(255),
+    status VARCHAR(255) NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id)
 );
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS Conditions (
     fid1 INTEGER NOT NULL,
     fid2 INTEGER NOT NULL,
     cond INTEGER NOT NULL,        
-    status INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(255) NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (ruleid) REFERENCES Rules(id),
     FOREIGN KEY (iid1) REFERENCES Items(id),
@@ -144,17 +144,17 @@ CREATE TABLE IF NOT EXISTS Conditions (
 CREATE TABLE IF NOT EXISTS Actions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ruleid INTEGER NOT NULL,
-    target TEXT NOT NULL,
-    action TEXT NOT NULL,
+    target VARCHAR(255) NOT NULL,
+    action VARCHAR(255) NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (ruleid) REFERENCES Rules(id)
 );
 
 CREATE TABLE IF NOT EXISTS Groups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     private BOOLEAN NOT NULL DEFAULT TRUE,
-    status INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(255) NOT NULL,
     created_at INTEGER NOT NULL
 );
 
@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS UserGroupLinks (
     uid INTEGER NOT NULL,
     gid INTEGER NOT NULL,
     role VARCHAR(255) NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(255) NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id),
     FOREIGN KEY (gid) REFERENCES Groups(id)
@@ -173,7 +173,6 @@ CREATE TABLE IF NOT EXISTS UserRecordLinks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uid INTEGER NOT NULL,
     rid INTEGER NOT NULL,
-    privelege  INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (uid) REFERENCES Users(id),
     FOREIGN KEY (rid) REFERENCES Records(id)

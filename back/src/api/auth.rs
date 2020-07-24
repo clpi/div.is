@@ -10,6 +10,11 @@ use futures::Future;
 use serde::{Serialize, Deserialize};
 use jsonwebtoken::errors::Result as JWTResult;
 use crate::models::user::User;
+use oauth2::{
+    basic::BasicClient, AuthUrl, ClientId, ClientSecret,
+    CsrfToken, RedirectUrl, Scope
+};
+use url::Url;
 
 // TODO implement salt?
 //

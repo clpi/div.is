@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Status, Permission, Model,
     link::{ItemFieldLink},
 };
 
@@ -14,11 +14,13 @@ pub struct Field {
     pub name: String,
     pub typ: String,
     pub value: String,
+    #[serde(default = "Permission::private")]
     pub private: bool, 
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
+// NOTE do i need this?
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct FieldEntry {

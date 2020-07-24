@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Time, Status, Permission, Model,
     field::Field,
     link::{ItemFieldLink, RecordItemLink},
 };
@@ -14,9 +14,11 @@ pub struct Item {
     pub uid: i32,
     pub pid: Option<i32>, // parent item id
     pub name: String,
-    pub status: i32,
+    #[serde(default = "Status::active")]
+    pub status: String,
+    #[serde(default = "Permission::private")]
     pub private: bool,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 

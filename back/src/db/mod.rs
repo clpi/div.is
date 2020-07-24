@@ -1,11 +1,5 @@
-pub mod models;
-pub mod users;
-pub mod records;
-
-
-pub use models::*;
-pub use users::*;
-
+pub mod pg;
+pub mod redis;
 
 use sqlx::SqlitePool;
 use sqlx::*;
@@ -35,10 +29,15 @@ impl Db {
    }
 
     pub async fn clear(self) -> sqlx::Result<()> {
-        sqlx::query_file!("sql/clear.sql")
-            .execute(&self.pool).await?;
-        Ok( () )
+        sqlx::query(";").execute(&self.pool).await?;
+        Ok(())
     }
+
+    //pub async fn clear(self) -> sqlx::Result<()> {
+        //sqlx::query_file!("sql/clear.sql")
+            //.execute(&self.pool).await?;
+        //Ok( () )
+    //}
 
     pub async fn clear_table(self, table: &str) -> sqlx::Result<()> {
         sqlx::query("DELETE FROM $1;")

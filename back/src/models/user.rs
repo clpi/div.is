@@ -1,13 +1,14 @@
-use sqlx::{sqlite::*, Sqlite, FromRow};
-use crate::api::auth::hash_pwd;
+use sqlx::{sqlite::*, Sqlite, FromRow};use crate::api::auth::hash_pwd;
 use crate::db::Db;
 use super::{
-    now_ts, Model,
+    Model, Time, Status, Permission,
     record::Record,
     entry::EntryType,
     link::{UserGroupLink, UserRecordLink},
 };
 
+// TODO make password Option<String> so no need for UserSession
+// or passwordless user structs
 #[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {
@@ -16,7 +17,7 @@ pub struct User {
     pub email: String,
     pub username: String,
     pub password: String,
-    #[serde(default = "now_ts")]
+    #[serde(default = "Time::now")]
     pub created_at: i32,
 }
 
@@ -27,25 +28,14 @@ pub struct UserSession {
     pub username: String,
 }
 
-// NOTE: Add (?) preferences
-#[derive(Default, FromRow, Serialize, Deserialize)]
-#[serde(rename_all="camelCase")]
-pub struct UserInfo {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
-    pub uid: i32,
-    pub first_name: String,
-    pub last_name: String,
-    pub bio: String,
-    pub img_path: String,
-    pub gender: String,
-    pub birth_date: i32,
-    pub location: String,
-    pub experience: i32,
-    pub privelge_level: i32,
-    pub created_at: i32,
-    #[serde(default = "now_ts")]
-    pub updated_at: i32,
+
+pub enum UserType {
+    Regular,
+    Administrator,
+}
+
+impl UserType {
+    pub fn regular() -> String { String::from("regular") }
 }
 
 impl User {
@@ -56,7 +46,7 @@ impl User {
             email: String::from(email),
             username: String::from(uname),
             password: String::from(pwd),
-            created_at: now_ts(),
+            created_at: Time::now(),
         } 
     }
 
@@ -69,7 +59,7 @@ impl User {
 
     pub async fn build() -> Self {
         User {
-            id: None, created_at: now_ts(),
+            id: None, created_at: Time::now(),
             ..User::default()
         }
     }
@@ -81,7 +71,7 @@ impl User {
             .bind(&self.email)
             .bind(&self.username)
             .bind(&self.password)
-            .bind(now_ts())
+            .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(self)
     }
@@ -163,8 +153,9 @@ impl User {
             id: None,
             uid: self.id.unwrap(),
             name: name.to_string(),
-            created_at: now_ts(),
-            status: 1, private: true
+            status: Status::active(),
+            permission: Permission::private(),
+            created_at: Time::now(),
         }
     }
 
@@ -203,3 +194,33 @@ impl Into<String> for User {
 }
 
 impl Model for User {}
+
+// NOTE: Add (?) preferences
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct UserInfo {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub uid: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub first_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bio: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub img_path: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gender: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub birth_date: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location: Option<String>,
+    pub experience: i32,
+    #[serde(default = "UserType::regular")]
+    pub user_type: String,
+    #[serde(default = "Time::now")]
+    pub created_at: i32,
+    #[serde(default = "Time::now")]
+    pub updated_at: i32,
+}

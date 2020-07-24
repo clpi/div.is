@@ -22,7 +22,11 @@
 
 <div class="home-wrapper" in:fade={{duration:100}}>
     <Box title={"Hello"}>
-      <p>sup {$user.username}</p>
+      {#if $user.username != undefined}
+        <p>sup {$user.username}</p>
+      {:else}
+        <p>Not logged in</p>
+      {/if}
       <!-- 
         <p>Welcome, {scoped.user.username}</p> 
       -->
