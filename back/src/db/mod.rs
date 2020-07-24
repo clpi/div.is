@@ -12,7 +12,7 @@ use sqlx::*;
 
 #[derive(Clone)]
 pub struct Db {
-    pool: SqlitePool,
+    pub pool: SqlitePool,
 }
 
 impl Db {

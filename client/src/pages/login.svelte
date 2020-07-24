@@ -1,6 +1,6 @@
 <script>
   import { slide, fade }from 'svelte/transition'
-  import { setContext, getContext, onMount } from 'svelte'
+  import { user, isLogged, logged, session } from '../store.js';
   import { goto } from '@sveltech/routify';
   import { metatags } from '@sveltech/routify';
   metatags.title = "login";
@@ -28,8 +28,7 @@
           body: JSON.stringify(userInfo)
       });
       if (loginPost.ok) {
-        setContext("loggedIn", true);
-        setContext("userData", loginPost);
+        isLogged.set(true);
         return loginPost.json();
       } else {
         throw new Error(users);

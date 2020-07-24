@@ -3,6 +3,7 @@ extern crate serde;
 extern crate argonautica;
 mod db;
 mod api;
+mod models;
 
 use warp::{Filter, self};
 use warp::http::Method;

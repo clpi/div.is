@@ -9,7 +9,7 @@ use argonautica::{Hasher, Verifier, config::Variant, input::{SecretKey, Salt}};
 use futures::Future;
 use serde::{Serialize, Deserialize};
 use jsonwebtoken::errors::Result as JWTResult;
-use crate::db::models::User;
+use crate::models::user::User;
 
 // TODO implement salt?
 //

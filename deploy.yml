@@ -51,11 +51,6 @@
     host_port: 80
     cont_port: 5005
   tasks:
-    - name: Install podman
-      dnf:
-        name:
-          - podman
-        state: latest
     - name: Create app data dir
       file:
         path: /usr/src/div/data

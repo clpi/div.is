@@ -1,9 +1,13 @@
-use sqlx::FromRow;
-use super::Db;
-use sqlx::{sqlite::*, Sqlite, types::chrono::{DateTime, Utc}};
+use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::api::auth::hash_pwd;
+use crate::db::Db;
+use super::{
+    now_ts, Model,
+    record::Record,
+    entry::EntryType,
+    link::{UserGroupLink, UserRecordLink},
+};
 
-// TODO: Begin modular implementation of models
 #[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {
@@ -14,6 +18,13 @@ pub struct User {
     pub password: String,
     #[serde(default = "now_ts")]
     pub created_at: i32,
+}
+
+#[derive(Default, Serialize, Deserialize, Clone)]
+pub struct UserSession {
+    pub id: Option<i32>,
+    pub email: String,
+    pub username: String,
 }
 
 // NOTE: Add (?) preferences
@@ -77,20 +88,20 @@ impl User {
 
     pub async fn with_user_info(self, info: UserInfo) -> () {  }
 
-    pub async fn delete_by_id(db: Db, id:i32) -> sqlx::Result<u64> {
+    pub async fn delete_by_id(db: &Db, id:i32) -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users where id=?")
             .bind(id)
             .execute(&db.pool).await
     }
 
-    pub async fn delete_by_username(db: Db, username: String) 
+    pub async fn delete_by_username(db: &Db, username: String) 
     -> sqlx::Result<u64> {
         sqlx::query("DELETE FROM Users where username=?")
             .bind(username)
             .execute(&db.pool).await
     }
 
-    pub async fn from_id(db: Db, id: i32 )
+    pub async fn from_id(db: &Db, id: i32 )
         -> sqlx::Result<Self> 
     {
         let res: Self = sqlx::query_as::<Sqlite, Self>(
@@ -122,7 +133,7 @@ impl User {
             .fetch_one(&db.pool).await
     }
 
-    pub async fn from_db<T: Into<String>>(db: Db, param: &str, value: T)
+    pub async fn from_db<T: Into<String>>(db: &Db, param: &str, value: T)
         -> sqlx::Result<Self> 
     {
         let val: String = value.into();
@@ -134,7 +145,7 @@ impl User {
         Ok(res)
     }
 
-    pub async fn fetch_all(db: Db)
+    pub async fn fetch_all(db: &Db)
         -> sqlx::Result<Vec<User>> 
     {
         let res: Vec<User> = sqlx::query_as::<Sqlite, Self>
@@ -157,13 +168,13 @@ impl User {
         }
     }
 
-    pub async fn with_record(&self, db: Db, record_id: i32, privelege: i32) 
+    pub async fn with_record(&self, db: &Db, record_id: i32) 
         -> sqlx::Result<()> {
-        UserRecordLink::create(db, self.id.unwrap(), record_id, privelege).await?;
+        UserRecordLink::create(&db, self.id.unwrap(), record_id).await?;
         Ok(())
     }
 
-    pub async fn get_records(&self, db: Db) -> sqlx::Result<Vec<Record>> {
+    pub async fn get_records(&self, db: &Db) -> sqlx::Result<Vec<Record>> {
         let res: Vec<Record> = sqlx::query_as::<Sqlite, Record>(
             "SELECT * FROM Records WHERE uid=?;")
             .bind(self.id)
@@ -181,19 +192,14 @@ impl User {
 
     pub async fn get_all_data(&self) {  }
 }
-
-//#[derive(Default, Clone, Serialize, Deserialize)]
-//pub struct UserQuery {
-    //id: Option<i32>,
-    //email: Option<String>,
-    //username: Option<String>,
-    //password: Option<String>,
-    //created_at: Option<i32>,
+// TODO actually implement -- without db query
+//impl From<UserSession> for User {
+    //fn from(user: UserSession) -> User {}
 //}
 
-//impl UserQuery {
-    //pub async fn with(field: &str, value: T) -> Self {
-        //match field {
-        //}
-    //}
-//}
+
+impl Into<String> for User {
+    fn into(self) -> String { String::from("User") }
+}
+
+impl Model for User {}

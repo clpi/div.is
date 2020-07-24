@@ -1,7 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
-    now_ts, ModelLink,
+    now_ts,
 };
 
 
@@ -156,9 +156,3 @@ impl UserRecordLink {
         Ok(())
     }
 }
-
-impl ModelLink for UserGroupLink {}
-impl ModelLink for UserRecordLink {}
-impl ModelLink for RecordItemLink {}
-impl ModelLink for FieldEntryLink {}
-impl ModelLink for ItemFieldLink {}

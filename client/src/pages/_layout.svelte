@@ -2,7 +2,8 @@
 <script>
     /*import Nav from '../comp/ui/nav.svelte';*/
     import { beforeUrlChange, isChangingPage, afterPageLoad, url, isActive, ready } from "@sveltech/routify";
-    import { user, isLogged, logged } from '../store.js';
+    import { onMount } from 'svelte';
+    import { session, user, isLogged, logged } from '../store.js';
     import { slide, fade } from 'svelte/transition';
     // TODO have everything load at once in fetch call
     // and then declare $ready instead of having await in DOM
@@ -10,10 +11,14 @@
 
     let authUser = Promise.resolve([]);
     let authLogged = Promise.resolve([]);
+    
+    onMount(async () => {
+      refresh();
+    })
     $beforeUrlChange(() => {
       refresh();
       return true;
-    })
+    });
     let refresh = async () => {
       logged.set(await getLogged());
       user.set(await getUser());

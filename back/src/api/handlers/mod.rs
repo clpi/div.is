@@ -1,7 +1,9 @@
 use warp::Filter;
-use warp::http::Response;
 use warp::http::StatusCode;
-use crate::db::models::*;
+use crate::models::{
+    user::User, record::Record, item::Item,
+    link::{UserRecordLink},
+};
 use crate::db::Db;
 use chrono::Utc;
 use super::{using, AppData,
@@ -246,7 +248,7 @@ pub async fn get_record_by_id(
     db: Db, id: i32,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match Record::from_id(&db, id).await {
-        Ok(record) => Ok(record.to_string()),
+        Ok(record) => Ok(serde_json::to_string(&record).unwrap()),
         Err(_) => Err(warp::reject()),
     }
 }
@@ -263,13 +265,9 @@ pub async fn get_user_records(
 pub async fn add_record(
     db: Db, record: Record,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    match &record.insert(&db).await {
-        Ok(rec) => {
-            let (uid, rid) = (rec.uid, rec.id.unwrap());
-            match UserRecordLink::create(&db, uid, rid).await {
-                Ok(_) => Ok(rec.to_string()),
-                Err(_) => Err(warp::reject()),
-            }
+    match record.insert(&db).await {
+        Ok(record) => {
+            Ok(serde_json::to_string(&record).unwrap())
         },    
         Err(_) => Err(warp::reject()),
     }
