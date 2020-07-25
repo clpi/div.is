@@ -20,7 +20,7 @@ pub fn get(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::
     let get_record = warp::get()
         .and(using(db.to_owned()))
         .and(warp::path!(i32))
-        .and_then(handlers::get_record_by_id);
+        .and_then(handlers::get_by_id);
     get_record
 }
 
@@ -29,4 +29,20 @@ pub fn create(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = war
         .and(warp::path!("new"))
         .and(warp::body::json())
         .and_then(handlers::add_record)
+}
+
+pub fn add_item(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::post().and(using(db.to_owned()))
+        .and(warp::path!("item"))
+        .and(warp::body::json())
+        .and_then(handlers::record::add_item)
+
+}
+
+pub fn add_new_item(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::post().and(using(db.to_owned()))
+        .and(warp::path!("item" / "new"))
+        .and(warp::body::json())
+        .and_then(handlers::record::add_new_item)
+
 }

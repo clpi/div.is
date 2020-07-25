@@ -1,0 +1,10 @@
+[server]
+url = "http://127.0.0.1:3001" #dev
+
+[log]
+
+[postgres]
+host = "127.0.0.1"
+username = "username" #pg
+password = "password" #ex
+database = "database" #conf

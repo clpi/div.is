@@ -9,6 +9,10 @@ pub mod link;
 
 use chrono::Utc;
 use serde::Serialize;
+use self::{
+    user::*, record::*, link::*, item::*, group::*, entry::*,
+    action::*, field::*, 
+};
 
 /// NOTE: On terminatoligy for function calls:
 /// "get_" queries database and returns models
@@ -26,7 +30,6 @@ pub trait Model: Sized + Serialize {
     }
 }
 
-pub trait ModelLink { } 
 
 //TODO rename private field to permission field
 //TODO figure out how to best use enums // best practices for them

@@ -1,0 +1,17 @@
+- name: Deploy to div.is
+  hosts: 
+  remote_user: root
+  tasks:
+    - name: Copy front end files
+      synchronize:
+        src: ../client
+        dest: /usr/src/div/
+        mode: push
+        rsync_opts:
+          - "--exclude=node_modules"
+          - "--exclude=scripts"
+      run_once: true
+    - name: Build frontend image
+      command: sudo podman build /usr/src/div/client -f Dockerfile.prod -t divfprod
+    - name: Run frontend image
+      command: sudo podman run --rm -dt -p 80:5005 --name divfprod localhost/divfprod

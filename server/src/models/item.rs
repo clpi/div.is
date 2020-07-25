@@ -8,7 +8,7 @@ use super::{
 };
 use std::rc::Rc;
 
-#[derive(Default, FromRow, Serialize, Deserialize)]
+#[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct Item {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -60,6 +60,39 @@ impl Item {
             .bind(&self.created_at)
             .execute(&db.pool).await?;
         Ok(self)
+    }
+
+    pub async fn delete(db: &Db, id: i32) -> sqlx::Result<()> {
+        let res = sqlx::query("
+            DROP FROM Items WHERE id=?;")
+            .bind(id)
+            .execute(&db.pool).await?;
+        Ok(())
+    }
+
+    pub async fn by_user(db: &Db, uid: i32) -> sqlx::Result<Vec<Item>> {
+        let res = sqlx::query_as::<Sqlite, Item>("
+            SELECT FROM Items WHERE uid=?;")
+            .bind(uid)
+            .fetch_all(&db.pool).await?;
+        Ok(res)
+    }
+
+    pub async fn by_user_and_name(db: &Db, uid: i32, name: String) -> sqlx::Result<Vec<Item>> {
+        let res = sqlx::query_as::<Sqlite, Item>("
+            SELECT FROM Items WHERE uid=$1 AND name=$2;")
+            .bind(uid)
+            .bind(name)
+            .fetch_all(&db.pool).await?;
+        Ok(res)
+    }
+
+    pub async fn by_name(db: &Db, name: &str) -> sqlx::Result<Vec<Item>> {
+        let res = sqlx::query_as::<Sqlite, Item>("
+            SELECT FROM Items WHERE name=?;")
+            .bind(name)
+            .fetch_all(&db.pool).await?;
+        Ok(res)
     }
 
     /// Method to create new (field-less) item and attach it

@@ -1,9 +1,19 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
+use super::*;
 use super::{
-    Time, Status, Priority, Permission,
+    Time, Status, Priority, Permission, Model,
 };
 
+pub enum Links {
+    RecordItem,
+    ItemField,
+    UserGroup,
+    FieldEntry,
+    UserRecord,
+}
+
+pub trait ModelLink: Sized { }
 
 // TODO modularize implementation with traits so redundant logic is reduced
 
@@ -91,6 +101,12 @@ impl RecordItemLink {
             .bind(Time::now())
             .execute(&db.pool).await?;
         Ok(())
+    }
+
+    pub async fn get_members(self, db: &Db) -> sqlx::Result<(Record, Item)> {
+        let rec = Record::from_id(db, self.rid).await?;
+        let itm = Item::from_id(db, self.rid).await?;
+        Ok((rec, itm))
     }
 }
 

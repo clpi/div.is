@@ -1,6 +1,7 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use std::collections::HashMap;
+use std::rc::Rc;
 use super::{
     Time, Model, Status, Permission,
     entry::EntryType,
@@ -20,6 +21,8 @@ pub struct Record {
     pub id: Option<i32>,
     pub uid: i32,
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
     #[serde(default = "Status::active")]
     pub status: String,
     #[serde(default = "Permission::private")]
@@ -35,6 +38,7 @@ impl Record {
     pub fn new(uid: i32, name: String) -> Record {
         Self { 
             id: None, uid, name, 
+            description: None,
             status: Status::active(),
             permission: Permission::private(),
             created_at: Time::now(),
@@ -100,9 +104,6 @@ impl Record {
         Ok(records)
     }
 
-    pub async fn with_name(mut self, name: String) -> Record {
-        self.name = name; self
-    }
 
     pub async fn create_entry_type(&self, uid: i32, name: String) -> EntryType {
         EntryType {
@@ -142,6 +143,21 @@ impl Record {
     ) -> sqlx::Result<Self> {
         RecordItemLink::create(&db, self.id.unwrap(), item_id, priority).await?;
         Ok(self)
+    }
+}
+
+pub struct RecordBuilder {
+    pub id: Option<i32>,
+    pub name: Option<String>,
+    pub items: Option<Vec<Rc<Item>>>,
+}
+
+impl RecordBuilder {
+    pub fn with_name(mut self, name: String) -> RecordBuilder {
+        self.name = Some(name); self
+    }
+    pub fn build(self) -> Record {
+        Record::default()
     }
 }
 
