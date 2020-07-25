@@ -31,7 +31,7 @@
     }
 
     let logout = async () => {
-        let res = await fetch(API_URL+'/logout', {
+        let res = await fetch(API_URL+'/auth/logout', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -40,7 +40,10 @@
         })
         .then(isLogged.set(false))
         .then(user.set({}))
-        .then(logged.set({}));
+        .then(logged.set({}))
+        .catch(err => {
+          console.error("Error:", err);
+        });
         
       return res;
     }
@@ -48,18 +51,24 @@
     // TODO don't use JWT in cookie ... or do use JWT but in header?
     let getUser = async () => {
       const res = await fetch(API_URL+'/user/id/'+$logged.sub)
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(err => {
+          console.error('Error:', err);
+        });
       return res;
     }
     let getLogged = async () => {
-      const res = await fetch(API_URL+'/userstatus', {
+      const res = await fetch(API_URL+'/auth/refresh', {
         method: 'GET',
         credentials: 'include',
         headers: {
           cookie: document.cookie,
         }
       })
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(err => {
+          console.error('Error:', err)
+        });
       return res;
     }
     getLogged().then($ready);

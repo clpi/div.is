@@ -10,7 +10,7 @@
   let userPromise = Promise.resolve([]);
   let userUsername = ""; let userId = ""; let userEmail = "";
   async function fetchAll() {
-      const usrs = await fetch(API_URL+'/users', {
+      const usrs = await fetch(API_URL+'/user/all', {
           method: 'GET',
           headers: {
             'content-type': 'application/json',
