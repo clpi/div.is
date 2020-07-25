@@ -14,7 +14,8 @@ pub fn login(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Error
         .and(using(data.to_owned()))
         .and(warp::path("login"))
         .and(warp::body::json())
-        .and_then(handlers::login);
+        .and_then(handlers::login)
+        .with(warp::log::log("auth"));
     login
 }
 
@@ -23,7 +24,8 @@ pub fn register(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Er
         .and(using(data.to_owned()))
         .and(warp::path("register"))
         .and(warp::body::json())
-        .and_then(handlers::register);
+        .and_then(handlers::register)
+        .with(warp::log::log("auth"));
     register
 }
 pub fn refresh(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -32,6 +34,7 @@ pub fn refresh(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Err
         .and(warp::path!("refresh"))
         .and(warp::cookie::optional("Authorization"))
         .and_then(handlers::refresh)
+        .with(warp::log::log("auth"))
         .with(warp::cors().allow_credentials(true)
             .allow_any_origin()
             .allow_methods(&[Method::GET])
@@ -45,6 +48,7 @@ pub fn logout(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Erro
         .and(warp::path!("logout"))
         .and(warp::cookie::optional("Authorization"))
         .and_then(handlers::logout)
+        .with(warp::log::log("auth"))
         .with(warp::cors().allow_credentials(true)
             .allow_any_origin()
             .allow_methods(&[Method::POST])

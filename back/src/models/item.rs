@@ -99,3 +99,30 @@ impl ItemBuilder {
         Item::default()
     }
 }
+
+// $07/25/20$  not impl in sql
+//
+pub enum Relationship {
+    Parent(i32, i32), //not sure if i want "following?"
+    Child(i32, i32),
+    Synchronize(i32, i32),
+    NoRelationship,
+}
+impl Relationship {
+    pub fn none() -> String { "none".to_string() }
+}
+
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct RecordRelationship {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub iid1: i32,
+    pub iid2: i32,
+    #[serde(default = "Relationship::none")]
+    pub rel: String,
+    #[serde(default = "Time::now")]
+    pub created_at: i32,
+    #[serde(default = "Time::now")]
+    pub updated_at: i32,
+}

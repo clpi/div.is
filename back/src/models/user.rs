@@ -208,7 +208,6 @@ impl User {
     //fn from(user: UserSession) -> User {}
 //}
 
-
 impl Into<String> for User {
     fn into(self) -> String { String::from("User") }
 }
@@ -264,4 +263,31 @@ pub struct UserInfoBuilder {
 
 pub struct UserPrefs {
 
+}
+
+// $07/25/20$  not impl in sql
+//
+pub enum Relationship {
+    Follows(i32, i32), //not sure if i want "following?"
+    Friends(i32, i32),
+    Blocks(i32, i32),
+    NoRelationship,
+}
+impl Relationship {
+    pub fn none() -> String { "none".to_string() }
+}
+
+#[derive(Default, FromRow, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct UserRelationship {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<i32>,
+    pub uid1: i32,
+    pub uid2: i32,
+    #[serde(default = "Relationship::none")]
+    pub rel: String,
+    #[serde(default = "Time::now")]
+    pub created_at: i32,
+    #[serde(default = "Time::now")]
+    pub updated_at: i32,
 }

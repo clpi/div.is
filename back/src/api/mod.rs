@@ -4,7 +4,7 @@ pub mod handlers;
 
 use serde_derive::*;
 use crate::db::Db;
-use warp::Filter;
+use warp::{Filter, filters::BoxedFilter};
 
 #[derive(Serialize, Deserialize)]
 pub struct UserLogin {
@@ -19,10 +19,18 @@ pub struct AppData {
     pub db: Db,
 }
 
+//#[derive(Clone)]
+//pub struct Username (String);
+
 pub fn using<T: Clone + Send>(data: T) 
     -> impl Filter<Extract = (T,), Error = std::convert::Infallible> + Clone {
     warp::any().map(move || data.clone())
 }
+
+// fore verifying, etc. need to think this through
+//pub fn username_filter() -> BoxedFilter<(Username,)> {
+    //warp::path::param().boxed()
+//}
 
 //impl Into<User> for UserLogin {
     //fn into(self) -> User {
