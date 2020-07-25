@@ -3,7 +3,7 @@ use yew::Properties;
 use yew_router::switch::Permissive;
 use yew_router::{prelude::*, route::Route};
 
-use crate::components::nav::Nav;
+use crate::components::{nav::Nav, footer::Footer};
 //use crate::components::header::Header;
 use crate::routes::{about::About, home::Home, contact::Contact, dash::Dash,login::Login, signup::Signup, records::Records, profile::Profile, AppRoute};
 use crate::models::user::User;
@@ -52,8 +52,11 @@ impl Component for App {
 
     fn view(&self) -> Html {
         html! {
-            <div class="App">
-                <Nav />
+            <div class="app">
+                <div class="header">
+                    <Nav />
+                </div>
+                <div class="content">
                 <Router<AppRoute, ()>
                     render = Router::render(|switch: AppRoute | {
                         match switch {
@@ -73,6 +76,10 @@ impl Component for App {
                         AppRoute::PageNotFound(Permissive(Some(route.route)))
                     })
                 />
+                </div>
+                <div class="footer">
+                    <Footer/>
+                </div>
             </div>
         }
     }

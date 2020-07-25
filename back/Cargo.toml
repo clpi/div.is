@@ -18,7 +18,7 @@ jsonwebtoken="*"
 argonautica = "*"
 oauth2 = { version = "3.0", features = ["futures-03"], default-features = false }
 futures = "0.3"
-chrono = "*"
+chrono = {version="*", features=["serde"]}
 redis = "*"
 url = "*"
 anyhow="*"

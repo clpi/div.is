@@ -5,6 +5,7 @@ use super::{
     field::Field,
     link::{ItemFieldLink, RecordItemLink},
 };
+use std::rc::Rc;
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
@@ -23,7 +24,37 @@ pub struct Item {
 }
 
 impl Item {
-    pub async fn new() {}
+
+    pub fn new(uid: i32, name: String) -> Self {
+        Self {
+            id: None,
+            uid, name,
+            pid: None,
+            status: Status::active(),
+            private: Permission::private(),
+            created_at: Time::now(),
+        }
+    }
+
+    pub fn create(uid: i32, name: String) -> ItemBuilder {
+        ItemBuilder::new(Self::new(uid, name)) 
+    }
+
+
+    pub async fn insert(self, db: Db) -> sqlx::Result<()> {
+        let res = sqlx::query("
+            INSERT INTO Items 
+            (uid, pid, name, status, private, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6);")
+            .bind(&self.uid)
+            .bind(&self.pid)
+            .bind(&self.name)
+            .bind(&self.status)
+            .bind(&self.private)
+            .bind(&self.created_at)
+            .execute(&db.pool).await?;
+        Ok(())
+    }
 
     pub async fn with_field(&self, 
         db: &Db, 
@@ -45,3 +76,26 @@ impl Item {
 }
 
 impl Model for Item {}
+
+pub struct ItemBuilder {
+    item: Rc<Item>,
+    fields: Option<Vec<Rc<Item>>>,
+}
+
+impl ItemBuilder {
+    pub fn new(item: Item) -> Self {
+        Self {
+            item: Rc::from(item),
+            fields: None,
+        }
+    }
+    
+    pub fn with_field(self, field: Field) -> () {
+        
+    }
+
+    //TODO implement
+    pub fn build() -> Item {
+        Item::default()
+    }
+}

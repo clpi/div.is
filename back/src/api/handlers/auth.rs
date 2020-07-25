@@ -1,6 +1,7 @@
 use super::*;
 use crate::api::auth::{hash_pwd, verify_pwd, encode_jwt, decode_jwt, Claims};
 use chrono::Utc;
+use crate::models::user::UserInfo;
 
 
 #[derive(Serialize, Deserialize)]
@@ -67,14 +68,13 @@ pub async fn register (
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let req_user = req_user.hash_pass(data.secret_key).await.unwrap();
     println!("Hashed user password");
-    match req_user.insert_into(data.db).await {
+    match &req_user.insert(data.db.clone()).await {
         Ok(user) => {
-            println!("Inserted user into DB");
+            println!("Registered {}", user.username);
             Ok(warp::reply::with_header(
                 StatusCode::OK.to_string(),
                 warp::http::header::SET_COOKIE,
-                format!("SESS={}", user.username)
-            ))
+                format!("SESS={}", user.username)))
         },
         Err(_e) => {
             println!("Could not insert user into DB");

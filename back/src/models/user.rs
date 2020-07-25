@@ -64,7 +64,7 @@ impl User {
         }
     }
 
-    pub async fn insert_into(self, db: Db) -> sqlx::Result<Self> {
+    pub async fn insert(self, db: Db) -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Users 
             (email, username, password, created_at) 
             VALUES ($1, $2, $3, $4);")  
@@ -73,15 +73,35 @@ impl User {
             .bind(&self.password)
             .bind(Time::now())
             .execute(&db.pool).await?;
+        match &self.id.clone() {
+            Some(id) => UserInfo::insert_new(db, id.to_owned()).await?,
+            None => {
+                let new_id = User::from_username
+                    (&db, self.username.clone())
+                    .await?.id.unwrap();
+                UserInfo::insert_new(db, new_id).await?;
+            }
+        }
         Ok(self)
     }
 
     pub async fn with_user_info(self, info: UserInfo) -> () {  }
 
     pub async fn delete_by_id(db: &Db, id:i32) -> sqlx::Result<u64> {
-        sqlx::query("DELETE FROM Users where id=?")
+        let res = sqlx::query("DELETE FROM Users where id=?")
             .bind(id)
-            .execute(&db.pool).await
+            .execute(&db.pool).await?;
+        Ok(res)
+    }
+
+    pub async fn get_info(self, db: &Db) -> sqlx::Result<UserInfo> {
+        let info = sqlx::query_as::<Sqlite, UserInfo>("
+            SELECT * FROM UserInfo INNER JOIN Users on UserInfo.uid
+            =Users.id WHERE UserInfo.uid=?
+            ")
+                .bind(self.id)
+                .fetch_one(&db.pool).await?;
+        Ok(info)
     }
 
     pub async fn delete_by_username(db: &Db, username: String) 
@@ -223,4 +243,25 @@ pub struct UserInfo {
     pub created_at: i32,
     #[serde(default = "Time::now")]
     pub updated_at: i32,
+}
+
+// TODO Implement
+impl UserInfo {
+    pub async fn insert_new(db: Db, uid: i32) -> sqlx::Result<()> {
+    let res = sqlx::query("INSERT INTO UserInfo (uid, created_at, updated_at) VALUES ($1);")
+        .bind(uid)
+        .bind(Time::now())
+        .bind(Time::now())
+        .execute(&db.pool).await?;
+    Ok(())
+    }
+}
+
+pub struct UserInfoBuilder {
+
+
+}
+
+pub struct UserPrefs {
+
 }

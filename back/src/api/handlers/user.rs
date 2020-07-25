@@ -30,7 +30,6 @@ pub async fn get_all_users(
         },
         Err(_e) => {
             Err(warp::reject())
-
         }    
     }
 }

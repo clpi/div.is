@@ -2,8 +2,10 @@ use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
 use super::{
     Time, Status, Permission, Model,
+    item::ItemBuilder,
     link::FieldEntryLink,
 };
+use std::rc::Rc;
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
@@ -43,4 +45,18 @@ impl EntryType {
 
 impl EntryEntry {
 
+}
+
+pub struct EntryTypeBuilder {
+    entry_type: Rc<EntryType>,
+    items: Option<Vec<Rc<ItemBuilder>>>,
+}
+
+impl EntryTypeBuilder {
+    pub fn new(entry_type: EntryType) -> Self {
+        Self {
+            entry_type: Rc::from(entry_type),
+            items: None,
+        }
+    } 
 }
