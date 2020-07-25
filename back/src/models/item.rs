@@ -1,8 +1,9 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
+use std::collections::HashMap;
 use super::{
-    Time, Status, Permission, Model,
-    field::Field,
+    Time, Status, Permission, Model, Priority,
+    field::Field, record::Record,
     link::{ItemFieldLink, RecordItemLink},
 };
 use std::rc::Rc;
@@ -13,7 +14,6 @@ pub struct Item {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid: i32,
-    pub pid: Option<i32>, // parent item id
     pub name: String,
     #[serde(default = "Status::active")]
     pub status: String,
@@ -29,40 +29,83 @@ impl Item {
         Self {
             id: None,
             uid, name,
-            pid: None,
             status: Status::active(),
             private: Permission::private(),
             created_at: Time::now(),
         }
     }
 
-    pub fn create(uid: i32, name: String) -> ItemBuilder {
+    pub fn build(uid: i32, name: String) -> ItemBuilder {
         ItemBuilder::new(Self::new(uid, name)) 
     }
 
+    pub async fn from_id(db: &Db, iid: i32) -> sqlx::Result<Self> {
+        let res = sqlx::query_as::<Sqlite, Item>("
+            SELECT * FROM Items where id = ?;")
+            .bind(iid)
+            .fetch_one(&db.pool).await?;
+        Ok(res)
+    }
 
-    pub async fn insert(self, db: Db) -> sqlx::Result<()> {
+
+    pub async fn insert(self, db: &Db) -> sqlx::Result<Self> {
         let res = sqlx::query("
             INSERT INTO Items 
-            (uid, pid, name, status, private, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6);")
+            (uid, name, status, private, created_at)
+            VALUES ($1, $2, $3, $4, $5);")
             .bind(&self.uid)
-            .bind(&self.pid)
             .bind(&self.name)
             .bind(&self.status)
             .bind(&self.private)
             .bind(&self.created_at)
             .execute(&db.pool).await?;
-        Ok(())
+        Ok(self)
     }
 
-    pub async fn with_field(&self, 
+    /// Method to create new (field-less) item and attach it
+    /// to a number of records given their IDs
+    /// should be in items?
+    pub async fn insert_with_records(
+        db: &Db,
+        uid: i32,
+        name: String,
+        recs: Option<HashMap<i32, String>>, //Priority::?
+    ) -> sqlx::Result<Item> {
+        let item = Item::new(uid, name)
+            .insert(&db).await?;
+        match recs {
+            Some(recs) => {
+                for recid in recs.keys() {
+                    let rec = Record::from_id(&db, recid.to_owned()).await?;
+                    let pri = recs.get(recid).unwrap();
+                    rec.create_link_to_item(
+                        db, item.id.unwrap(), pri.to_owned()).await?;
+                }
+            },
+            None => {}
+        }
+        Ok(item)
+    }
+
+    pub async fn with_field(self, 
         db: &Db, 
         field_id: i32, 
-        priority: Option<i32>
-    ) -> sqlx::Result<()> {
-        ItemFieldLink::create(&db, self.id.unwrap(), field_id, priority).await?;
-        Ok(())
+        priority: Option<String>
+    ) -> sqlx::Result<Self> {
+        match priority {
+            Some(pri) => {
+                ItemFieldLink::create(
+                    &db, self.id.unwrap(), 
+                    field_id, pri)
+                    .await?;
+            },
+            None => {
+                ItemFieldLink::create(
+                    &db, self.id.unwrap(), 
+                    field_id, Priority::lowest())
+                    .await?;
+            }}
+        Ok(self)
     }
 
     pub async fn get_fields(self, db: &Db) -> sqlx::Result<Vec<Field>> {
@@ -114,7 +157,7 @@ impl Relationship {
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
-pub struct RecordRelationship {
+pub struct ItemItemRelationship {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub iid1: i32,

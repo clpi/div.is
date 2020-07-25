@@ -17,9 +17,13 @@ pub struct Login {
     //callback: Callback<User>,
 //}
 pub enum Msg {
-    Request,
-    Response(Result<User, AuthError>),
-    Notify,
+    RequestSubmitted,
+    ResponseReceived(Result<User, AuthError>),
+    ForgotUsername,
+    ForgotPassword,
+    RequestError,
+    ResponseError,
+
 }
 
 impl Component for Login {

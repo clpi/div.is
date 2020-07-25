@@ -22,6 +22,7 @@ chrono = {version="*", features=["serde"]}
 redis = "*"
 url = "*"
 anyhow="*"
+uuid = {version = "0.6", features = ["serde", "v4"] }
 #blake2="*"
 #actix_web="*"
 #actix_rt="*"

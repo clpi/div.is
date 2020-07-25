@@ -37,7 +37,7 @@ impl Field {
     pub async fn add_to_item(self, 
         db: &Db,
         item_id: i32,
-        priority: Option<i32>
+        priority: String,
     ) -> sqlx::Result<Self> {
         ItemFieldLink::create(&db, 
             item_id, 

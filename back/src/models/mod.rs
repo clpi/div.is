@@ -10,6 +10,14 @@ pub mod link;
 use chrono::Utc;
 use serde::Serialize;
 
+/// NOTE: On terminatoligy for function calls:
+/// "get_" queries database and returns models
+/// "create_" populates OTHER MODELS and inserts into db (ie links)
+/// "insert_" method OF THE MODEL which is populated model and into db
+/// "delete_" of course deletes an entry fron DB
+/// "build_" creates an in-memory rep of model through builder structs -- NO DB
+/// "new_" does the same without builder structs -- no db
+
 // TODO get async trait and make this an async trait, THEN
 //      add get_by_id, del_by_id, update_by_id
 pub trait Model: Sized + Serialize { 

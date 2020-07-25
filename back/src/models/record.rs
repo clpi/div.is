@@ -1,5 +1,6 @@
 use sqlx::{sqlite::*, Sqlite, FromRow};
 use crate::db::Db;
+use std::collections::HashMap;
 use super::{
     Time, Model, Status, Permission,
     entry::EntryType,
@@ -112,16 +113,36 @@ impl Record {
         }
    }
 
-    pub async fn with_item(&self, 
-        db: &Db, 
-        item_id: i32, 
-        priority: Option<i32>
-    ) -> sqlx::Result<()> {
-        RecordItemLink::create(&db, self.id.unwrap(), item_id, priority).await?;
-        Ok(())
+    pub async fn insert_with_items(
+        db: &Db,
+        uid: i32, 
+        name: String, 
+        items: Option<HashMap<i32, String>>
+    ) -> sqlx::Result<Record> {
+        let record = Record::new(uid, name)
+            .insert(&db).await?;
+        match items {
+            Some(items) => {
+                for iid in items.keys() {
+                    let itm = Item::from_id(&db, iid.to_owned()).await?;
+                    let pri = items.get(iid).unwrap();
+                    RecordItemLink::create(db, record.id.unwrap(),
+                        itm.id.unwrap(), pri.to_owned()).await?;
+                }
+            },
+            None => {}
+        }
+        Ok(record)
     }
 
-
+    pub async fn create_link_to_item(self, 
+        db: &Db, 
+        item_id: i32, 
+        priority: String,
+    ) -> sqlx::Result<Self> {
+        RecordItemLink::create(&db, self.id.unwrap(), item_id, priority).await?;
+        Ok(self)
+    }
 }
 
 impl Model for Record {}
@@ -151,4 +172,8 @@ pub struct RecordRelationship {
     pub created_at: i32,
     #[serde(default = "Time::now")]
     pub updated_at: i32,
+}
+
+impl RecordRelationship {
+
 }

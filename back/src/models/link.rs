@@ -80,7 +80,7 @@ impl RecordItemLink {
         db: &Db,
         record_id: i32,
         item_id: i32,
-        priority: Option<i32>
+        priority: String,
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO RecordItemLinks
         (rid, iid, priority, created_at) 
@@ -99,7 +99,7 @@ impl ItemFieldLink {
         db: &Db,
         item_id: i32,
         field_id: i32,
-        priority: Option<i32>
+        priority: String,
     ) -> sqlx::Result<()> {
         sqlx::query("INSERT INTO ItemFieldLinks
         (iid, fid, priority, created_at) 

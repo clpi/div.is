@@ -18,6 +18,18 @@ pub async fn get_shared_with(
     }
 }
 
+pub async fn create_record(
+    db: Db, record: Record,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match record.insert(&db).await {
+        Ok(record) => {
+            Ok(serde_json::to_string(&record).unwrap())
+        },    
+        Err(_) => Err(warp::reject()),
+    }
+}
+
+
 // get records from uid
 //pub async fn by_user(
     //db: Db, uid 

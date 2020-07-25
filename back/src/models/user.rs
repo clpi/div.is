@@ -1,10 +1,15 @@
+//TODO ensure that you amke a function to account for models that exist in memory that aren[t yet
+//in the database, or vice versa]
 use sqlx::{sqlite::*, Sqlite, FromRow};use crate::api::auth::hash_pwd;
+use std::collections::HashMap;
 use crate::db::Db;
+use std::rc::Rc;
 use super::{
     Model, Time, Status, Permission,
     record::Record,
+    item:: Item,
     entry::EntryType,
-    link::{UserGroupLink, UserRecordLink},
+    link::{UserGroupLink, UserRecordLink, RecordItemLink},
 };
 
 // TODO make password Option<String> so no need for UserSession
@@ -168,15 +173,30 @@ impl User {
         serde_json::to_string(self).unwrap()
     }
 
-    pub fn create_record(&self, name: &str) -> Record {
-        Record {
-            id: None,
-            uid: self.id.unwrap(),
-            name: name.to_string(),
-            status: Status::active(),
-            permission: Permission::private(),
-            created_at: Time::now(),
-        }
+    /// User adds items and specifies the records and importance
+    /// (of added item) to attach it to
+    pub async fn new_item_with_records(self, 
+        db: &Db,
+        name: String,
+        records: Option<HashMap<i32, String>>, //Priority::?
+    ) -> sqlx::Result<Self> {
+        Item::insert_with_records(
+            db, self.id.unwrap(), name, records
+        );
+        Ok(self)
+    }
+
+    /// User adds record and specifies pre-existing items to
+    /// add to the record for entries
+    pub async fn insert_record_with_items(self,
+        db: &Db,
+        name: String, 
+        items: Option<HashMap<i32, String>>
+    ) -> sqlx::Result<Self> {
+        Record::insert_with_items(
+            db, self.id.unwrap(), name, items
+        );
+        Ok(self)
     }
 
     pub async fn with_record(&self, db: &Db, record_id: i32) 
@@ -290,4 +310,54 @@ pub struct UserRelationship {
     pub created_at: i32,
     #[serde(default = "Time::now")]
     pub updated_at: i32,
+}
+
+pub struct UserRelationshipBuilder {
+    users: Option<Vec<i32>>,
+    rel: Option<String>,
+    created_at: Option<i32>,
+}
+
+impl UserRelationship {
+    pub fn new() -> UserRelationshipBuilder 
+    { UserRelationshipBuilder::new() }    
+
+    pub fn with_rel(u1: i32, u2: i32, relation: String) -> Self {
+        let rel = UserRelationshipBuilder::from(u1, u2)
+            .with_relation(relation);
+        rel.build()
+    }
+}
+
+
+impl UserRelationshipBuilder {
+
+    pub fn new() -> UserRelationshipBuilder {
+        UserRelationshipBuilder { 
+            users: None,
+            rel: None,
+            created_at: None
+        } 
+    }
+
+    pub fn from(u1: i32, u2: i32) -> UserRelationshipBuilder {
+        UserRelationshipBuilder { 
+            users: Some(vec![u1, u2]),
+            rel: None,
+            created_at: None
+        } 
+    }
+
+    pub fn with_relation(mut self, rel: String) -> Self {
+        self.rel = Some(rel);
+        self
+    }
+
+    pub fn with_user(user: User) -> () {}
+
+    pub fn with_uid(uid: i32) -> () {}
+
+    pub fn build(self) -> UserRelationship {
+        UserRelationship::default()
+    }
 }
