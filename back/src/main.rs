@@ -40,7 +40,9 @@ async fn main() -> sqlx::Result<()> {
         db: db,
     };
 
-    let routes = warp::path("api").and(routes::routes(app_data)).with(cors);
+    let routes = warp::path("api")
+        .and(routes::routes(app_data))
+        .with(cors);
 
     warp::serve(routes).run(([0, 0, 0, 0], 3001)).await;
     Ok(())

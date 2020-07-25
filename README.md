@@ -56,3 +56,4 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] optimize api fetches on frontend so read/write is minimized and redundant api calls are reduced
 - [ ] store authentication memory server side instead of in svelte store (?)
 - [ ] $07/25/20$ find out if there is *any way* to reduce the redundancy of passing and cloning db whenever a handler / route / model method is called
+- [ ] $07/25/20$ benchmark to see whether it's faster to have all routes as variables in a function or modularized in separate modules/functions (or rather, how much of a performance hit it is)

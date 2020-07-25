@@ -10,7 +10,7 @@
     permission: false, //bool
   }
   async function createRecord() {
-    const post = await fetch(API_URL+'/record', {
+    const post = await fetch(API_URL+'/user/record', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

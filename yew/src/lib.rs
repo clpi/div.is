@@ -3,6 +3,7 @@
 #![allow(clippy::eval_order_dependence)]
 
 pub mod app;
+pub mod models;
 pub mod components;
 pub mod routes;
 
@@ -20,4 +21,8 @@ pub fn run() -> Result<(), JsValue> {
     wasm_logger::init(wasm_logger::Config::default());
     yew::start_app::<App>();
     Ok(())
+}
+
+pub mod errors {
+    pub type AuthError = std::io::Error;
 }

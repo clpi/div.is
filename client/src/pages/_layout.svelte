@@ -185,7 +185,7 @@
                     class:active={$isActive("/"+$user.username)}
                 >
                     <a href={$url('/:username', {username: $user.username})}>
-                        {$user.username}
+                        {$user.username} ⇩
                     </a>
                 </li>
               {:else}
