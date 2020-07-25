@@ -12,7 +12,7 @@ pub fn shared_with_user(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), E
         .and(using(db.to_owned()))
         .and(warp::body::json())
         .and(warp::path!("shared"))
-        .and_then(handlers::get_records_shared_with);
+        .and_then(handlers::get_shared_with);
     get_records_shared_with 
 }
 

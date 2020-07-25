@@ -31,7 +31,7 @@ pub fn refresh(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Err
         .and(using(data.to_owned()))
         .and(warp::path!("refresh"))
         .and(warp::cookie::optional("Authorization"))
-        .and_then(handlers::check_cookie)
+        .and_then(handlers::refresh)
         .with(warp::cors().allow_credentials(true)
             .allow_any_origin()
             .allow_methods(&[Method::GET])
