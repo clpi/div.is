@@ -3,10 +3,6 @@ use warp::{Filter, http::Method};
 use crate::db::Db;
 use super::{AppData, using, handlers};
 
-pub mod record;
-pub mod auth;
-
-// TODO Figure out how to do this
 pub fn routes(data: AppData) -> impl Filter
         <Extract=(impl warp::Reply,), 
         Error=warp::Rejection> + Clone 

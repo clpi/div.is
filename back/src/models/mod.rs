@@ -10,6 +10,8 @@ pub mod link;
 use chrono::Utc;
 use serde::Serialize;
 
+// TODO get async trait and make this an async trait, THEN
+//      add get_by_id, del_by_id, update_by_id
 pub trait Model: Sized + Serialize { 
     fn to_string(&self) -> String {
         serde_json::to_string(self).unwrap()

@@ -111,7 +111,7 @@
                             <p in:fade>{ user.username }</p>
                             <p in:fade><b>id: </b>{user.id}</p>
                             <p in:fade><b>Email: </b>{user.email}</p>
-                            <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
+                            <p in:fade><em><b>Created at</b> { user.createdAt }</em></p>
                         </Box>
                     </li>
                 {:catch}
@@ -140,7 +140,7 @@
                                     <h3 in:fade>{ user.username }</h3>
                                     <p in:fade><b>id: </b>{user.id}</p>
                                     <p in:fade><b>Email: </b>{user.email}</p>
-                                    <p in:fade><em><b>Created at</b> { user.created_at }</em></p>
+                                    <p in:fade><em><b>Created at</b> { user.createdAt }</em></p>
                                 </Box>
                             </li>
                         {:else}
