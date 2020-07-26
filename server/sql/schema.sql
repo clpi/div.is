@@ -1,5 +1,54 @@
 -- Consider where it might be appropriate to use JSON, i.e.
 -- for preferences, user info, etc. also for real/double values
+-- learn more about functions, views, search paths, yadda yadda
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET search_path = UserData, Objects, Links, Relations;
+
+CREATE TYPE status AS ENUM (
+    'active',
+    'archived',
+    'deleted',
+    'completed',
+);
+
+CREATE TYPE priority AS ENUM (
+    'lowest',
+    'low',
+    'medium',
+    'high',
+    'highest',
+);
+
+CREATE TYPE permission AS ENUM (
+    'private',
+    'invite_only',
+    'mutuals_only',
+    'public',
+);
+
+CREATE TYPE permission AS ENUM (
+    'male',
+    'female',
+    'other',
+);
+
+CREATE TYPE field_type AS ENUM (
+    'dropdown',
+    'textbox',
+    'enum_select_one',
+    'enum_select_mul',
+    'boolean',
+    'range'
+)
 
 
 CREATE SCHEMA IF NOT EXISTS UserData;
@@ -10,32 +59,31 @@ CREATE SCHEMA IF NOT EXISTS UserData;
         username    TEXT NOT NULL UNIQUE CHECK (char_length(first_name) < 40),
         password    TEXT NOT NULL CHECK (char_length(first_name) < 40),
         created_at  TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
-    )
+    );;
 
     CREATE TABLE IF NOT EXISTS UserData.UserInfo (
-        id SERIAL PRIMARY KEY NOT NULL,
-        uid INTEGER NOT NULL,
-        timezone TIMEZONE NOT NULL,
-        first_name TEXT CHECK (CHAR_LENGTH(first_name) < 80),
-        last_name TEXT CHECK (CHAR_LENGTH(first_name) < 80),
-        bio TEXT,
-        img_path TEXT,
-        gender TEXT,
-        birth_date INTEGER,
-        location TEXT,
-        experience INTEGER NOT NULL,
-        user_type INTEGER NOT NULL,
-        updated_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (uid) REFERENCES Users(id)
-    )
+        id           SERIAL PRIMARY KEY NOT NULL,
+        uid          INTEGER NOT NULL REFERENCES UserData.Users(id),
+        timezone     TIMEZONE NOT NULL,
+        first_name   TEXT CHECK (CHAR_LENGTH(first_name) < 80),
+        last_name    TEXT CHECK (CHAR_LENGTH(first_name) < 80),
+        bio          TEXT,
+        img_path     TEXT,
+        gender       TEXT,
+        birth_date   INTEGER,
+        location     TEXT,
+        experience   INTEGER NOT NULL,
+        user_type    INTEGER NOT NULL,
+        updated_at   TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
+    );;
 
     CREATE TABLE IF NOT EXISTS UserData.Groups (
         id SERIAL PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL,
-        private BOOLEAN NOT NULL DEFAULT TRUE,
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
+        permission TEXT NOT NULL,
         status TEXT NOT NULL,
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS UserData.GroupInfo (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -43,55 +91,52 @@ CREATE SCHEMA IF NOT EXISTS UserData;
         private BOOLEAN NOT NULL DEFAULT TRUE,
         status TEXT NOT NULL,
         updated_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
-    )
+    );
 
     COMMENT ON TABLE UserData.Users is "Essential user info for auth/session";
     COMMENT ON TABLE UserData.UserInfo is "Profile info for user";
     COMMENT ON TABLE UserData.UserInfo is "Groups of users";
 
-    CREATE VIEW UserSession
-        SELECT (id, email, username) FROM Users;
+    -- CREATE VIEW UserSession
+        -- SELECT (id, email, username) FROM Users;
 
 CREATE SCHEMA IF NOT EXISTS Objects;
 
     CREATE TABLE IF NOT EXISTS Objects.Records (
         id SERIAL PRIMARY KEY NOT NULL,
-        uid INTEGER NOT NULL,
-        name TEXT NOT NULL,    
+        uid INTEGER NOT NULL REFERENCES UserData.Users(id),
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
         status TEXT NOT NULL,
         private BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (uid) REFERENCES Users(id)
-    )
+        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
+    );
 
     CREATE TABLE IF NOT EXISTS Objects.Items (
         id SERIAL PRIMARY KEY NOT NULL,
-        uid INTEGER NOT NULL,
-        name TEXT NOT NULL,
+        uid INTEGER NOT NULL REFERENCES UserData.Users(id),
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
         status TEXT NOT NULL,
         private BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (uid) REFERENCES Users(id)
-    )
+        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
+    );
 
 
     CREATE TABLE IF NOT EXISTS Objects.Fields (
         id SERIAL PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL,    
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
         typ TEXT NOT NULL,
         value TEXT,
         private BOOLEAN NOT NULL DEFAULT TRUE,
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Objects.EntryTypes (
         id SERIAL PRIMARY KEY NOT NULL,
-        uid INTEGER NOT NULL,
-        name TEXT NOT NULL,
+        uid INTEGER NOT NULL REFERENCES UserData.Users(id),
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
         private BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (uid) REFERENCES Users(id)
-    )
+        created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP
+    );
 
 CREATE SCHEMA IF NOT EXISTS Entries;
 
@@ -104,7 +149,7 @@ CREATE SCHEMA IF NOT EXISTS Entries;
         FOREIGN KEY (uid) REFERENCES Users(id),
         FOREIGN KEY (rid) REFERENCES Records(id),
         FOREIGN KEY (etid) REFERENCES EntryTypes(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Entries.FieldEntries ( 
         id SERIAL PRIMARY KEY NOT NULL,
@@ -113,19 +158,19 @@ CREATE SCHEMA IF NOT EXISTS Entries;
         content TEXT,
         FOREIGN KEY (eeid) REFERENCES EntryEntries(id),
         FOREIGN KEY (fid) REFERENCES Fields(id)
-    )
+    );
 
 CREATE SCHEMA IF NOT EXISTS Logic;
 
     CREATE TABLE IF NOT EXISTS Logic.Rules ( 
         id SERIAL PRIMARY KEY NOT NULL,
         uid INTEGER NOT NULL,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
         priority TEXT,
         status TEXT NOT NULL,
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (uid) REFERENCES Users(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Logic.Conditions (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -144,7 +189,7 @@ CREATE SCHEMA IF NOT EXISTS Logic;
         FOREIGN KEY (iid2) REFERENCES Items(id),
         FOREIGN KEY (fid1) REFERENCES Fields(id),
         FOREIGN KEY (fid2) REFERENCES Fields(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Logic.Actions (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -153,7 +198,7 @@ CREATE SCHEMA IF NOT EXISTS Logic;
         action TEXT NOT NULL,
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (ruleid) REFERENCES Rules(id)
-    )
+    );
 
 CREATE SCHEMA IF NOT EXISTS Links;
 
@@ -166,7 +211,7 @@ CREATE SCHEMA IF NOT EXISTS Links;
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (uid) REFERENCES Users(id),
         FOREIGN KEY (gid) REFERENCES Groups(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Links.RecordItemLinks (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -177,7 +222,7 @@ CREATE SCHEMA IF NOT EXISTS Links;
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (rid) REFERENCES Records(id),
         FOREIGN KEY (iid) REFERENCES Items(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Links.ItemFieldLinks (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -187,7 +232,7 @@ CREATE SCHEMA IF NOT EXISTS Links;
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (iid) REFERENCES Items(id),
         FOREIGN KEY (fid) REFERENCES Fields(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Links.FieldEntryLinks (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -196,7 +241,7 @@ CREATE SCHEMA IF NOT EXISTS Links;
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (etid) REFERENCES EntryTypes(id),
         FOREIGN KEY (fid) REFERENCES Fields(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Links.UserRecordLinks (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -205,7 +250,7 @@ CREATE SCHEMA IF NOT EXISTS Links;
         created_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (uid) REFERENCES Users(id),
         FOREIGN KEY (rid) REFERENCES Records(id)
-    )
+    );
 
 CREATE SCHEMA IF NOT EXISTS Relations;
 
@@ -218,7 +263,7 @@ CREATE SCHEMA IF NOT EXISTS Relations;
         updated_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (uid1) REFERENCES Users(id),
         FOREIGN KEY (uid2) REFERENCES Users(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Relations.RecordRelations (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -229,7 +274,7 @@ CREATE SCHEMA IF NOT EXISTS Relations;
         updated_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (rid1) REFERENCES Records(id),
         FOREIGN KEY (rid2) REFERENCES Records(id)
-    )
+    );
 
     CREATE TABLE IF NOT EXISTS Relations.ItemRelations (
         id SERIAL PRIMARY KEY NOT NULL,
@@ -240,4 +285,4 @@ CREATE SCHEMA IF NOT EXISTS Relations;
         updated_at TIMESTAMPZ DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (iid1) REFERENCES Items(id),
         FOREIGN KEY (iid2) REFERENCES Items(id)
-    )
+    );

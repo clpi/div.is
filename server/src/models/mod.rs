@@ -34,6 +34,8 @@ pub trait Model: Sized + Serialize {
 //TODO rename private field to permission field
 //TODO figure out how to best use enums // best practices for them
 //TODO think this through -- all enums
+
+
 pub enum Time {
     Now,
     Tomorrow,
@@ -42,14 +44,36 @@ pub enum Time {
     MonthLater,
 }
 
-impl Time {
-    pub fn now() -> i32 { Utc::now().timestamp() as i32 }
-}
-
 pub enum Status {
     Archived,    
+    Completed,
     Deleted,
     Active,
+}
+
+pub enum Permission {
+    Public,
+    Private,
+    InviteOnly,
+    MutualOnly,
+}
+
+pub enum Priority {
+    Lowest,
+    Low,
+    Medium,
+    High,
+    Highest,
+}
+
+pub enum Gender {
+    Male,
+    Female,
+    Other,
+}
+
+impl Time {
+    pub fn now() -> i32 { Utc::now().timestamp() as i32 }
 }
 
 impl Status {
@@ -58,23 +82,12 @@ impl Status {
 }
 
 // TODO think this through
-pub enum Permission {
-    Public,
-    Private,
-    Selective,
-    InviteOnly,
-    MutualOnly,
-}
 
 impl Permission {
     pub fn private() -> bool { true }
     pub fn invite_only() -> String { "invite_only".to_string() }
 }
 
-pub enum Priority {
-    Lowest,
-    Highest,
-}
 impl Priority {
     pub fn lowest() -> String { "lowest".to_string() }
 }

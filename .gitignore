@@ -15,6 +15,7 @@ data/pg/pg.env
 data/pg/pgadmin.env
 data/redis/redis.env
 data/redis/redis.conf
+scripts/pg_login.sh
 
 
 #Added by cargo
