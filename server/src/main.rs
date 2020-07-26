@@ -48,9 +48,18 @@ async fn main() -> sqlx::Result<()> {
     Ok(())
 }
 
+// TODO handle this more gracefully
 pub async fn db() -> sqlx::Result<db::Db> {
-    //let db_type = dotenv::var("DB_TYPE").expect("SQLite");
-    let db_url = dotenv::var("DB_URL").expect("DB_URL not set");
+    let db_url;
+    let env = std::env::var("ENVIRONMENT");
+    if env.is_ok() {
+        db_url = match env.unwrap().as_str() {
+            "PROD" => std::env::var("PROD_DB_URL").expect("PROD_DB_URL not set"),
+            _ => std::env::var("DEV_DB_URL").expect("DEV_DB_URL not set"),
+        }
+    } else {
+        db_url = dotenv::var("DB_URL").expect("DB_URL not set in .env");
+    }
     Ok( db::Db::new(&db_url).await? )
 }
 

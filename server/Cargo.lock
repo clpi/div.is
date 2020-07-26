@@ -1033,17 +1033,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "libsqlite3-sys"
-version = "0.17.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56d90181c2904c287e5390186be820e5ef311a3c62edebb7d6ca3d6a48ce041d"
-dependencies = [
- "cc",
- "pkg-config",
- "vcpkg",
-]
-
-[[package]]
 name = "log"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2017,12 +2006,13 @@ dependencies = [
  "hex",
  "hmac",
  "libc",
- "libsqlite3-sys",
  "log 0.4.11",
  "md-5",
  "memchr",
  "percent-encoding",
  "rand 0.7.3",
+ "serde",
+ "serde_json",
  "sha-1",
  "sha2",
  "sqlformat",
@@ -2043,6 +2033,7 @@ dependencies = [
  "heck",
  "proc-macro2 1.0.18",
  "quote 1.0.7",
+ "serde_json",
  "sqlx-core",
  "syn",
  "url",

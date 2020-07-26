@@ -43,7 +43,7 @@ impl Field {
             item_id, 
             self.id.unwrap(), 
             priority).await?;
-        Ok(self)
+    Ok(self)
     }
 }
 

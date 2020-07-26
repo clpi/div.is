@@ -26,4 +26,10 @@ elif [ "$1" == "log" ]; then
     elif [ "$2" == "loc" ]; then
         psql -h localhost -p 5432 -U divadm divdb
     fi
+elif [ "$1" == "init" ]; then
+    if [ "$2" == "rem" ]; then
+        psql -h io.div.is -p 5432 -U divadm -d divdb -a -q -f ../server/sql/schema.sql
+    elif [ "$2" == "loc" ]; then
+        psql -h localhost -p 5432 -U divadm -d divdb -a -q -f ../server/sql/schema.sql
+    fi
 fi

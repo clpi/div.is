@@ -58,3 +58,9 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] $07/25/20$ find out if there is *any way* to reduce the redundancy of passing and cloning db whenever a handler / route / model method is called
 - [ ] $07/25/20$ benchmark to see whether it's faster to have all routes as variables in a function or modularized in separate modules/functions (or rather, how much of a performance hit it is)
 - [ ] $07/25/20$  create proper enumerations within schema.sql file for postgres reflected in Rust backend code
+- [ ] $07/25/20$ $22:24$ now that you're using postgres, OVERHAUL your models so that they take advantage of the enum type system postgres allows and sqlx now has derive support for:
+    - [ ] figure out how/if schemas interplay between sqlx and postgres
+    - [ ] implement them for statuses
+    - [ ] implement them for permissions
+    - [ ] implement them for priorities
+    - [ ] implement schemas / see how they interplay

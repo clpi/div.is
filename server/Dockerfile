@@ -11,6 +11,7 @@ RUN cargo build --release
 RUN cargo install --path ./
 
 ENV HOST_PORT 80
+ENV ENVIRONMENT DEV
 
 EXPOSE 80
 

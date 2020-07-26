@@ -11,6 +11,7 @@ RUN cargo build --release
 RUN cargo install --path ./
 
 ENV HOST_PORT 3001
+ENV ENVIRONMENT PROD
 
 EXPOSE 3001
 

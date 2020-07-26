@@ -34,8 +34,10 @@ pub trait Model: Sized + Serialize {
 //TODO rename private field to permission field
 //TODO figure out how to best use enums // best practices for them
 //TODO think this through -- all enums
+//TODO use these enums with postgres ... when you're comfortable
 
-
+#[derive(sqlx::Type)]
+#[sqlx(rename = "mood", rename_all = "lowercase")]
 pub enum Time {
     Now,
     Tomorrow,
@@ -44,6 +46,8 @@ pub enum Time {
     MonthLater,
 }
 
+#[derive(sqlx::Type)]
+#[sqlx(rename = "mood", rename_all = "lowercase")]
 pub enum Status {
     Archived,    
     Completed,
@@ -51,6 +55,8 @@ pub enum Status {
     Active,
 }
 
+#[derive(sqlx::Type)]
+#[sqlx(rename = "mood", rename_all = "lowercase")]
 pub enum Permission {
     Public,
     Private,
@@ -58,6 +64,8 @@ pub enum Permission {
     MutualOnly,
 }
 
+#[derive(sqlx::Type)]
+#[sqlx(rename = "mood", rename_all = "lowercase")]
 pub enum Priority {
     Lowest,
     Low,
@@ -66,6 +74,8 @@ pub enum Priority {
     Highest,
 }
 
+#[derive(sqlx::Type)]
+#[sqlx(rename = "gender", rename_all = "lowercase")]
 pub enum Gender {
     Male,
     Female,

@@ -11,7 +11,7 @@ info = "htps://info.div.is"
 repository = "https://github.com/pecusys/div.is"
 
 [dependencies]
-sqlx={version="*", features=["sqlite", "postgres", "chrono", "uuid"]}
+sqlx={version="*", features=["json", "postgres", "chrono", "uuid"]}
 warp="*"
 tokio={version="*", features=["macros"]}
 serde={version="*", features=["derive"]}
