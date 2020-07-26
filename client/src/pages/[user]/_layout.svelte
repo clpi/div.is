@@ -1,6 +1,8 @@
 <script>
   import { params } from '@sveltech/routify';
   import { onMount } from 'svelte';
+  
+  export let user;
 
   onMount(async () => {
     console.log($params)

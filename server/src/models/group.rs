@@ -1,4 +1,5 @@
-use sqlx::{Postgres, FromRow, postgres::*};
+use sqlx::{Sqlite, FromRow, sqlite::*};
+use chrono::{DateTime, Utc};
 use crate::db::Db;
 use super::{
     Time, Permission, Status, Model,
@@ -12,10 +13,10 @@ pub struct Group {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub name: String,
-    #[serde(default = "Permission::private")]
-    pub private: bool, 
     #[serde(default = "Status::active")]
     pub status: String,
+    #[serde(default = "Permission::private")]
+    pub permission: String, 
     #[serde(default = "Time::now")]
     pub created_at: i32,
 }

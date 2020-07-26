@@ -4,7 +4,7 @@
 /// $07/25/20$ on out queries and sqlx will be conigured
 /// for postgres however
 
-use sqlx::SqlitePool;
+use sqlx::sqlite::*;
 use sqlx::*;
 
 #[derive(Clone)]
@@ -18,15 +18,15 @@ impl Db {
         if !std::path::Path::new(&url.to_string()).exists() {
             // run sqlite3 mem.db "" to create
         }
-        let pool = sqlx::SqlitePool::new(&url).await?;
-        sqlx::query_file!("sql/schema.sql")
+        let pool = sqlx::sqlite::SqlitePool::new(&url).await?;
+        sqlx::query_file!("sql/archived/schema.sql")
             .execute(&pool).await?;
         println!("Successfully created DB pool.");
         Ok( Self { pool } )
     }
 
     pub async fn init(self) -> sqlx::Result<Self> {
-        sqlx::query_file!("sql/schema.sql")
+        sqlx::query_file!("sql/archived/schema.sql")
             .execute(&self.pool).await?;
         Ok( self )
    }

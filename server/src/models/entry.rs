@@ -1,5 +1,6 @@
-use sqlx::{Postgres, FromRow, postgres::*};
+use sqlx::{Sqlite, FromRow, sqlite::*};
 use crate::db::Db;
+use chrono::{DateTime, Utc};
 use super::{
     Time, Status, Permission, Model,
     item::ItemBuilder,
@@ -17,7 +18,7 @@ pub struct EntryType {
     #[serde(default = "Status::active")]
     pub status: String,
     #[serde(default = "Permission::private")]
-    pub private: bool,
+    pub permission: String,
     #[serde(default = "Time::now")]
     pub created_at: i32,
 }

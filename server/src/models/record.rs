@@ -1,4 +1,6 @@
-use sqlx::{Postgres, FromRow, postgres::*};
+//use sqlx::{Sqlite, FromRow, Sqlite::*};
+use sqlx::{Sqlite, FromRow, sqlite::*};
+use chrono::{DateTime, Utc};
 use crate::db::Db;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -26,7 +28,7 @@ pub struct Record {
     #[serde(default = "Status::active")]
     pub status: String,
     #[serde(default = "Permission::private")]
-    pub permission: bool,
+    pub permission: String,
     #[serde(default = "Time::now")]
     pub created_at: i32,
 }
@@ -46,7 +48,7 @@ impl Record {
     }
 
     pub async fn from_id(db: &Db, id: i32) -> sqlx::Result<Self> {
-        let record = sqlx::query_as::<Postgres, Self>("SELECT * FROM Records WHERE id=?;")  
+        let record = sqlx::query_as::<Sqlite, Self>("SELECT * FROM Records WHERE id=?;")  
             .bind(id)
             .fetch_one(&db.pool).await?;
         Ok(record)
@@ -69,7 +71,7 @@ impl Record {
     }
 
     pub async fn get_items(self, db: &Db) -> sqlx::Result<Vec<Item>> {
-        let items: Vec<Item> = sqlx::query_as::<Postgres, Item>("
+        let items: Vec<Item> = sqlx::query_as::<Sqlite, Item>("
             SELECT * FROM Items INNER JOIN RecordItemLinks 
             ON RecordItemLinks.iid=Items.id WHERE RecordItemLinks.iid=?;")
             .bind(&self.id)
@@ -83,7 +85,7 @@ impl Record {
     }
 
     pub async fn get_users(self, db: &Db) -> sqlx::Result<Vec<User>> {
-        let users: Vec<User> = sqlx::query_as::<Postgres, User>("
+        let users: Vec<User> = sqlx::query_as::<Sqlite, User>("
             SELECT * FROM Users INNER JOIN UserRecordLinks
             ON UserRecordLinks.uid=Users.id WHERE UserRecordLinks.rid=?;")
             .bind(&self.id)
@@ -94,7 +96,7 @@ impl Record {
     // TODO: Get records where user has UserRecordLink association,
     // but record's uid != user's uid
     pub async fn associated_with_user(db: &Db, user: &User) -> sqlx::Result<Vec<Self>> {
-        let records: Vec<Self> = sqlx::query_as::<Postgres, Self>("
+        let records: Vec<Self> = sqlx::query_as::<Sqlite, Self>("
             SELECT * FROM Records INNER JOIN UserRecordLinks
             ON UserRecordLinks.uid=Users.id 
             WHERE UserRecordLinks.uid=?
@@ -108,7 +110,7 @@ impl Record {
     pub async fn create_entry_type(&self, uid: i32, name: String) -> EntryType {
         EntryType {
             id: None, uid: uid, name: name,
-            private: Permission::private(),
+            permission: Permission::private(),
             status: Status::active(),
             created_at: Time::now(),
         }
@@ -156,9 +158,9 @@ impl RecordBuilder {
     pub fn with_name(mut self, name: String) -> RecordBuilder {
         self.name = Some(name); self
     }
-    pub fn build(self) -> Record {
-        Record::default()
-    }
+    //pub fn build(self) -> Record {
+        //Record::default()
+    //}
 }
 
 impl Model for Record {}

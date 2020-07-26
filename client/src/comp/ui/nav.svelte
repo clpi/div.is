@@ -8,9 +8,10 @@
 </script>
 <style>
     .Navbar {
-        /*border-top: 4px solid #feba80;*/
-        background-image: linear-gradient(#fffffd, #fffdfe);
-        /*margin-top: 0.5rem;*/
+      border-top: 4px solid #feba80;
+        /*background-image: linear-gradient(#fffffd, #fffdfe);*/
+      background-color: rgba(0,0,0,0);
+      margin-top: 0rem;
     }
     .NavLinks {
         margin-bottom: 1rem;

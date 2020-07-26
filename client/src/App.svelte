@@ -8,7 +8,7 @@
 
 <style>
     .body {
-        height: 100%;
+      height: 100%;
     }
     .contain {
         background-color: #fffefd;

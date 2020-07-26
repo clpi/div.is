@@ -1,21 +1,18 @@
 <!-- _layout.svelte -->
 <script>
     /*import Nav from '../comp/ui/nav.svelte';*/
-    import { beforeUrlChange, isChangingPage, afterPageLoad, url, isActive, ready } from "@sveltech/routify";
+    import { beforeUrlChange, url, isActive, ready } from "@sveltech/routify";
     import { onMount } from 'svelte';
-    import { session, user, isLogged, logged } from '../store.js';
+    import { user, isLogged, logged } from '../store.js';
     import { slide, fade } from 'svelte/transition';
     // TODO have everything load at once in fetch call
     // and then declare $ready instead of having await in DOM
     // TODO handle auth like routify suggests on their website
 
-    let authUser = Promise.resolve([]);
-    let authLogged = Promise.resolve([]);
-    
     onMount(async () => {
       refresh();
     })
-    $beforeUrlChange(() => {
+    $beforeUrlChange(async () => {
       refresh();
       return true;
     });
@@ -76,14 +73,17 @@
 
 <style>
     .Navbar {
-        background-image: linear-gradient(#fffffd, #fffdfe);
-        margin-bottom: 1rem;
+      background-color: rgba(0,0,0,0);
+      margin-bottom: 0.3rem;
     }
     #navHome {
         margin-left: 5vw;
         margin-right: 5vw;
         border: 4px solid #fedaa1;
-        padding: 0px 4px 0px 4px;
+        padding: 0px 2px 0px 2px;
+        border-radius: 2px;
+        background-color: #FFF;
+        box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 
     }
     #navHome:hover {
@@ -147,27 +147,33 @@
         padding-left: 13.5vw;
         padding-right: 13.5vw;
     }
+    .username {
+    }
+    .title {
+      font-size: larger;
+      font-weight: 400;
+    }
 </style>
 
 <div class="wrapper">
     <div class="Navbar">
-        <ul class="Nav">
-            <li in:slide={{delay:100}} id="navHome"class:active={$isActive("/")}>
-                <a href={$url("/")}>div.is</a>
+      <ul in:fade={{delay:0, duration: 1000}} class="Nav">
+            <li id="navHome"class:active={$isActive("/")}>
+                <a class="title" href={$url("/")}>div.is</a>
             </li>
-            <li in:slide={{delay:150}} class:active={$isActive("/index")}>
+            <li class:active={$isActive("/index")}>
                 <a href={$url("/index")}>home</a>
             </li>
-            <li in:slide={{delay:200}} class:active={$isActive("/dashboard")}>
-                <a href={$url("/dashboard")}>dashboard</a>
-            </li>
-            <li in:slide={{delay:250}} class:active={$isActive("/about")}>
+            <li class:active={$isActive("/about")}>
                 <a href={$url("/about")}>about</a>
             </li>
-            <li in:slide={{delay:300}} class:active={$isActive("/contact")}>
+            <li class:active={$isActive("/contact")}>
                 <a href={$url("/contact")}>contact</a>
             </li>
-            <li in:slide={{delay:350}} class:active={$isActive("/admin")}>
+            <li class:active={$isActive("/dashboard")}>
+                <a href={$url("/dashboard")}>dash</a>
+            </li>
+            <li class:active={$isActive("/admin")}>
                 <a href={$url("/admin")}>admin</a>
             </li>
             {#await refresh}
@@ -184,35 +190,31 @@
                     id="loginNav" 
                     class:active={$isActive("/"+$user.username)}
                 >
-                    <a href={$url('/:username', {username: $user.username})}>
+                  <a class="username"
+                  href={$url('/:username', {username: $user.username})}>
                         {$user.username} ⇩
-                    </a>
+                  </a>
                 </li>
               {:else}
-                <li in:fade id="signupNav" class:active={$isActive("/signup")} >
+                <li id="signupNav" class:active={$isActive("/signup")} >
                     <a href={$url("/signup")}>signup</a>
                 </li>
-                <li in:fade id="loginNav" class:active={$isActive("/login")}>
+                <li id="loginNav" class:active={$isActive("/login")}>
                     <a href={$url("/login")}>login</a>
                 </li>
             {/if}
             {:catch}
-                <li in:fade id="signupNav" class:active={$isActive("/signup")} >
+                <li id="signupNav" class:active={$isActive("/signup")} >
                     <a href={$url("/signup")}>signup</a>
                 </li>
-                <li in:fade id="loginNav" class:active={$isActive("/login")}>
+                <li id="loginNav" class:active={$isActive("/login")}>
                     <a href={$url("/login")}>login</a>
                 </li>
             {/await}
-            <li in:slide={{delay:300}} id="navIcon">
-                <a href="http://github.com/pecusys">
-                    gh
-                </a>
-            </li>
         </ul>
     </div>
     <div class = "content">
-      <slot/>
+      <slot scoped={{usr: $user, log: $isLogged}}/>
       <!-- 
         <slot scoped={{user: userData, loggedIn: loggedIn}}/> 
       -->

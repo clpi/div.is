@@ -1,7 +1,7 @@
 //TODO ensure that you amke a function to account for models that exist in memory that aren[t yet
 //in the database, or vice versa]
 use crate::api::auth::hash_pwd;
-use sqlx::{Postgres, FromRow, postgres::*};
+use sqlx::{Sqlite, FromRow, sqlite::*};
 use std::collections::HashMap;
 use crate::db::Db;
 use std::rc::Rc;
@@ -52,7 +52,7 @@ impl User {
             email: String::from(email),
             username: String::from(uname),
             password: String::from(pwd),
-            created_at: Time::now(),
+            created_at: Time::now()
         } 
     }
 
@@ -63,12 +63,7 @@ impl User {
 
     //pub async fn from_db(db: Db) -> DbQuery { User::default(), DbQuery::from(db) }
 
-    pub async fn build() -> Self {
-        User {
-            id: None, created_at: Time::now(),
-            ..User::default()
-        }
-    }
+    //pub async fn build() -> UserBuilder {}
 
     pub async fn insert(self, db: Db) -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Users 
@@ -79,15 +74,15 @@ impl User {
             .bind(&self.password)
             .bind(Time::now())
             .execute(&db.pool).await?;
-        match &self.id.clone() {
-            Some(id) => UserInfo::insert_new(db, id.to_owned()).await?,
-            None => {
-                let new_id = User::from_username
-                    (&db, self.username.clone())
-                    .await?.id.unwrap();
-                UserInfo::insert_new(db, new_id).await?;
-            }
-        }
+        //match &self.id.clone() {
+            //Some(id) => UserInfo::insert_new(db, id.to_owned()).await?,
+            //None => {
+                //let new_id = User::from_username
+                    //(&db, self.username.clone())
+                    //.await?.id.unwrap();
+                //UserInfo::insert_new(db, new_id).await?;
+            //}
+        //}
         Ok(self)
     }
 
@@ -101,7 +96,7 @@ impl User {
     }
 
     pub async fn get_info(self, db: &Db) -> sqlx::Result<UserInfo> {
-        let info = sqlx::query_as::<Postgres, UserInfo>("
+        let info = sqlx::query_as::<Sqlite, UserInfo>("
             SELECT * FROM UserInfo INNER JOIN Users on UserInfo.uid
             =Users.id WHERE UserInfo.uid=?
             ")
@@ -120,7 +115,7 @@ impl User {
     pub async fn from_id(db: &Db, id: i32 )
         -> sqlx::Result<Self> 
     {
-        let res: Self = sqlx::query_as::<Postgres, Self>(
+        let res: Self = sqlx::query_as::<Sqlite, Self>(
             "SELECT * FROM Users WHERE id=?;")
             .bind(id)
             .fetch_one(&db.pool).await?;
@@ -134,7 +129,7 @@ impl User {
     pub async fn from_username(db: &Db, username: String) 
         -> sqlx::Result<Self>
     {
-        sqlx::query_as::<Postgres, Self>
+        sqlx::query_as::<Sqlite, Self>
             ("SELECT * FROM Users WHERE username=?;")
             .bind(String::from(username))
             .fetch_one(&db.pool).await
@@ -143,7 +138,7 @@ impl User {
     pub async fn from_email(db: &Db, username: &str) 
         -> sqlx::Result<Self> 
     {
-        sqlx::query_as::<Postgres, Self>
+        sqlx::query_as::<Sqlite, Self>
             ("SELECT * FROM Users WHERE email=?;")
             .bind(String::from(username))
             .fetch_one(&db.pool).await
@@ -153,7 +148,7 @@ impl User {
         -> sqlx::Result<Self> 
     {
         let val: String = value.into();
-        let res: Self = sqlx::query_as::<Postgres, Self>(
+        let res: Self = sqlx::query_as::<Sqlite, Self>(
             "SELECT * FROM Users WHERE ?=?;")
             .bind(String::from(param))
             .bind(String::from(val))
@@ -164,7 +159,7 @@ impl User {
     pub async fn fetch_all(db: &Db)
         -> sqlx::Result<Vec<User>> 
     {
-        let res: Vec<User> = sqlx::query_as::<Postgres, Self>
+        let res: Vec<User> = sqlx::query_as::<Sqlite, Self>
             ("SELECT * FROM Users;")
             .fetch_all(&db.pool).await?;
         Ok(res)
@@ -207,7 +202,7 @@ impl User {
     }
 
     pub async fn get_records(&self, db: &Db) -> sqlx::Result<Vec<Record>> {
-        let res: Vec<Record> = sqlx::query_as::<Postgres, Record>(
+        let res: Vec<Record> = sqlx::query_as::<Sqlite, Record>(
             "SELECT * FROM Records WHERE uid=?;")
             .bind(self.id)
             .fetch_all(&db.pool)
@@ -323,10 +318,10 @@ impl UserRelation {
     pub fn new() -> UserRelationBuilder 
     { UserRelationBuilder::new() }    
 
-    pub fn with_rel(u1: i32, u2: i32, relation: String) -> Self {
+    pub fn with_rel(u1: i32, u2: i32, relation: String) -> () {
         let rel = UserRelationBuilder::from(u1, u2)
             .with_relation(relation);
-        rel.build()
+        //rel.build()
     }
 }
 
@@ -358,6 +353,9 @@ impl UserRelationBuilder {
     pub fn with_uid(uid: i32) -> () {}
 
     pub fn build(self) -> UserRelation {
-        UserRelation::default()
+        UserRelation {
+            id: None, 
+            ..UserRelation::default()
+        }
     }
 }

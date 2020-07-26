@@ -16,11 +16,11 @@ pub fn routes(data: AppData) -> impl Filter
     let s_dir = warp::path("static").and(warp::fs::dir("../../static"));
     
     index.or(s_dir)
-        .or(user::routes(&data.db))
-        .or(record::routes(&data.db))
-        .or(auth::routes(&data))
-        .or(db::routes(&data.db))
-        .or(all_users(&data.db))
+        .or(user::routes(&data.db.clone()))
+        .or(record::routes(&data.db.clone()))
+        .or(auth::routes(&data.clone()))
+        .or(db::routes(&data.db.clone()))
+        .or(all_users(&data.db.clone()))
 }
 
 // TODO figure out why this doesn't work in user routes

@@ -1,5 +1,9 @@
+use sqlx::postgres::PgPool;
+use sqlx::*;
+use sqlx::pool::PoolConnection;
 use sqlx::postgres::*;
 use std::{path::Path, fs};
+use crate::models::user::User;
 
 #[derive(Clone)]
 pub struct Db {
@@ -12,9 +16,32 @@ pub struct Db {
 impl Db {
 
     pub async fn new(url: &str) -> sqlx::Result<Self> {
-        let pool = sqlx::PgPool::new(&url).await?;
+        let pool = PgPool::new(&url).await?;
+        let mut listener = PgListener::new(&url).await?;
         println!("Successfully created DB pool.");
         Ok( Self { pool } )
+    }
+
+    pub async fn conn(&self) -> sqlx::Result<PoolConnection<PgConnection>> {
+        self.pool.acquire().await
+    }
+
+    pub async fn test_post(self) -> sqlx::Result<i32> {
+        let res = sqlx::query("
+            INSERT INTO Users (email, username, password)
+            VALUES ($1, $2, $3) RETURNING id;")
+            .bind("chrisman22")
+            .bind("chrisman22")
+            .bind("chrisman22")
+            .execute(&self.pool).await?;
+        Ok(res as i32)
+    }
+
+    pub async fn test_get(self) -> sqlx::Result<Vec<User>> {
+        let res: Vec<User> = sqlx::query_as::<Postgres, User>("
+            SELECT * FROM Users;")
+            .fetch_all(&self.pool).await?;
+        Ok(res)
     }
 
     /// "Can't insert multiple commands into prepared statement" for

@@ -64,3 +64,6 @@ Currently using Podman and Ansible to deploy to DigitalOcean
     - [ ] implement them for permissions
     - [ ] implement them for priorities
     - [ ] implement schemas / see how they interplay
+- [ ] $07/26/20$ figure out what's going on with postgres:
+    - [ ] works in main function, works in module, but not in handlers. likely something to do with the borrowing and passing around that happens -- maybe ok for sqlite, but not for connection-based db? not sure, but i'll have to see
+    - [ ] ease yourself into knowing what you need for postgres in this project by starting off from the get go with sqlx + postgres in another, then implementing it here.

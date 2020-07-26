@@ -58,8 +58,9 @@ pub async fn db() -> sqlx::Result<db::Db> {
             _ => std::env::var("DEV_DB_URL").expect("DEV_DB_URL not set"),
         }
     } else {
-        db_url = dotenv::var("DB_URL").expect("DB_URL not set in .env");
+        dbg!(db_url = dotenv::var("DB_URL").expect("DB_URL not set in .env"));
     }
+    println!("{}", db_url);
     Ok( db::Db::new(&db_url).await? )
 }
 

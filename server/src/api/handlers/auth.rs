@@ -68,7 +68,7 @@ pub async fn register (
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let req_user = req_user.hash_pass(data.secret_key).await.unwrap();
     println!("Hashed user password");
-    match &req_user.insert(data.db.clone()).await {
+    match &req_user.insert(data.db).await {
         Ok(user) => {
             println!("Registered {}", user.username);
             Ok(warp::reply::with_header(

@@ -6,6 +6,7 @@
     h1 { 
         font-size: 2rem;
         font-weight: 300;
+        text-shadow: 0px 1px 1px #444;
     }
     h2 {
         font-size: 1.6rem;
@@ -15,8 +16,11 @@
         font-size: 1.3rem;
         font-weight: 300;
     }
+    p {
+    }
     .Box {
         width: 300px;
+        height: 140px;
         float: left;
         /*border: 1px solid #fa4;*/
         border: 1px solid #eee;
@@ -36,7 +40,8 @@
     }
     .Box:hover {
         box-shadow: 2px 2px 3px rgba(0,0,0,0.15);
-        transition: box-shadow;
+        background-color: #fbfafa;
+        transition: box-shadow, background-color;
     }
 </style>
 

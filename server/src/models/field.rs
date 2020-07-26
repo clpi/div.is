@@ -1,4 +1,5 @@
-use sqlx::{Postgres, FromRow, postgres::*};
+use sqlx::{Sqlite, FromRow, sqlite::*};
+use chrono::{DateTime, Utc};
 use crate::db::Db;
 use super::{
     Time, Status, Permission, Model,
@@ -15,7 +16,7 @@ pub struct Field {
     pub typ: String,
     pub value: String,
     #[serde(default = "Permission::private")]
-    pub private: bool, 
+    pub permission: String, 
     #[serde(default = "Time::now")]
     pub created_at: i32,
 }

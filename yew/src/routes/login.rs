@@ -17,7 +17,7 @@ pub struct Login {
     //callback: Callback<User>,
 //}
 pub enum Msg {
-    RequestSubmitted,
+    Request,
     ResponseReceived(Result<User, AuthError>),
     ForgotUsername,
     ForgotPassword,

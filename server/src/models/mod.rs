@@ -34,7 +34,7 @@ pub trait Model: Sized + Serialize {
 //TODO rename private field to permission field
 //TODO figure out how to best use enums // best practices for them
 //TODO think this through -- all enums
-//TODO use these enums with postgres ... when you're comfortable
+//TODO use these enums with Sqlite ... when you're comfortable
 
 #[derive(sqlx::Type)]
 #[sqlx(rename = "mood", rename_all = "lowercase")]
@@ -94,7 +94,7 @@ impl Status {
 // TODO think this through
 
 impl Permission {
-    pub fn private() -> bool { true }
+    pub fn private() -> String { "private".to_string() }
     pub fn invite_only() -> String { "invite_only".to_string() }
 }
 
