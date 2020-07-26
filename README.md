@@ -57,3 +57,4 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] store authentication memory server side instead of in svelte store (?)
 - [ ] $07/25/20$ find out if there is *any way* to reduce the redundancy of passing and cloning db whenever a handler / route / model method is called
 - [ ] $07/25/20$ benchmark to see whether it's faster to have all routes as variables in a function or modularized in separate modules/functions (or rather, how much of a performance hit it is)
+- [ ] $07/25/20$  create proper enumerations within schema.sql file for postgres reflected in Rust backend code

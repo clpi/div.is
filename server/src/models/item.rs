@@ -1,4 +1,4 @@
-use sqlx::{sqlite::*, Sqlite, FromRow};
+use sqlx::{Postgres, FromRow, postgres::*};
 use crate::db::Db;
 use std::collections::HashMap;
 use super::{
@@ -40,7 +40,7 @@ impl Item {
     }
 
     pub async fn from_id(db: &Db, iid: i32) -> sqlx::Result<Self> {
-        let res = sqlx::query_as::<Sqlite, Item>("
+        let res = sqlx::query_as::<Postgres, Item>("
             SELECT * FROM Items where id = ?;")
             .bind(iid)
             .fetch_one(&db.pool).await?;
@@ -71,7 +71,7 @@ impl Item {
     }
 
     pub async fn by_user(db: &Db, uid: i32) -> sqlx::Result<Vec<Item>> {
-        let res = sqlx::query_as::<Sqlite, Item>("
+        let res = sqlx::query_as::<Postgres, Item>("
             SELECT FROM Items WHERE uid=?;")
             .bind(uid)
             .fetch_all(&db.pool).await?;
@@ -79,7 +79,7 @@ impl Item {
     }
 
     pub async fn by_user_and_name(db: &Db, uid: i32, name: String) -> sqlx::Result<Vec<Item>> {
-        let res = sqlx::query_as::<Sqlite, Item>("
+        let res = sqlx::query_as::<Postgres, Item>("
             SELECT FROM Items WHERE uid=$1 AND name=$2;")
             .bind(uid)
             .bind(name)
@@ -88,7 +88,7 @@ impl Item {
     }
 
     pub async fn by_name(db: &Db, name: &str) -> sqlx::Result<Vec<Item>> {
-        let res = sqlx::query_as::<Sqlite, Item>("
+        let res = sqlx::query_as::<Postgres, Item>("
             SELECT FROM Items WHERE name=?;")
             .bind(name)
             .fetch_all(&db.pool).await?;
@@ -142,7 +142,7 @@ impl Item {
     }
 
     pub async fn get_fields(self, db: &Db) -> sqlx::Result<Vec<Field>> {
-        let items: Vec<Field> = sqlx::query_as::<Sqlite, Field>("
+        let items: Vec<Field> = sqlx::query_as::<Postgres, Field>("
             SELECT * FROM Fields INNER JOIN ItemFieldLinks 
             ON ItemFieldLinks.fid=Fields.id WHERE ItemFieldLinks.fid=?")
             .bind(&self.id)
@@ -178,24 +178,24 @@ impl ItemBuilder {
 
 // $07/25/20$  not impl in sql
 //
-pub enum Relationship {
+pub enum Relation {
     Parent(i32, i32), //not sure if i want "following?"
     Child(i32, i32),
     Synchronize(i32, i32),
     NoRelationship,
 }
-impl Relationship {
+impl Relation {
     pub fn none() -> String { "none".to_string() }
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
-pub struct ItemItemRelationship {
+pub struct ItemRelation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub iid1: i32,
     pub iid2: i32,
-    #[serde(default = "Relationship::none")]
+    #[serde(default = "Relation::none")]
     pub rel: String,
     #[serde(default = "Time::now")]
     pub created_at: i32,

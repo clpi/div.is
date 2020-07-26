@@ -1,6 +1,6 @@
 FROM rust:1.45-slim
 
-WORKDIR /usr/src/div/server
+WORKDIR /usr/src/div/back
 
 COPY . .
 
@@ -10,9 +10,9 @@ RUN cargo build --release
 
 RUN cargo install --path ./
 
-ENV HOST_PORT 80
+ENV HOST_PORT 3001
 
-EXPOSE 80
+EXPOSE 3001
 
 CMD ["/usr/local/cargo/bin/div"]
 #CMD ["cargo", "run"]

@@ -1,2 +1,7 @@
-- name: Run pgadmin container
-  command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
+---
+- name: Build and run postgres image
+  hosts: io.div.is
+  remote_user: root
+  tasks:
+    - name: Run pgadmin container
+      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --name divpgadmin --hostname divpgadmin dpage/pgadmin4

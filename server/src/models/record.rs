@@ -1,4 +1,4 @@
-use sqlx::{sqlite::*, Sqlite, FromRow};
+use sqlx::{Postgres, FromRow, postgres::*};
 use crate::db::Db;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -46,7 +46,7 @@ impl Record {
     }
 
     pub async fn from_id(db: &Db, id: i32) -> sqlx::Result<Self> {
-        let record = sqlx::query_as::<Sqlite, Self>("SELECT * FROM Records WHERE id=?;")  
+        let record = sqlx::query_as::<Postgres, Self>("SELECT * FROM Records WHERE id=?;")  
             .bind(id)
             .fetch_one(&db.pool).await?;
         Ok(record)
@@ -69,7 +69,7 @@ impl Record {
     }
 
     pub async fn get_items(self, db: &Db) -> sqlx::Result<Vec<Item>> {
-        let items: Vec<Item> = sqlx::query_as::<Sqlite, Item>("
+        let items: Vec<Item> = sqlx::query_as::<Postgres, Item>("
             SELECT * FROM Items INNER JOIN RecordItemLinks 
             ON RecordItemLinks.iid=Items.id WHERE RecordItemLinks.iid=?;")
             .bind(&self.id)
@@ -83,7 +83,7 @@ impl Record {
     }
 
     pub async fn get_users(self, db: &Db) -> sqlx::Result<Vec<User>> {
-        let users: Vec<User> = sqlx::query_as::<Sqlite, User>("
+        let users: Vec<User> = sqlx::query_as::<Postgres, User>("
             SELECT * FROM Users INNER JOIN UserRecordLinks
             ON UserRecordLinks.uid=Users.id WHERE UserRecordLinks.rid=?;")
             .bind(&self.id)
@@ -94,7 +94,7 @@ impl Record {
     // TODO: Get records where user has UserRecordLink association,
     // but record's uid != user's uid
     pub async fn associated_with_user(db: &Db, user: &User) -> sqlx::Result<Vec<Self>> {
-        let records: Vec<Self> = sqlx::query_as::<Sqlite, Self>("
+        let records: Vec<Self> = sqlx::query_as::<Postgres, Self>("
             SELECT * FROM Records INNER JOIN UserRecordLinks
             ON UserRecordLinks.uid=Users.id 
             WHERE UserRecordLinks.uid=?
@@ -165,24 +165,24 @@ impl Model for Record {}
 
 // $07/25/20$  not impl in sql
 //
-pub enum Relationship {
+pub enum Relation {
     Master(i32, i32), //not sure if i want "following?"
     Slave(i32, i32),
     Synchronize(i32, i32),
     NoRelationship,
 }
-impl Relationship {
+impl Relation {
     pub fn none() -> String { "none".to_string() }
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
-pub struct RecordRelationship {
+pub struct RecordRelation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub rid1: i32,
     pub rid2: i32,
-    #[serde(default = "Relationship::none")]
+    #[serde(default = "Relation::none")]
     pub rel: String,
     #[serde(default = "Time::now")]
     pub created_at: i32,
@@ -190,6 +190,6 @@ pub struct RecordRelationship {
     pub updated_at: i32,
 }
 
-impl RecordRelationship {
+impl RecordRelation {
 
 }

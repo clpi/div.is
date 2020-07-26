@@ -1,3 +1,5 @@
+-- $07/25/20$ ARCHIVED: Now using Postgres --
+
 DROP TABLE Users;
 DROP TABLE UserInfo;
 DROP TABLE Records;

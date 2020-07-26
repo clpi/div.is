@@ -1,6 +1,7 @@
 //TODO ensure that you amke a function to account for models that exist in memory that aren[t yet
 //in the database, or vice versa]
-use sqlx::{sqlite::*, Sqlite, FromRow};use crate::api::auth::hash_pwd;
+use crate::api::auth::hash_pwd;
+use sqlx::{Postgres, FromRow, postgres::*};
 use std::collections::HashMap;
 use crate::db::Db;
 use std::rc::Rc;
@@ -100,7 +101,7 @@ impl User {
     }
 
     pub async fn get_info(self, db: &Db) -> sqlx::Result<UserInfo> {
-        let info = sqlx::query_as::<Sqlite, UserInfo>("
+        let info = sqlx::query_as::<Postgres, UserInfo>("
             SELECT * FROM UserInfo INNER JOIN Users on UserInfo.uid
             =Users.id WHERE UserInfo.uid=?
             ")
@@ -119,7 +120,7 @@ impl User {
     pub async fn from_id(db: &Db, id: i32 )
         -> sqlx::Result<Self> 
     {
-        let res: Self = sqlx::query_as::<Sqlite, Self>(
+        let res: Self = sqlx::query_as::<Postgres, Self>(
             "SELECT * FROM Users WHERE id=?;")
             .bind(id)
             .fetch_one(&db.pool).await?;
@@ -133,7 +134,7 @@ impl User {
     pub async fn from_username(db: &Db, username: String) 
         -> sqlx::Result<Self>
     {
-        sqlx::query_as::<Sqlite, Self>
+        sqlx::query_as::<Postgres, Self>
             ("SELECT * FROM Users WHERE username=?;")
             .bind(String::from(username))
             .fetch_one(&db.pool).await
@@ -142,7 +143,7 @@ impl User {
     pub async fn from_email(db: &Db, username: &str) 
         -> sqlx::Result<Self> 
     {
-        sqlx::query_as::<Sqlite, Self>
+        sqlx::query_as::<Postgres, Self>
             ("SELECT * FROM Users WHERE email=?;")
             .bind(String::from(username))
             .fetch_one(&db.pool).await
@@ -152,7 +153,7 @@ impl User {
         -> sqlx::Result<Self> 
     {
         let val: String = value.into();
-        let res: Self = sqlx::query_as::<Sqlite, Self>(
+        let res: Self = sqlx::query_as::<Postgres, Self>(
             "SELECT * FROM Users WHERE ?=?;")
             .bind(String::from(param))
             .bind(String::from(val))
@@ -163,7 +164,7 @@ impl User {
     pub async fn fetch_all(db: &Db)
         -> sqlx::Result<Vec<User>> 
     {
-        let res: Vec<User> = sqlx::query_as::<Sqlite, Self>
+        let res: Vec<User> = sqlx::query_as::<Postgres, Self>
             ("SELECT * FROM Users;")
             .fetch_all(&db.pool).await?;
         Ok(res)
@@ -206,7 +207,7 @@ impl User {
     }
 
     pub async fn get_records(&self, db: &Db) -> sqlx::Result<Vec<Record>> {
-        let res: Vec<Record> = sqlx::query_as::<Sqlite, Record>(
+        let res: Vec<Record> = sqlx::query_as::<Postgres, Record>(
             "SELECT * FROM Records WHERE uid=?;")
             .bind(self.id)
             .fetch_all(&db.pool)
@@ -287,24 +288,24 @@ pub struct UserPrefs {
 
 // $07/25/20$  not impl in sql
 //
-pub enum Relationship {
+pub enum Relation {
     Follows(i32, i32), //not sure if i want "following?"
     Friends(i32, i32),
     Blocks(i32, i32),
     NoRelationship,
 }
-impl Relationship {
+impl Relation {
     pub fn none() -> String { "none".to_string() }
 }
 
 #[derive(Default, FromRow, Serialize, Deserialize)]
 #[serde(rename_all="camelCase")]
-pub struct UserRelationship {
+pub struct UserRelation {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i32>,
     pub uid1: i32,
     pub uid2: i32,
-    #[serde(default = "Relationship::none")]
+    #[serde(default = "Relation::none")]
     pub rel: String,
     #[serde(default = "Time::now")]
     pub created_at: i32,
@@ -312,36 +313,35 @@ pub struct UserRelationship {
     pub updated_at: i32,
 }
 
-pub struct UserRelationshipBuilder {
+pub struct UserRelationBuilder {
     users: Option<Vec<i32>>,
     rel: Option<String>,
     created_at: Option<i32>,
 }
 
-impl UserRelationship {
-    pub fn new() -> UserRelationshipBuilder 
-    { UserRelationshipBuilder::new() }    
+impl UserRelation {
+    pub fn new() -> UserRelationBuilder 
+    { UserRelationBuilder::new() }    
 
     pub fn with_rel(u1: i32, u2: i32, relation: String) -> Self {
-        let rel = UserRelationshipBuilder::from(u1, u2)
+        let rel = UserRelationBuilder::from(u1, u2)
             .with_relation(relation);
         rel.build()
     }
 }
 
+impl UserRelationBuilder {
 
-impl UserRelationshipBuilder {
-
-    pub fn new() -> UserRelationshipBuilder {
-        UserRelationshipBuilder { 
+    pub fn new() -> UserRelationBuilder {
+        UserRelationBuilder { 
             users: None,
             rel: None,
             created_at: None
         } 
     }
 
-    pub fn from(u1: i32, u2: i32) -> UserRelationshipBuilder {
-        UserRelationshipBuilder { 
+    pub fn from(u1: i32, u2: i32) -> UserRelationBuilder {
+        UserRelationBuilder { 
             users: Some(vec![u1, u2]),
             rel: None,
             created_at: None
@@ -357,7 +357,7 @@ impl UserRelationshipBuilder {
 
     pub fn with_uid(uid: i32) -> () {}
 
-    pub fn build(self) -> UserRelationship {
-        UserRelationship::default()
+    pub fn build(self) -> UserRelation {
+        UserRelation::default()
     }
 }

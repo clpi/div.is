@@ -62,10 +62,13 @@ pub enum Permission {
     Public,
     Private,
     Selective,
+    InviteOnly,
+    MutualOnly,
 }
 
 impl Permission {
     pub fn private() -> bool { true }
+    pub fn invite_only() -> String { "invite_only".to_string() }
 }
 
 pub enum Priority {

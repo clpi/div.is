@@ -1,4 +1,4 @@
-use sqlx::{sqlite::*, Sqlite, FromRow};
+use sqlx::{Postgres, FromRow, postgres::*};
 use crate::db::Db;
 use super::{
     Time, Permission, Status, Priority, Model,

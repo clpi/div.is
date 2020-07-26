@@ -29,9 +29,9 @@
     - name: Build postgres image
       command: sudo podman build /usr/src/div/data/pg -t divdb
     - name: Run postgres container
-      command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql --env-file /usr/src/div/data/pg/pg.env --restart always --name divdb --hostname divdb localhost/divdb
+      command: sudo podman run -idt --rm -p 5432:5432 -v /usr/src/div/data/pg/pgdata:/var/lib/postgresql --env-file /usr/src/div/data/pg/pg.env --name divdb --hostname divdb localhost/divdb
     - name: Run pgadmin container
-      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --restart always --name divpgadmin --hostname divpgadmin dpage/pgadmin4
+      command: sudo podman run -idt --rm -p 5050:5050 -v /usr/src/div/data/pg/pgadmin:/var/lib/pgadmin --env-file /usr/src/div/data/pg/pgadmin.env --name divpgadmin --hostname divpgadmin dpage/pgadmin4
     - name: Build backend image
       command: sudo podman build /usr/src/div/back -t divb
     - name: Run backend image

@@ -25,20 +25,26 @@ if [ "$1" == "up" ]; then
     fi
     if [ "$2" == "dev" ]; then
         echo "${green}${und}DEV: Running div.is front end container...${res}"
-        FRONT_HOST_PORT=$FRONT_CON_PORT
+        FRONT_HOST_PORT=5005
+        FRONT_CON_PORT=5005
+        BACK_HOST_PORT=3001
+        BACK_CON_PORT=3001
         ENV="dev"
-        sudo podman build back -t divb
+        sudo podman build server -f Dockerfile.dev -t divbdev
         sudo podman build client -f Dockerfile.dev -t divfdev
         sudo podman run --rm -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT --name divfdev localhost/divfdev
-        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divb
+        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divbdev
     elif [ "$2" == "prod" ]; then
         echo "${green}${und}PROD: Running div.is front end container...${res}"
         FRONT_HOST_PORT=80
+        FRONT_CON_PORT=5005
+        BACK_HOST_PORT=80
+        BACK_CON_PORT=3001
         ENV="prod"
-        sudo podman build back -t divb
-        sudo podman build client -f Dockerfile.prod -t divfprod
+        sudo podman build back -t divbprod
+        sudo podman build client -t divfprod
         sudo podman run --rm -dt -p $FRONT_HOST_PORT:$FRONT_CON_PORT --name divfprod localhost/divfprod
-        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divb
+        sudo podman run --rm -dt -p $BACK_HOST_PORT:$BACK_CON_PORT --name divb localhost/divbprod
     else
         break
     fi
@@ -50,6 +56,8 @@ elif [ "$1" == "down" ]; then
     sudo podman image prune --force
     sudo podman container rm --all --force
     sudo podman container prune --force
+    sudo podman pod rm --all --force
+    sudo podman pod prune --force
     echo "${green}Pods have been torn down.${res}"
 elif [ "$1" == "check" ]; then
     echo "Checking pods...${res}"

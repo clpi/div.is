@@ -1,3 +1,5 @@
+-- $07/25/20$ ARCHIVED: Now using Postgres --
+
 DELETE FROM Users;
 DELETE FROM UserInfo;
 DELETE FROM Records;
