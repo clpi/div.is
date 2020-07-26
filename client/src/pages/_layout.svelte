@@ -75,6 +75,7 @@
     .Navbar {
       background-color: rgba(0,0,0,0);
       margin-bottom: 0.3rem;
+      position: sticky;
     }
     #navHome {
         margin-left: 5vw;
@@ -153,6 +154,10 @@
       font-size: larger;
       font-weight: 400;
     }
+    .user-corner {
+      background-color: #fff;
+      /*border: 2px solid #eeee;*/
+    }
 </style>
 
 <div class="wrapper">
@@ -179,6 +184,7 @@
             {#await refresh}
             {:then res}
             {#if $isLogged}
+              <div class="user-corner">
                 <li 
                     in:fade
                     id="loginNav" 
@@ -195,13 +201,16 @@
                         {$user.username} ⇩
                   </a>
                 </li>
+              </div>
               {:else}
+              <div class="corner">
                 <li id="signupNav" class:active={$isActive("/signup")} >
                     <a href={$url("/signup")}>signup</a>
                 </li>
                 <li id="loginNav" class:active={$isActive("/login")}>
                     <a href={$url("/login")}>login</a>
                 </li>
+              </div>
             {/if}
             {:catch}
                 <li id="signupNav" class:active={$isActive("/signup")} >

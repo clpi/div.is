@@ -24,6 +24,8 @@
         float: left;
         /*border: 1px solid #fa4;*/
         border: 1px solid #eee;
+        border-bottom-color: #fc8;
+        border-bottom-width: 2px;
         border-radius: 2px;
         box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 		padding: 0.8em;

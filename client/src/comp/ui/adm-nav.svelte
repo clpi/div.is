@@ -7,7 +7,7 @@
     .admin-nb {
         float: left;
         min-width: auto;
-        margin-right: 5vw;
+        /*margin-right: 5vw;*/
         position: fixed;
     }
     .admin-nav {
