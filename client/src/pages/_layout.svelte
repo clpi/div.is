@@ -28,19 +28,19 @@
     }
 
     let logout = async () => {
-        let res = await fetch(API_URL+'/auth/logout', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                cookie: document.cookie,
-            }
-        })
-        .then(isLogged.set(false))
-        .then(user.set({}))
-        .then(logged.set({}))
-        .catch(err => {
-          console.error("Error:", err);
-        });
+      let res = await fetch(API_URL+'/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+              cookie: document.cookie,
+          }
+      })
+      .then(isLogged.set(false))
+      .then(user.set({}))
+      .then(logged.set({}))
+      .catch(err => {
+        console.error("Error:", err);
+      });
         
       return res;
     }
@@ -179,15 +179,15 @@
             <li class:active={$isActive("/contact")}>
                 <a href={$url("/contact")}>contact</a>
             </li>
-            <li class:active={$isActive("/dashboard")}>
-                <a href={$url("/dashboard")}>dash</a>
-            </li>
-            <li class:active={$isActive("/admin")}>
-                <a href={$url("/admin")}>admin</a>
-            </li>
             {#await refresh}
-            {:then res}
+            {:then}
             {#if $isLogged}
+              <li class:active={$isActive("/dash")}>
+                  <a href={$url("/dash")}>dash</a>
+              </li>
+              <li class:active={$isActive("/admin")}>
+                  <a href={$url("/admin")}>admin</a>
+              </li>
               <div class="user-corner">
                 <li 
                     in:fade

@@ -19,10 +19,24 @@ pub use record::*;
 pub use db::*;
 pub use auth::*;
 
-
+pub fn respond(resp: Result<String, serde_json::Error>) 
+    -> warp::http::Response<String> {
+    match resp {
+        Ok(body) => warp::http::Response::builder()
+            .status(warp::http::StatusCode::OK)
+            .header("content-type", "applicaiton/json")
+            .body(body)
+            .expect("Valid response"),
+        Err(_) => warp::http::Response::builder()
+            .status(warp::http::StatusCode::INTERNAL_SERVER_ERROR)
+            .body(String::from(""))
+            .expect("Invalid response")
+    }
+}
 
 
     
+
 
 
 

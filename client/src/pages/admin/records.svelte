@@ -1,8 +1,12 @@
 <script>
   import { slide, fade } from 'svelte/transition'
   import Box from '../../comp/ui/box.svelte';
+  import { beforeUrlChange, afterPageLoad, url, ready, goto } from '@sveltech/routify';
+  import { fetchAll } from '../../util/calls';
   let recordPostPromise = Promise.resolve([]);
   let submittedRecordPost = false;
+  let users = Promise.resolve([]);
+  let selectedUser;
   let recordPost = {
     uid: 0, //int
     name: "", //string
@@ -30,6 +34,9 @@
       recordPostPromise = createRecord();
       submittedRecordPost = true;
   }
+  $afterPageLoad(async () => {
+    users = fetchAll();
+  })
 </script>
 <style>
     ul {
@@ -41,6 +48,18 @@
 
 <div in:fade={{duration:100}}>
     <h1>Records</h1>
+    <h3>Select user</h3>
+    {#await users}
+    <p>Fetching users...</p>
+    {:then userList}
+    <select bind:value={recordPost.uid}>
+      {#each userList as usr}
+        <option value={usr.id}>{usr.username}</option>
+      {/each}
+    </select>
+    {:catch}
+    <p> Couldn't fetch users. </p>
+    {/await}
     <Box title="Post record">
         <form label="Username">
           <ul>

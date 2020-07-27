@@ -1,6 +1,7 @@
 <script>
+  // TODO make general sidenav component that is passed
+  //      an array of links which it renders through a for loop
   import { isActive, url, layout } from "@sveltech/routify";
-  import { setContext, getContext, onMount } from 'svelte'
   import { fade } from 'svelte/transition';
 </script>
 <style>
@@ -68,9 +69,6 @@
         font-size: 1.6rem;
         margin-left: 20px;
         font-weight: 400;
-    }
-    .wrapper {
-        padding-top: 12px;
     }
 </style>
 <div class="admin-nb">
