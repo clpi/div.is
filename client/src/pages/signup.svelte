@@ -1,7 +1,8 @@
 
 <script>
-  import { slide, fade } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
   import { metatags } from '@sveltech/routify';
+  import ContentBg from '../comp/ui/contentBg.svelte';
   metatags.title = "signup";
   let disabled = false;
   let promise = Promise.resolve([]);
@@ -53,26 +54,17 @@
 
 <style>
     .signup {
-      padding-left: 5vw;
-    }
-    .signupForm {
-      margin-top: 40px;
-      background-color: #fefdfd;
-      border: 2px solid #eee;
-      border-bottom-color: #fd9;
-      border-bottom-width: 3px;
-      border-radius: 8px;
-      padding-top: 5%;
-      padding-bottom: 10%;
-      align-items: center;
-      box-shadow: 1px 2px 2px rgba(0,0,0,0.1);
-      padding-left: 15.5vw;
-      padding-right: 15.5vw;
+      padding-left: 10vw;
+      padding-right: 10vw;
     }
     .signup-head {
       display: inline-block;
       margin: auto;
       text-align: center;
+    }
+    .signup-left{
+      padding-left: 10%;
+      padding-bottom: 10%;
     }
     .title {
       font-weight: 300;
@@ -92,23 +84,15 @@
         font-size: 1.3rem;
         font-weight: 300;
     }
-    .loading {
-        box-shadow: 2px 2px #000;
-    }
-    .buttons {
-      padding-top: 40px;
-    }
-    .signupForm{
-    }
     .submitAuth {
         margin-top: 3vmin;
-        float: right;
+        float: left;
         margin-right: 0vmin;
     }
 </style>
 
 <div class="signup">
-    <div in:fade={{duration:100}} class="signupForm">
+    <ContentBg>
       <div class="signup-left">
       <div class="signup-head">
         <h1 class="title" in:fade={{duration: 600}}>Welcome on board! </h1>
@@ -144,6 +128,5 @@
                 <p style="color: red">{error.message}</p>
             {/await}
         </div>
-    </div>
-</div>
+    </ContentBg>
 </div>

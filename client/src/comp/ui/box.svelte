@@ -1,6 +1,7 @@
 <script>
     import { fade } from 'svelte/transition';
     export let title;
+    /*export let type;*/
 </script>
 <style>
     h1 { 
@@ -19,13 +20,14 @@
     p {
     }
     .Box {
-        width: 300px;
-        height: 140px;
+        min-width: 300px;
+        min-height: 140px;
         float: left;
         /*border: 1px solid #fa4;*/
         border: 1px solid #eee;
         border-bottom-color: #fc8;
         border-bottom-width: 2px;
+        background-color: #fffefd;
         border-radius: 2px;
         box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 		padding: 0.8em;
@@ -37,7 +39,7 @@
         border: 1px solid #fa4;
         border-radius: 2px;
         box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
-		padding: 0.8em;
+        padding: 0.8em;
         margin: 0.8em;
     }
     .Box:hover {

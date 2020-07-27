@@ -78,7 +78,7 @@
       position: sticky;
     }
     #navHome {
-        margin-left: 5vw;
+        margin-left: 2vw;
         margin-right: 5vw;
         border: 4px solid #fedaa1;
         padding: 0px 2px 0px 2px;
@@ -147,6 +147,7 @@
     .content {
         padding-left: 13.5vw;
         padding-right: 13.5vw;
+        min-height: 100%;
     }
     .username {
     }
@@ -157,6 +158,9 @@
     .user-corner {
       background-color: #fff;
       /*border: 2px solid #eeee;*/
+    }
+    .wrapper {
+      height: 100%;
     }
 </style>
 

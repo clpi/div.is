@@ -10,12 +10,15 @@
         position: relative;
         margin-left: 5vw;
     }
+    .admin-db {
+      min-height: 100vh;
+    }
 </style>
 <div class="admin-db">
+    <ContentBg>
     <Sidenav/>
     <div class="content">
-      <ContentBg>
         <slot/>
-      </ContentBg>
     </div>
+    </ContentBg>
 </div>

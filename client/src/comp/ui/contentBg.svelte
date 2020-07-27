@@ -3,20 +3,24 @@
 </script>
 <style>
     .wrapper {
-      padding-left: 5vw;
+      /*padding-left: 5vw;*/
     }
     .bg {
       margin-top: 30px;
+      min-height: 80%;
+      height: 80vh;
       background-color: #fefdfd;
       border: 2px solid #eee;
       border-bottom-color: #fd9;
       border-bottom-width: 3px;
       border-radius: 8px;
-      padding-top: 5%;
-      padding-bottom: 10%;
+      /*padding-top: 5%;*/
+      padding-bottom: 10vh;
+      margin-bottom: 10vh;
       align-items: center;
-      padding-left: 15.5vw;
-      padding-right: 15.5vw;
+      margin: auto;
+      /*padding-left: 15.5vw;*/
+      /*padding-right: 15.5vw;*/
       box-shadow: 1px 2px 2px rgba(0,0,0,0.1);
     }
     .head {
@@ -44,11 +48,9 @@
     }
 </style>
 
-<div class="wrapper">
     <div in:fade={{duration:100}} class="bg">
       <div class="head">
         <h1 class="title" in:fade={{duration: 600}}><slot name="title"/></h1>
       </div>
       <slot/>
     </div>
-</div>

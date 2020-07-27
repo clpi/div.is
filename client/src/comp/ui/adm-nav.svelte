@@ -7,8 +7,10 @@
     .admin-nb {
         float: left;
         min-width: auto;
+        margin-right: 10%;
+        height: 100%;
         /*margin-right: 5vw;*/
-        position: fixed;
+        /*position: fixed;*/
     }
     .admin-nav {
         margin-left: auto;
@@ -17,7 +19,7 @@
         align-content: center;
     } 
     ul {
-        margin-left: 5vw;
+        /*margin-left: 5vw;*/
         list-style-type: none;
         justify-items: auto;
         margin-top: 1rem;
@@ -26,21 +28,22 @@
         overflow: hidden;
     }
     li {
-        min-width:auto;
-        margin: auto;
-        align-items: center;
-        vertical-align: center;
-        border-left: 4px solid rgba(255,170,80,0);
+      min-width:100%;
+      /*margin: auto;*/
+      align-items: center;
+      vertical-align: center;
+      border-left: 4px solid rgba(255,170,80,0);
     }
     li a {
-        display: inline-block;
-        color: #1f1f1f;
-        text-align: center;
-        padding: 1.8vh 1.5vw 1.8vh 1.5vw;
-        text-decoration: none;
-        font-stretch: expanded;
-        font-weight:400;
-        outline:0;
+      display: inline-block;
+      color: #1f1f1f;
+      text-align: center;
+      padding: 1.8vh 1.5vw 1.8vh 1.5vw;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-stretch: expanded;
+      font-weight:400;
+      outline:0;
     }
     li:hover {
         border-left: 4px solid #ffdca9;
@@ -49,15 +52,22 @@
     .active {
         border-left-color: #fa4;
         align-items: center;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        border-right: 1px solid #eee;
+        box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
     }
     .active:hover {
-        border-left-color: #fa4;
+        border-left-color: #fb5;
+        background-color: #fefafa;
     }
     .nav-head {
         margin-bottom: 20px; 
     }
     .nav-ht {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
+        margin-left: 20px;
+        font-weight: 400;
     }
     .wrapper {
         padding-top: 12px;
@@ -80,7 +90,7 @@
         <li in:fade class:active={$isActive("/admin/records")}>
             <a href={$url("/admin/records")}>records</a>
         </li>
-        <li in:fade class:active={$isActive("/dashboard/stats")}>
+        <li in:fade class:active={$isActive("/admin/stats")}>
             <a href={$url("/admin/stats")}>stats</a>
         </li>
     </ul>

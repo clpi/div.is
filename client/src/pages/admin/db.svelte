@@ -4,9 +4,13 @@
   import Tab from '../../comp/ui/tab.svelte';
 </script>
 <style>
-    .db {
-        display: inline-block;
+    ul {
+      list-style: none;
+      position: relative;
     }
+    li {
+    }
+
 </style>
 
 <div in:fade={{duration:100}} class="db">

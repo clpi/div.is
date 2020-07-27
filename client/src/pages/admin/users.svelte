@@ -1,8 +1,6 @@
 <script>
-  import { slide, fade } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import Box from '../../comp/ui/box.svelte';
-  import Tab from '../../comp/ui/tab.svelte';
-  import Infobox from '../../comp/ui/box.svelte';
   let userList;
   let promise = Promise.resolve([]);
   let submitted = false;
@@ -73,10 +71,9 @@
 <style>
     ul {
         list-style-type: none;
-        display: inline-block;
+        display: flex;
     }
     li {
-        float: left;
     }
 </style>
 
@@ -138,7 +135,11 @@
                         {#each users as user}
                             <li>
                                 <Box title="User">
-                                    <h3 in:fade>{ user.username }</h3>
+                                  <h3 in:fade>
+                                    <a href={"/"+user.username}>
+                                      { user.username }
+                                    </a>
+                                  </h3>
                                     <p in:fade><b>id: </b>{user.id}</p>
                                     <p in:fade><b>Email: </b>{user.email}</p>
                                     <p in:fade><em><b>Created at</b> { user.createdAt }</em></p>
