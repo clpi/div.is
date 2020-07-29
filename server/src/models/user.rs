@@ -15,6 +15,7 @@ use super::{
 
 // TODO make password Option<String> so no need for UserSession
 // or passwordless user structs
+/// User model which maps directly to database schema.
 #[derive(Default, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {

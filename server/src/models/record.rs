@@ -54,6 +54,14 @@ impl Record {
         Ok(record)
     }
 
+    pub async fn from_uid(db: &Db, uid: i32) -> sqlx::Result<Vec<Self>> {
+        let records = sqlx::query_as::<_, Record>( 
+            "SELECT * FROM Records WHERE uid= ? ")
+            .bind(uid)
+            .fetch_all(&db.pool).await?;
+        Ok(records)
+    }
+
     pub async fn insert(self, db: &Db) 
     -> sqlx::Result<Self> {
         sqlx::query("INSERT INTO Records 

@@ -2,8 +2,9 @@ use super::*;
 
 pub fn routes(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path("record").and(shared_with_user(db)
-        .or(get(db)))
+        .or(get(db))
         .or(create(db))
+        .or(get_by_uid(db)))
 }
 
 // this should go in user
@@ -21,6 +22,15 @@ pub fn get(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::
         .and(using(db.to_owned()))
         .and(warp::path!(i32))
         .and_then(handlers::get_by_id);
+    get_record
+}
+
+// maybe have this route be: /:uid/records or /user/:uid/records?
+pub fn get_by_uid(db: &Db) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    let get_record = warp::get()
+        .and(using(db.to_owned()))
+        .and(warp::path!("uid" / i32))
+        .and_then(handlers::get_by_uid);
     get_record
 }
 

@@ -9,6 +9,15 @@ pub async fn get_by_id(
     }
 }
 
+pub async fn get_by_uid(
+    db: Db, uid: i32 
+) -> Result<impl warp::Reply, warp::Rejection> {
+    match Record::from_uid(&db, uid).await {
+        Ok(records) => Ok(serde_json::to_string(&records).unwrap()),
+        Err(_) => Err(warp::reject())
+    }
+}
+
 pub async fn get_shared_with(
     db: Db, user: User
 ) -> Result<impl warp::Reply, warp::Rejection> {
@@ -40,13 +49,4 @@ pub async fn add_new_item(
 ) -> Result<impl warp::Reply, warp::Rejection> {
     Ok("todo".to_string())
 }
-// get records from uid
-//pub async fn by_user(
-    //db: Db, uid 
-//) -> Result<impl warp::Reply, warp::Rejection> {
-    //match Record::associated_with_user(&db, &user).await {
-        //Ok(records) => Ok(serde_json::to_string(&records).unwrap()),
-        //Err(_) => Err(warp::reject())
-    //}
-//}
 

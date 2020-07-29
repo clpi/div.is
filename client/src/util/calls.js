@@ -29,6 +29,18 @@ export async function createRecord(recordData) {
   }
 }
 
+export async function getUserRecords(uid) {
+  const records = await fetch(API_URL+'/record/'+uid, GET_PARAMS)
+    .catch(err=>{
+      console.log(err);
+  });
+  if (records.ok) {
+    return records.json();
+  } else {
+    throw new Error(records);
+  }
+}
+
 export async function fetchAll() {
   const usrs = await fetch(API_URL+'/all', GET_PARAMS)
     .catch(err=>{

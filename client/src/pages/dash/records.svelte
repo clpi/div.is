@@ -1,7 +1,17 @@
 <script>
   import { slide, fade } from 'svelte/transition'
   import Box from '../../comp/ui/box.svelte';
-  import Tab from '../../comp/ui/tab.svelte';
+  import { createRecord, getUserRecords } from '../../util/calls';
+  recordPostPromise = createRecord();
+  let uid = 1;
+  function handleCreateRecord() {
+      recordPostPromise = createRecord();
+      submittedRecordPost = true;
+  }
+  function handleGetRecords() {
+      recordPostPromise = getUserRecords(uid);
+      submittedRecordPost = true;
+  }
 </script>
 <style>
 </style>
