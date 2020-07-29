@@ -1,3 +1,5 @@
+//import { user, logged, isLogged } from '../store.js';
+
 const GET_PARAMS = {
   method: 'GET',
   headers: {
@@ -64,5 +66,54 @@ export async function getUserById(id) {
     return usr.json();
   } else {
     throw new Error("No user with id " + id + " found.");
+  }
+}
+
+export async function refreshAuth() {
+  const res = await fetch(API_URL+'/auth/refresh', {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      cookie: document.cookie,
+    }
+  })
+    .then(res => res.json())
+    .catch(err => {
+      console.error('Error:', err)
+    });
+  return res;
+}
+
+export async function loginUser(userInfo) {
+  const loginPost = await fetch(API_URL+'/auth/login', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'content-type': 'application/json',
+        /*authorization: <authorization>*/
+    },
+    body: JSON.stringify(userInfo)
+  });
+  if (loginPost.ok) {
+    isLogged.set(true);
+    return loginPost.json();
+  } else {
+    throw new Error(users);
+  }
+}
+
+export async function signupUser(loginInfo) {
+  const signupPost = await fetch(API_URL+'/auth/register', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+        /*authorization: <authorization>*/
+    },
+    body: JSON.stringify(loginInfo)
+  });
+  if (signupPost.ok) {
+    return "OK";
+  } else {
+    throw new Error(users);
   }
 }

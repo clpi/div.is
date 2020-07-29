@@ -34,15 +34,3 @@ pub fn respond(resp: Result<String, serde_json::Error>)
     }
 }
 
-
-    
-
-
-
-
-
-
-
-
-
-
