@@ -67,3 +67,4 @@ Currently using Podman and Ansible to deploy to DigitalOcean
 - [ ] $07/26/20$ figure out what's going on with postgres:
     - [ ] works in main function, works in module, but not in handlers. likely something to do with the borrowing and passing around that happens -- maybe ok for sqlite, but not for connection-based db? not sure, but i'll have to see
     - [ ] ease yourself into knowing what you need for postgres in this project by starting off from the get go with sqlx + postgres in another, then implementing it here.
+- [ ] $07/29/20$ add tests comparing respose times for separate routes/handlers and combined routes/handlers (as well as separate functions for routes vs. all routes in one combined function)

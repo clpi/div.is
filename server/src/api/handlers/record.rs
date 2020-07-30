@@ -13,7 +13,10 @@ pub async fn get_by_uid(
     db: Db, uid: i32 
 ) -> Result<impl warp::Reply, warp::Rejection> {
     match Record::from_uid(&db, uid).await {
-        Ok(records) => Ok(serde_json::to_string(&records).unwrap()),
+        Ok(records) => {
+            println!("{}", serde_json::to_string(&records).unwrap());
+            Ok(serde_json::to_string(&records).unwrap())
+        },
         Err(_) => Err(warp::reject())
     }
 }

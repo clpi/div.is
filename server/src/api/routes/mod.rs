@@ -21,6 +21,7 @@ pub fn routes(data: AppData) -> impl Filter
         .or(auth::routes(&data.clone()))
         .or(db::routes(&data.db.clone()))
         .or(all_users(&data.db.clone()))
+        .or(record::get_by_uid(&data.db.clone())) //temp for testing
 }
 
 // TODO figure out why this doesn't work in user routes

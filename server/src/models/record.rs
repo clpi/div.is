@@ -48,7 +48,7 @@ impl Record {
     }
 
     pub async fn from_id(db: &Db, id: i32) -> sqlx::Result<Self> {
-        let record = sqlx::query_as::<Sqlite, Self>("SELECT * FROM Records WHERE id=?;")  
+        let record = sqlx::query_as::<_, Self>("SELECT * FROM Records WHERE id=?;")  
             .bind(id)
             .fetch_one(&db.pool).await?;
         Ok(record)
@@ -56,9 +56,13 @@ impl Record {
 
     pub async fn from_uid(db: &Db, uid: i32) -> sqlx::Result<Vec<Self>> {
         let records = sqlx::query_as::<_, Record>( 
-            "SELECT * FROM Records WHERE uid= ? ")
+            "SELECT * FROM Records WHERE uid= ?;")
             .bind(uid)
             .fetch_all(&db.pool).await?;
+        for record in &records {
+            println!("record: {}", &record.id.unwrap());
+            println!("{}", &record.to_string());
+        }
         Ok(records)
     }
 
@@ -154,6 +158,9 @@ impl Record {
         RecordItemLink::create(&db, self.id.unwrap(), item_id, priority).await?;
         Ok(self)
     }
+
+    pub async fn clear_archived(self) -> () { () }
+
 }
 
 pub struct RecordBuilder {

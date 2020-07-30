@@ -2,7 +2,7 @@
   import { slide, fade } from 'svelte/transition'
   import Box from '../../comp/ui/box.svelte';
   import { createRecord, getUserRecords } from '../../util/calls';
-  recordPostPromise = createRecord();
+  /*let recordPostPromise = createRecord();*/
   let uid = 1;
   function handleCreateRecord() {
       recordPostPromise = createRecord();
