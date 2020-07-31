@@ -34,12 +34,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b602bfe940d21c130f3895acd65221e8a61270debe89d628b9cb4e3ccb8569b"
-
-[[package]]
 name = "argonautica"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -450,7 +444,6 @@ dependencies = [
 name = "div"
 version = "0.0.0"
 dependencies = [
- "anyhow",
  "argonautica",
  "chrono",
  "dotenv",
@@ -464,7 +457,6 @@ dependencies = [
  "sqlx",
  "tokio",
  "url",
- "uuid 0.6.5",
  "warp",
 ]
 
@@ -1992,7 +1984,7 @@ dependencies = [
  "serde_json",
  "sqlformat",
  "url",
- "uuid 0.8.1",
+ "uuid",
 ]
 
 [[package]]
@@ -2335,17 +2327,6 @@ name = "utf-8"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05e42f7c18b8f902290b009cde6d651262f956c98bc51bca4cd1d511c9cd85c7"
-
-[[package]]
-name = "uuid"
-version = "0.6.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1436e58182935dcd9ce0add9ea0b558e8a87befe01c1a301e6020aeb0876363"
-dependencies = [
- "cfg-if",
- "rand 0.4.6",
- "serde",
-]
 
 [[package]]
 name = "uuid"

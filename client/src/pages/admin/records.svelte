@@ -7,6 +7,7 @@
   let submittedRecordPost = false;
   let users = Promise.resolve([]);
   let selectedUser;
+  let statusTypes = ["active", "archived", "deleted", "completed"];
   let recordPost = {
     uid: 0, //int
     name: "", //string
@@ -49,23 +50,30 @@
 <div in:fade={{duration:100}}>
     <h1>Records</h1>
     <h3>Select user</h3>
-    {#await users}
-    <p>Fetching users...</p>
-    {:then userList}
-    <select bind:value={recordPost.uid}>
-      {#each userList as usr}
-        <option value={usr.id}>{usr.username}</option>
-      {/each}
-    </select>
-    {:catch}
-    <p> Couldn't fetch users. </p>
-    {/await}
     <Box title="Post record">
         <form label="Username">
           <ul>
-            <li>uid: <input label="uid" type=number bind:value={recordPost.uid}></li>
+            <li>user (uid: {recordPost.uid}):             
+            {#await users}
+            <p>Fetching users...</p>
+            {:then userList}
+            <select bind:value={recordPost.uid}>
+              {#each userList as usr}
+                <option value={usr.id}>{usr.username}</option>
+              {/each}
+            </select>
+            {:catch}
+            <input label="uid" type=number bind:value={recordPost.uid}>
+            {/await}
+            </li>
             <li>name: <input label="name" bind:value={recordPost.name}/></li>
-            <li>status: <input label="status" bind:value={recordPost.status}/></li>
+            <li>status: 
+            <select bind:value={recordPost.status}>
+              {#each statusTypes as statusType}
+                <option value={statusType}>{statusType}</option>
+              {/each}
+            </select>
+            </li>
             <li>private: <input type=checkbox bind:checked={recordPost.permission}></li>
         </form>             
         <button on:click={handleCreateRecord}>Submit</button>

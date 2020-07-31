@@ -2,7 +2,7 @@
 name = "div"
 description = "a programmatic life aggregation, advanced measurement, and insight tool"
 version = "0.0.0"
-authors = ["ChrisP <chris@div.is>"]
+authors = ["ChrisP <chris@div.is> <chris.div.is>"]
 edition = "2018"
 license = "MIT"
 homepage = "htps://div.is"
@@ -26,8 +26,8 @@ futures = "0.3"
 chrono = {version="*", features=["serde"]}
 redis = "*"
 url = "*"
-anyhow="*"
-uuid = {version = "0.6", features = ["serde", "v4"] }
+#anyhow="*"
+#uuid = {version = "0.6", features = ["serde", "v4"] }
 #blake2="*"
 #actix_web="*"
 #actix_rt="*"

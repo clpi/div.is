@@ -39,6 +39,7 @@ async fn main() -> sqlx::Result<()> {
         secret_key: api::auth::get_secret_key().await.unwrap(),
         db: db,
     };
+    println!("secret key: {}", &app_data.secret_key);
 
     let routes = warp::path("api")
         .and(routes::routes(app_data))
