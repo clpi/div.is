@@ -8,6 +8,7 @@ client/node_modules
 yew/target
 yew/node_modules
 yew/.cache
+yew/.env
 server/mem.db-shm
 server/mem.db-wal
 scripts/inv
@@ -16,8 +17,10 @@ data/pg/pgadmin.env
 data/redis/redis.env
 data/redis/redis.conf
 scripts/pg_login.sh
+common/target
 
 
 #Added by cargo
 
 /target
+
