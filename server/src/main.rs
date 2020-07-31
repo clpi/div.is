@@ -32,14 +32,13 @@ async fn main() -> sqlx::Result<()> {
         ]);
 
     let (host, port) = hosts();
-    let db = db().await?;
+    let db = db::setup().await?;
 
     let app_data = api::AppData {
         jwt_secret: api::auth::get_jwt_secret().await.unwrap(),
         secret_key: api::auth::get_secret_key().await.unwrap(),
         db: db,
     };
-    println!("secret key: {}", &app_data.secret_key);
 
     let routes = warp::path("api")
         .and(routes::routes(app_data))
@@ -50,20 +49,6 @@ async fn main() -> sqlx::Result<()> {
 }
 
 // TODO handle this more gracefully
-pub async fn db() -> sqlx::Result<db::Db> {
-    let db_url;
-    let env = std::env::var("ENVIRONMENT");
-    if env.is_ok() {
-        db_url = match env.unwrap().as_str() {
-            "PROD" => std::env::var("PROD_DB_URL").expect("PROD_DB_URL not set"),
-            _ => std::env::var("DEV_DB_URL").expect("DEV_DB_URL not set"),
-        }
-    } else {
-        dbg!(db_url = dotenv::var("DB_URL").expect("DB_URL not set in .env"));
-    }
-    println!("{}", db_url);
-    Ok( db::Db::new(&db_url).await? )
-}
 
 pub fn hosts() -> (String, String) {
     let host = dotenv::var("DEV_HOST").expect("DEV_HOST not set");
