@@ -1,26 +1,33 @@
 .env
 .gitlab-ci.yml
 wiki/
+
 server/.env
 server/mem.db
 server/target
+
 client/node_modules
-yew/target
-yew/node_modules
-yew/.cache
-yew/.env
+
 server/mem.db-shm
 server/mem.db-wal
+
 scripts/inv
+
 data/pg/pg.env
 data/pg/pgadmin.env
 data/redis/redis.env
 data/redis/redis.conf
-scripts/pg_login.sh
-common/target
 
+scripts/pg_login.sh
+
+common/target/*
+
+app/node_modules
+app/services/target/*
+app/src-tauri/target/*
 
 #Added by cargo
 
 /target
+/src
 

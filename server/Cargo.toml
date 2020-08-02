@@ -1,5 +1,5 @@
 [package]
-name = "div"
+name = "divis"
 description = "a programmatic life aggregation, advanced measurement, and insight tool"
 version = "0.0.0"
 authors = ["ChrisP <chris@div.is> <chris.div.is>"]

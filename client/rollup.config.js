@@ -7,10 +7,12 @@ import { terser } from 'rollup-plugin-terser';
 import copy from 'rollup-plugin-copy'
 import del from 'del'
 import replace from '@rollup/plugin-replace';
-import { injectManifest } from 'rollup-plugin-workbox'
-import { spassr } from 'spassr'
-import postcss from 'rollup-plugin-postcss'
-import autoProcess from 'svelte-preprocess'
+import { injectManifest } from 'rollup-plugin-workbox';
+import { spassr } from 'spassr';
+import postcss from 'rollup-plugin-postcss';
+import autoProcess from 'svelte-preprocess';
+import autoPreprocess from 'svelte-preprocess';
+import typescript from '@rollup/plugin-typescript';
 
 const isNollup = !!process.env.NOLLUP
 const production = !process.env.ROLLUP_WATCH;
@@ -61,9 +63,12 @@ const baseConfig = () => ({
       css: css => {
         css.write(`${buildDir}/bundle.css`);
       },
-      preprocess: autoProcess(),
+      preprocess: autoPreprocess(),
       emitCss: true,
       hot: isNollup,
+    }),
+    typescript({
+      sourceMap: !production
     }),
     postcss({
       extract: true,
