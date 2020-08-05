@@ -1,0 +1,27 @@
+FROM rust:1.45-slim
+
+WORKDIR /usr/src/div/back
+
+COPY . .
+
+RUN apt-get update -y && apt-get upgrade -y && apt-get install clang llvm-dev libclang-dev pkg-config libssl-dev -y
+
+
+RUN cargo build --release
+
+RUN cargo install --path ./
+
+RUN cargo install systemfd cargo-watch
+
+RUN apt-get install -y libsqlite3-dev wait-for-it
+
+RUN cargo install movine
+
+ENV HOST_PORT 3001
+
+ENV ENVIRONMENT PROD
+
+EXPOSE 3001
+
+CMD ["/usr/local/cargo/bin/div"]
+#CMD ["cargo", "run"]

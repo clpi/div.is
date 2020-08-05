@@ -1,0 +1,53 @@
+version: "3.1"
+
+services:
+  server:
+    build:
+      contact: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ${PWD}:/server
+    environment:
+      DB_URL: postgres://divdb:divpass@divdb:5432/divdb
+      JWT_SECRET: jwt_secret
+      SECRET_KEY: secret_key
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+      - cache
+    restart: always
+
+  website:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    environment:
+      API_URL: http://div.is:3001/api
+    ports:
+      - 80:5005
+  
+  db:
+    image: postgres:latest-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ${PWD}:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: divuser
+      POSTGRES_PASSWORD: divhashed
+      POSTGRES_DB: divdb
+    restart: always
+
+  redis:
+    image: redis:latest-alpine
+    ports:
+      - 6379:6379
+    restart: always
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+

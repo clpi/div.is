@@ -1,0 +1,14 @@
+<h1>div.is</h1>
+ <button onclick="showContent()">Show hidden content</button>
+
+<template>
+  <h2>div.is api index</h2>
+</template>
+
+<script>
+function showContent() {
+  var temp = document.getElementsByTagName("template")[0];
+  var clon = temp.content.cloneNode(true);
+  document.body.appendChild(clon);
+}
+</script> 
