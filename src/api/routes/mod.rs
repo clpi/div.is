@@ -12,6 +12,7 @@ pub fn routes(data: AppData) -> impl Filter
         Error=warp::Rejection> + Clone 
 {
 
+    //let hello = warp::get().and(warp::any()).map(|| { "hello" });
     let index = warp::path("index").and(warp::fs::file("../../static/index.html")).map(|index| warp::reply::html("<h1>hello</h1>"));
     let s_dir = warp::path("static").and(warp::fs::dir("../../static"));
     

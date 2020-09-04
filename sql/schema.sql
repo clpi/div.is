@@ -38,7 +38,7 @@
     -- 'range'
 -- );
 
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     id          SERIAL NOT NULL PRIMARY KEY,
     email       TEXT NOT NULL UNIQUE,
     username    TEXT NOT NULL UNIQUE CHECK (char_length(username) < 40),

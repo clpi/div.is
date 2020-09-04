@@ -1,6 +1,5 @@
 use super::*;
 
-
 pub fn routes(data: &AppData) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path("auth").and(
         login(data.clone())
